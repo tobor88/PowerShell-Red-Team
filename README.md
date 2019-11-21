@@ -3,8 +3,9 @@ Collection of PowerShell functions a Red Teamer may use to collect data from a m
 
 - Convert-Base64.psm1 is a function as the name states for encoding and/or decoding text into Base64 format.
 ```powershell
-Convert-Base64 -Value "Convert me to base64!" -Encode
-Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
+C:\PS> Convert-Base64 -Value "Convert me to base64!" -Encode
+
+C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
 ```
 
 - Get-LdapInfo.psm1 is a a function I am very proud of for performing general LDAP queries. Althouhg only 2 properties will show in the output, all of the properties associated with object can be seen by pipeing to Select-Object -Prroperty *.
