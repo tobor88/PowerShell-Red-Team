@@ -13,7 +13,12 @@ C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
  C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 ```
 
-- Start-SimpleHTTPServer is a function used to host an HTTP server for downloading files. It is meant to be similart to pythons SimpleHTTPServer module. Directories are not traversable through the web server. The files that will be hosted for download will be from the current directory you are in when issuing this command. 
+- Start-SimpleHTTPServer is a function used to host an HTTP server for downloading files. It is meant to be similart to pythons SimpleHTTPServer module. Directories are not traversable through the web server. The files that will be hosted for download will be from the current directory you are in when issuing this command.
 ```powershell
 C:\PS> Start-SimpleHTTPServer
+Open HTTP Server on port 8000
+
+#OR
+C:\PS> Start-SimpleHTTPServer -Port 80
+# Open HTTP Server on port 80
 ```
