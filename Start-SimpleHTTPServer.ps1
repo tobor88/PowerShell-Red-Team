@@ -8,22 +8,52 @@
     The server can be accessed at http://localhost:8000 You can download files but directories are
     not able to be traversed through the web server.
 
+.PARAMETER
+    -Port
+        The port parameter is for easily defining what port the http server should listen on.
+        The default value is 8000.
+
 .EXAMPLE
     Start-SimpleHTTPServer
+        This example starts an HTTP server on port 8000
 #>
 Function Start-SimpleHTTPServer {
     [CmdletBinding()]
-        param()
+        param(
+            [Parameter(
+                Mandatory=$False,
+                Position=0,
+                ValueFromPipeline=$False,
+                HelpMessage='Enter a port for the HTTP Server to listen on. Valid ports are between 1 and 65535. Example: 1234')] # End Parameter
+            [ValidateRange(1,65535)]
+            [int32]$Port
+        )  # End param
+
+    If ($Port -eq $Null)
+    {
+
+        $Port = 8000
+        $Address = "http://localhost:$Port/"
+
+    }  # End If
+    Else
+    {
+
+        $Address = "http://localhost:$Port/"
+
+    }  # End Else
 
     $WebServer = [System.Reflection.Assembly]::LoadWithPartialName("System.Web")
     $WebServer
 
     $Listener = New-Object -TypeName System.Net.HttpListener
-    $Listener.Prefixes.Add("http://localhost:8000/")
+    $Listener.Prefixes.Add("$Address")
     $Listener.Start()
 
     New-PSDrive -Name 'SimpleHTTPServer' -Root $Pwd.Path -PSProvider FileSystem -Scope Global
+
     $Root = $Pwd.Path
+
     Set-Location -Path 'SimpleHTTPServer:\'
 
     Do {
@@ -33,7 +63,7 @@ Function Start-SimpleHTTPServer {
         $Response = $Context.Response
         $Context.User.Identity.Impersonate()
 
-        Write-Host "$RequestUrl"
+        Write-Host $RequestUrl
         [array]$Content = @()
 
         $LocalPath = $RequestUrl.LocalPath
@@ -112,7 +142,7 @@ Function Start-SimpleHTTPServer {
 "@
                 }  # End ForEach
 
-                $Content = Get-DirectoryContent -Path $FullPath -HeaderName "PowerShell Simple HTTP Server" -RequestURL "http://localhost:8000" -SubfolderName $LocalPath -Root $Root
+                $Content = Get-DirectoryContent -Path $FullPath -HeaderName "PowerShell Simple HTTP Server" -RequestURL "$Address" -SubfolderName $LocalPath -Root $Root
 
                 $Encoding = [System.Text.Encoding]::UTF8
                 $Content = $Encoding.GetBytes($Content)
