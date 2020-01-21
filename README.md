@@ -22,3 +22,7 @@ Open HTTP Server on port 8000
 C:\PS> Start-SimpleHTTPServer -Port 80
 # Open HTTP Server on port 80
 ```
+- Invoke-PingSweep is a function used for performing a ping sweep of a subnet range. This is still something I am working on completing all the desired options. 
+```powershell
+Invoke-PingSweep -Subnet 192.168.1.0 -Start 192 -End 224 -Source Singular
+```
