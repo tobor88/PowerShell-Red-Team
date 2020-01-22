@@ -158,7 +158,7 @@ Function Invoke-PingSweep
             [string]$IP = "$ClassC.$i"
 
             # When Windows PowerShell is executing the command and source value is not defined
-            If (($PsVersionTable.PSEdition -ne 'Core') -and (!$Source.IsPresent) -and ($IP -notlike $LocalIPAddress))
+            If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -like $Null) -and ($IP -notlike $LocalIPAddress))
             {
 
                 $Filter = 'Address="{0}" and Timeout={1}' -f $IP, $Timeout
@@ -195,7 +195,7 @@ Function Invoke-PingSweep
                 } # End If
                 ElseIf ($Source -like 'Multiple')
                 {
-
+                    Write-Host "Source is multiple"
                     For ($x = ($Start - 1); $x -le ($End - $Start); $x++)
                     {
 
