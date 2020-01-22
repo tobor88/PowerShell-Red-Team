@@ -8,7 +8,7 @@ C:\PS> Convert-Base64 -Value "Convert me to base64!" -Encode
 C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
 ```
 
-- Get-LdapInfo.psm1 is a a function I am very proud of for performing general LDAP queries. Althouhg only 2 properties will show in the output, all of the properties associated with object can be seen by pipeing to Select-Object -Prroperty *.
+- Get-LdapInfo.psm1 is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property *.
 ```powershell
  C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 ```
@@ -22,7 +22,14 @@ Open HTTP Server on port 8000
 C:\PS> Start-SimpleHTTPServer -Port 80
 # Open HTTP Server on port 80
 ```
-- Invoke-PingSweep is a function used for performing a ping sweep of a subnet range. This is still something I am working on completing all the desired options. 
+
+- Invoke-PingSweep is a function used for performing a ping sweep of a subnet range. 
 ```powershell
 Invoke-PingSweep -Subnet 192.168.1.0 -Start 192 -End 224 -Source Singular
+# NOTE: The source parameter only works if IP Source Routing value is "Yes"
+
+Invoke-PingSweep -Subnet 10.0.0.0 -Start 1 -End 20 -Count 2
+# Default value for count is 1
+
+Invoke-PingSweep -Subnet 172.16.0.0 -Start 64 -End 128 -Count 3 -Source Multiple
 ```
