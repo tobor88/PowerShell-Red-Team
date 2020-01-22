@@ -179,6 +179,7 @@ Function Invoke-PingSweep
                 {
 
                     $SourceIP = "$ClassC." + ($End - 1)
+                    Write-Host "Sending Ping from $SourceIP to $IP"
 
                     Try
                     {
@@ -195,11 +196,12 @@ Function Invoke-PingSweep
                 } # End If
                 ElseIf ($Source -like 'Multiple')
                 {
-                    Write-Host "Source is multiple"
+
                     For ($x = ($Start - 1); $x -le ($End - $Start); $x++)
                     {
 
                         $SourceIP = "$ClassC.$x"
+                        Write-Host "Sending ping from $SourceIP to $IP"
 
                         Try
                         {
