@@ -179,7 +179,9 @@ Function Invoke-PingSweep
                 {
 
                     $SourceIP = "$ClassC." + ($End - 1)
-                    Write-Host "Sending Ping from $SourceIP to $IP"
+
+                    # Uncomment the below line if you wish to see the source address the ping is coming from
+                    # Write-Host "Sending Ping from $SourceIP to $IP"
 
                     Try
                     {
@@ -201,7 +203,9 @@ Function Invoke-PingSweep
                     {
 
                         $SourceIP = "$ClassC.$x"
-                        Write-Host "Sending ping from $SourceIP to $IP"
+
+                        # Uncomment the below line if you wish to see the source ip the ping is being sent from 
+                        # Write-Host "Sending ping from $SourceIP to $IP"
 
                         Try
                         {
