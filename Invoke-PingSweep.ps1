@@ -97,6 +97,7 @@
     System.Array
 
     The results of this command is an array of active IP Addresses.
+    NOTE: Technically this does not output an object yet. This is something I will do in the future
 
 
 .NOTES
@@ -144,71 +145,93 @@ Function Invoke-PingSweep
             [string]$Source
         ) # End param
 
-    [array]$LocalIPAddress = Get-NetIPAddress -AddressFamily "IPv4" | Where-Object { ($_.InterfaceAlias -notmatch "Bluetooth|Loopback") -and ($_.IPAddress -notlike "169.254.*") }  | Select-Object -Property "IPAddress"
-    [string]$ClassC = $Subnet.Split(".")[0..2] -Join "."
-    [array]$Results = @()
-    [int]$Timeout = 500
+        [array]$LocalIPAddress = Get-NetIPAddress -AddressFamily "IPv4" | Where-Object { ($_.InterfaceAlias -notmatch "Bluetooth|Loopback") -and ($_.IPAddress -notlike "169.254.*") }  | Select-Object -Property "IPAddress"
+        [string]$ClassC = $Subnet.Split(".")[0..2] -Join "."
+        [array]$Results = @()
+        [int]$Timeout = 500
 
-    Write-Host "The below IP Addressess are currently active." -ForegroundColor "Green"
+        Write-Host "The below IP Addressess are currently active." -ForegroundColor "Green"
 
-    For ($i = 0; $i -le $End; $i++)
-    {
-
-        [string]$IP = "$ClassC.$i"
-
-        # When Windows PowerShell is executing the command and source value is not defined
-        If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -eq $Null) -and ($IP -notlike $LocalIPAddress))
+        For ($i = 0; $i -le $End; $i++)
         {
 
-            $Filter = 'Address="{0}" and Timeout={1}' -f $IP, $Timeout
+            [string]$IP = "$ClassC.$i"
 
-            If ((Get-WmiObject "Win32_PingStatus" -Filter $Filter).StatusCode -eq 0)
+            # When Windows PowerShell is executing the command and source value is not defined
+            If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -eq $Null) -and ($IP -notlike $LocalIPAddress))
             {
 
-                Write-Host $IP -ForegroundColor "Yellow"
+                $Filter = 'Address="{0}" and Timeout={1}' -f $IP, $Timeout
 
-            } # End If
-
-        } # End If
-        # When Core or Windows PowerShell is running or source is defined
-        ElseIf (($PsVersionTable.PSEdition -eq 'Core') -or ($Source -ne $Null) -and ($IP -notlike $LocalIPAddress))
-        {
-
-            If ($Source -like 'Singular')
-            {
-
-                $SourceIP = "$ClassC." + ($End - 1)
-
-                Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Source $SourceIP -Quiet
-
-            } # End If
-            ElseIf ($Source -like 'Multiple')
-            {
-
-                For ($x = ($Start - 1); $x -le ($End - $Start); $x++)
+                If ((Get-WmiObject "Win32_PingStatus" -Filter $Filter).StatusCode -eq 0)
                 {
 
-                    $SourceIP = "$ClassC.$x"
-                    Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Source $SourceIP -Quiet
+                    Write-Host $IP -ForegroundColor "Yellow"
 
-                } # End For
+                } # End If
 
-            } # End ElseIf
-
-        }  # End ElseIf
-        # When Core is running and source is not defined
-        ElseIf (($PsVersionTable.PSEdition -eq 'Core') -and ($Source -eq $Null) -and ($IP -notlike $LocalIPAddress))
-        {
-
-            If (Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Quiet)
+            } # End If
+            # When Core or Windows PowerShell is running or source is defined
+            ElseIf (($PsVersionTable.PSEdition -eq 'Core') -or ($Source -ne $Null) -and ($IP -notlike $LocalIPAddress))
             {
 
-                Write-Host $IP -ForegroundColor 'Yellow'
+                If ($Source -like 'Singular')
+                {
 
-            }  # End If
+                    $SourceIP = "$ClassC." + ($End - 1)
 
-        }  # End ElseIf
+                    Try
+                    {
 
-    } # End For
+                        Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Source $SourceIP -Quiet
+
+                    }  # End Try
+                    Catch
+                    {
+
+                        Write-Host "Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work." -ForegroundColor 'Red'
+
+                    }  # End Catch
+                } # End If
+                ElseIf ($Source -like 'Multiple')
+                {
+
+                    For ($x = ($Start - 1); $x -le ($End - $Start); $x++)
+                    {
+
+                        $SourceIP = "$ClassC.$x"
+
+                        Try
+                        {
+
+                            Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Source $SourceIP -Quiet
+
+                        }  # End Try
+                        Catch
+                        {
+
+                            Write-Host "Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work." -ForegroundColor 'Red'
+
+                        }  # End Catch
+
+                    } # End For
+
+                } # End ElseIf
+
+            }  # End ElseIf
+            # When Core is running and source is not defined
+            ElseIf (($PsVersionTable.PSEdition -eq 'Core') -and ($Source -eq $Null) -and ($IP -notlike $LocalIPAddress))
+            {
+
+                If (Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Quiet)
+                {
+
+                    Write-Host $IP -ForegroundColor 'Yellow'
+
+                }  # End If
+
+            }  # End ElseIf
+
+        } # End For
 
 } # End Function Invoke-PingSweep
