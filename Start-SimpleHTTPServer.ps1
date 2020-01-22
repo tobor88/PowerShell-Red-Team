@@ -16,6 +16,12 @@
 .EXAMPLE
     Start-SimpleHTTPServer
         This example starts an HTTP server on port 8000
+
+.NOTES
+        Author: Rob Osborne
+        Alias: tobor
+        Contact: rosborne@osbornepro.com
+        https://roberthosborne.com
 #>
 Function Start-SimpleHTTPServer {
     [CmdletBinding()]
