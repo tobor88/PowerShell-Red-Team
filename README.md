@@ -33,7 +33,7 @@ C:\PS> Start-SimpleHTTPServer -Port 80
 # Open HTTP Server on port 80
 ```
 
-- Invoke-PortScan.psm1 is a function for scanning all possible TCP ports on a target. I will improve in future by including UDP as well as the ability to define a port range.
+- Invoke-PortScan.ps1 is a function for scanning all possible TCP ports on a target. I will improve in future by including UDP as well as the ability to define a port range.
 ```powershell
  C:\PS> Invoke-PortScan -IpAddress 192.168.0.1
 ```
