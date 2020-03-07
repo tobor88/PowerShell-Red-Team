@@ -112,7 +112,7 @@ Function Test-PrivEsc {
 
         $UnquotedServicePaths = Get-CimInstance -ClassName "Win32_Service" -Property "Name","DisplayName","PathName","StartMode" | Where-Object { $_.StartMode -eq "Auto" -and $_.PathName -notlike "C:\Windows*" -and $_.PathName -notlike '"*' } | Select-Object -Property "PathName","DisplayName","Name"
 
-        If ($UnquotedServicePaths)
+        If ($UnquotedServicePaths -notlike $Null)
         {
 
             Write-Host "Unquoted Service Path has been found" -ForegroundColor "Red"
