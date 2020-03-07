@@ -49,6 +49,8 @@ Function Test-PrivEsc {
         Get-ItemProperty -Path "HKCU:\Software\TightVNC\Server" -ErrorAction "SilentlyContinue"
         Get-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions" -ErrorAction "SilentlyContinue"
         Get-ItemProperty -Path "HKCU:\Software\OpenSSH\Agent\Key" -ErrorAction "SilentlyContinue"
+        
+        Write-Host "To perform a more in depth search use SessionGopher: https://github.com/Arvanaghi/SessionGopher/blob/master/SessionGopher.ps1" -ForegroundColor "Cyan"
 
 #============================================================================================================
 #  AlwaysInstallElevated PRIVESC
