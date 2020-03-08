@@ -13,6 +13,16 @@ C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
  C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 ```
 
+- Test-PrivEsc.ps1 is a function that can be used for finding whether WSUS updates over HTTP are vulnerable to PrivEsc, Clear Text credentials are stored in common places,  AlwaysInstallElevated is vulnerable to PrivEsc, Unquoted Service Paths exist, and enum of possible weak write permissions for services.
+```powershell
+ C:\PS> Test-PrivEsc
+```
+
+- Get-InitialEnum.ps1 is a function for enumerating the basics of a Windows Operating System to help better display possible weaknesses.
+```powershell
+ C:\PS> Get-InitialEnum
+```
+
 - Start-SimpleHTTPServer is a function used to host an HTTP server for downloading files. It is meant to be similart to pythons SimpleHTTPServer module. Directories are not traversable through the web server. The files that will be hosted for download will be from the current directory you are in when issuing this command.
 ```powershell
 C:\PS> Start-SimpleHTTPServer
@@ -21,6 +31,11 @@ Open HTTP Server on port 8000
 #OR
 C:\PS> Start-SimpleHTTPServer -Port 80
 # Open HTTP Server on port 80
+```
+
+- Invoke-PortScan.ps1 is a function for scanning all possible TCP ports on a target. I will improve in future by including UDP as well as the ability to define a port range.
+```powershell
+ C:\PS> Invoke-PortScan -IpAddress 192.168.0.1
 ```
 
 - Invoke-PingSweep is a function used for performing a ping sweep of a subnet range. 
