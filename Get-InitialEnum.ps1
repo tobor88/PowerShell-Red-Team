@@ -53,13 +53,7 @@ OUTPUTS
 #>
 Function Get-InitialEnum {
     [CmdletBinding()]
-        param(
-            [Parameter(
-                Mandatory=$False, 
-                Position=0, 
-                ValueFromPipeline=$False, 
-                HelpMessage="Define the file name and directory path you wish to save the output too. Example: C:\Temp\output.txt")]  # End Parameter
-            [string]$FilePath)  # End param
+        param()  # End param
 
 #================================================================
 #  SECURITY PATCHES
