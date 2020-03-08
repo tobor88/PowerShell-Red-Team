@@ -1,5 +1,15 @@
 # PowerShell-Red-Team-Enum
-Collection of PowerShell functions a Red Teamer may use to collect data from a machine or gain access to a target.
+Collection of PowerShell functions a Red Teamer may use to collect data from a machine or gain access to a target. I added ps1 files for the commands that are included in the RedTeamEnum module. This will allow you to easily find and use only one command if that is all you want. If you want the entire module perform the following actions after downloading the RedTeamEnum directory and contents to your device.
+```powershell
+C:\PS> robocopy .\RedTeamEnum $env:USERPROFILE\Documents\WindowsPowerShell\Modules\RedTeamEnum *
+# This will copy the module to a location that allows you to easily import it. If you are using OneDrive sync you may need to use $env:USERPROFILE\OneDrive\Documents\WindowsPowerShell\Modules\RedTeamEnum instead.
+
+C:\PS> Import-Module -Name RedTeamEnum -Verbose
+# This will import all the commands in the module. 
+
+C:\PS> Get-Command -Module RedTeamEnum
+# This will list all the commands in the module.
+```
 
 - Convert-Base64.psm1 is a function as the name states for encoding and/or decoding text into Base64 format.
 ```powershell
