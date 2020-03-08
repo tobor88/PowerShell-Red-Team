@@ -57,130 +57,10 @@ Function Get-InitialEnum {
     
     BEGIN 
     {
-                <#
-        .NAME 
-            Get-Driver
 
-
-        .SYNOPSIS
-            PowerShell function to enhance the built-in DriverQuery command
-        
-        
-        .DESCRIPTION
-            Includes parameters to filter for signed and unsigned drivers.
-        
-        
-        .EXAMPLE
-            Get-Driver -Signed
-        
-        #>
-        Function Get-Driver {
-            [CmdletBinding()]
-                Param (
-                    [Switch]$Unsigned,
-                    [Switch]$Signed,
-                    [Switch]$All)  # End param
-
-        BEGIN 
-        {
-        
-            Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
-                      
-        } # End of Begin section
-
-        PROCESS 
-        {
-        
-            If ($Signed)
-            {
-            
-                Write-Verbose "Obtaining signed driver info..."
-                $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
-
-                $DrvSig
-                "`n " + $DrvSig.count + " signed drivers, note TRUE column"
-            
-            }  # End of If
-            ElseIf ($UnSigned) 
-            {
-            
-                Write-Verbose "Obtaining signed driver info..."
-                $DrvU = DriverQuery -SI | Select-String "False"
-
-                $DrvU
-                "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
-                
-            }  # End ElseIf
-            ElseIf ($All) 
-            {
-            
-                DriverQuery -SI
-            
-            }  # End ElseIf
-            Else 
-            {
-            
-                DriverQuery
-            
-            }  # End Else
-                
-        } # End PROCESS
-
-    } # End Function Get-Driver
-    
-    Function Get-AntiVirusProduct {
-            [CmdletBinding()]
-                param (
-                    [Parameter(
-                        Mandatory=$False,
-                        Position=0,
-                        ValueFromPipeline=$True, 
-                        ValueFromPipelineByPropertyName=$true)]
-            [Alias('Computer')]
-            [string]$ComputerName=$env:COMPUTERNAME )  # End param
-    
-            $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
-    
-            $Ret = @()
-            ForEach ($AntiVirusProduct in $AntiVirusProducts)
-            {
-                #The values are retrieved from: http://community.kaseya.com/resources/m/knowexch/1020.aspx
-                Switch ($AntiVirusProduct.productState) 
-                {
-                    "262144" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
-                    "262160" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-                    "266240" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
-                    "266256" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-                    "393216" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
-                    "393232" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-                    "393488" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
-                    "397312" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
-                    "397328" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-                    "397584" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
-                
-                    Default {$defstatus = "Unknown" ;$rtstatus = "Unknown"}
-                }  # End Switch 
-    
-                $HashTable = @{}
-                $HashTable.Computername = $ComputerName
-                $HashTable.Name = $AntiVirusProduct.DisplayName
-                $HashTable.'Product GUID' = $AntiVirusProduct.InstanceGuid
-                $HashTable.'Product Executable' = $AntiVirusProduct.PathToSignedProductExe
-                $HashTable.'Reporting Exe' = $AntiVirusProduct.PathToSignedReportingExe
-                $HashTable.'Definition Status' = $DefStatus
-                $HashTable.'Real-time Protection Status' = $RtStatus
-    
-                $Ret += New-Object -TypeName "PSObject" -Property $HashTable 
-    
-            }  # End ForEach 
-            
-            $Ret
-    
-        }  # End Function Get-AntiVirusProduct
-
-    }  # End BEGIN
-    PROCESS 
-    {
+}  # End BEGIN
+PROCESS 
+{
 #================================================================
 #  SECURITY PATCHES
 #================================================================
@@ -318,6 +198,109 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     Write-Host "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" -ForegroundColor "Yellow"
     Get-ChildItem -Path "Env:" | Format-Table -Property "Key","Value"
 
-    }  # ENd PROCESS 
+}  # End PROCESS 
 
 }  # End Function Get-InitialEnum
+
+Function Get-Driver {
+    [CmdletBinding()]
+        Param (
+            [Switch]$Unsigned,
+            [Switch]$Signed,
+            [Switch]$All)  # End param
+BEGIN 
+{
+    
+    Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
+                  
+} # End of Begin section
+PROCESS 
+{
+  
+    If ($Signed)
+    {
+
+        Write-Verbose "Obtaining signed driver info..."
+        $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
+
+        $DrvSig
+        "`n " + $DrvSig.count + " signed drivers, note TRUE column"
+        
+    }  # End of If
+    ElseIf ($UnSigned) 
+    {
+        
+        Write-Verbose "Obtaining signed driver info..."
+        $DrvU = DriverQuery -SI | Select-String "False"
+
+        $DrvU
+        "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
+            
+    }  # End ElseIf
+    ElseIf ($All) 
+    {
+        
+        DriverQuery -SI
+        
+    }  # End ElseIf
+    Else 
+    {
+        
+        DriverQuery
+        
+    }  # End Else
+            
+} # End PROCESS
+
+} # End Function Get-Driver
+
+
+Function Get-AntiVirusProduct {
+    [CmdletBinding()]
+        param (
+            [Parameter(
+                Mandatory=$False,
+                Position=0,
+                ValueFromPipeline=$True, 
+                ValueFromPipelineByPropertyName=$true)]
+    [Alias('Computer')]
+    [string]$ComputerName=$env:COMPUTERNAME )  # End param
+
+    $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
+
+    $Ret = @()
+    ForEach ($AntiVirusProduct in $AntiVirusProducts)
+    {
+       #The values are retrieved from: http://community.kaseya.com/resources/m/knowexch/1020.aspx
+        Switch ($AntiVirusProduct.productState) 
+        {
+            "262144" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+            "262160" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+            "266240" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+            "266256" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+            "393216" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+            "393232" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+            "393488" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+            "397312" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+            "397328" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+            "397584" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+            
+            Default {$defstatus = "Unknown" ;$rtstatus = "Unknown"}
+        }  # End Switch 
+
+        $HashTable = @{}
+        $HashTable.Computername = $ComputerName
+        $HashTable.Name = $AntiVirusProduct.DisplayName
+        $HashTable.'Product GUID' = $AntiVirusProduct.InstanceGuid
+        $HashTable.'Product Executable' = $AntiVirusProduct.PathToSignedProductExe
+        $HashTable.'Reporting Exe' = $AntiVirusProduct.PathToSignedReportingExe
+        $HashTable.'Definition Status' = $DefStatus
+        $HashTable.'Real-time Protection Status' = $RtStatus
+
+        $Ret += New-Object -TypeName "PSObject" -Property $HashTable 
+
+    }  # End ForEach 
+        
+    $Ret
+
+}  # End Function Get-AntiVirusProduct
