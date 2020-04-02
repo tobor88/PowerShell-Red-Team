@@ -1,6 +1,6 @@
 Function Invoke-InMemoryPayload
 {
-    [CmletBinding()]
+    [CmdletBinding()]
         param(
             [Parameter(
                 Mandatory=$True,
