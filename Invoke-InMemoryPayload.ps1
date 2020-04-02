@@ -6,7 +6,7 @@ Function Invoke-InMemoryPayload
                 Mandatory=$True,
                 Poisition=0,
                 ValueFromPipeline=$True, 
-                ValueFromPipelineByPropertyValue=$True,
+                ValueFromPipelineByPropertyName=$True,
                 HelpMessage='Generate an msfvenom payload. Copy the value of the byte variable and place it here.')]  # End Parameter
             [Byte[]]$Payload
         )  # End param
