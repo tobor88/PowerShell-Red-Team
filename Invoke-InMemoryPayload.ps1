@@ -5,7 +5,7 @@
     
 .SYNOPSIS
     Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections.
-
+    This function was built off of a template from the Offensive Security PWK course.
 
 .SYNTAX
     Invoke-InMemoryPayload [-ShellCode] <bytes[] shellcode>
