@@ -17,7 +17,7 @@
 
 .EXAMPLES
     -------------------------- EXAMPLE 1 --------------------------
-   C:\PS> Invoke-InMemoryPayload -ShellCode x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90
+   C:\PS> Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
    This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
  
  
