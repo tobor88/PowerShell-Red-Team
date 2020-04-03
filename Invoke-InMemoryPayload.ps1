@@ -1,3 +1,51 @@
+<#
+.NAME
+    Invoke-InMemoryPayload
+    
+    
+.SYNOPSIS
+    Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections.
+
+
+.SYNTAX
+    Invoke-InMemoryPayload [-ShellCode] <bytes[] shellcode>
+    
+
+.DESCRIPTION
+    This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory.
+
+
+.EXAMPLES
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Invoke-InMemoryPayload -ShellCode x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90
+   This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
+ 
+ 
+ .PARAMTERS
+    -ShellCode <byte[]>
+        Defines the Class C subnet range to perform the ping sweep
+        Enter a string consisting of 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by a zero
+        Required?                    True
+        Position?                    0
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+    
+    
+.INPUTS
+    [System.Byte[]]
+    
+    
+.OUTPUTS
+    None
+    
+    
+.NOTES
+    Author: Rob Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthosborne.com
+#>
 Function Invoke-InMemoryPayload
 {
     [CmdletBinding()]
