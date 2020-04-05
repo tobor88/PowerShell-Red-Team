@@ -22,7 +22,7 @@ C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
 ```powershell
  C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 #
- C:\PS> Get-LdapInfo -Detailed -ListUsers 
+ C:\PS> Get-LdapInfo -Detailed -ListUsers | Where-Object -Property SamAccountName -like "user.samname"
 ```
 
 - Test-PrivEsc is a function that can be used for finding whether WSUS updates over HTTP are vulnerable to PrivEsc, Clear Text credentials are stored in common places,  AlwaysInstallElevated is vulnerable to PrivEsc, Unquoted Service Paths exist, and enum of possible weak write permissions for services.
