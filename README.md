@@ -18,17 +18,19 @@ C:\PS> Convert-Base64 -Value "Convert me to base64!" -Encode
 C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
 ```
 
-- Get-LdapInfo.psm1 is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property *.
+- Get-LdapInfo is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property * or using the -Detailed switch parameter.
 ```powershell
  C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+#
+ C:\PS> Get-LdapInfo -Detailed -ListUsers 
 ```
 
-- Test-PrivEsc.ps1 is a function that can be used for finding whether WSUS updates over HTTP are vulnerable to PrivEsc, Clear Text credentials are stored in common places,  AlwaysInstallElevated is vulnerable to PrivEsc, Unquoted Service Paths exist, and enum of possible weak write permissions for services.
+- Test-PrivEsc is a function that can be used for finding whether WSUS updates over HTTP are vulnerable to PrivEsc, Clear Text credentials are stored in common places,  AlwaysInstallElevated is vulnerable to PrivEsc, Unquoted Service Paths exist, and enum of possible weak write permissions for services.
 ```powershell
  C:\PS> Test-PrivEsc
 ```
 
-- Get-InitialEnum.ps1 is a function for enumerating the basics of a Windows Operating System to help better display possible weaknesses.
+- Get-InitialEnum is a function for enumerating the basics of a Windows Operating System to help better display possible weaknesses.
 ```powershell
  C:\PS> Get-InitialEnum
 ```
