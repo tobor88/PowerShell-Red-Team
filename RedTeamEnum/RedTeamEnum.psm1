@@ -677,18 +677,24 @@ Function Get-LdapInfo {
 
         If ($Detailed.IsPresent)
         {
+        
             If ($Results.Properties)
             {
+            
                 ForEach ($Result in $Results)
                 {
-
+                
+                    [array]$ObjProperties = @()
+                    
                     ForEach ($Property in $Result.Properties)
                     {
 
-                        $Property
+                        $ObjProperties += $Property
 
                     }  # End ForEach
-
+                    
+                    $ObjProperties
+                    
                     Write-Host "-----------------------------------------------------------------------`n"
 
                 } # End ForEach
@@ -730,8 +736,6 @@ Function Get-LdapInfo {
     } # End END
 
 } # End Get-LdapInfo
-
-
 
 <#
 .SYNOPSIS
