@@ -111,6 +111,10 @@ Function Convert-Base64
 
 
 <#
+.NAME
+    Get-LdapInfo
+
+
 .SYNOPSIS
     Perform LDAP Queries of the current domain. This requires a user account in order to execute the cmdlet.
     Due to the amount of switches I have not provieded examples for each one. The names are pretty self explanatory.
@@ -125,30 +129,97 @@ Function Convert-Base64
 
 
 .SYNTAX
-    Get-LdapInfo [ -DomainAdmins | -DomainControllers | -UAC ]
+    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ]
 
 
 
 .PARAMETER
 
-    -DomainAdmins              [<SwitchParameter>]
-        The switch parameter is used to tell the cmdlet to obtain a list of members of the Domain Admins Group
+    -Detailed                  [<SwitchParameter>]
+        This switch parameter will display all properties of the rerturned objects
 
 
     -DomainControllers         [<SwitchParameter>]
          This switch is used to tell the cmdlet to get a list of the Domain's Controllers
 
 
+    -AllServers                [<SwitchParameter>]
+        This switch is used to obtain a list of all servers in the domain environment
+
+
+    -AllMemberServers                [<SwitchParameter>]
+        This switch is used to obtain a list of all member servers in the environment
+
+
+    -DomainTrusts                [<SwitchParameter>]
+        This switch is used to obtain a list of all trusted and federated domains for the domain
+
+
+    -DomainAdmins              [<SwitchParameter>]
+        The switch parameter is used to tell the cmdlet to obtain a list of members of the Domain Admins Group
+
+
     -UACTrusted                [<SwitchParameter>]
         This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can be delegated
 
 
-    -LogonScript               [<SwitchParameter>]
-         This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
+    -NotUACTrusted                [<SwitchParameter>]
+        This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can NOT be delegated
+ 
+
+    -SPNNamedObjects                [<SwitchParameter>]
+        This switch is used to obtain a list of Service Principal Named objects
 
 
     -EnabledUsers              [<SwitchParameter>]
         This switch parameter is used to tell the cmdlet to get a list of enabled user accounts in the domain
+
+
+    -PossibleExecutives                [<SwitchParameter>]
+        This switch is used to obtain a list of possible executives for the company
+
+
+    -LogonScript               [<SwitchParameter>]
+         This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
+    
+    -ListAllOu               [<SwitchParameter>]
+        This siwtch is meant to return a list of all OUs in the domain
+
+
+    -ListComputer               [<SwitchParameter>]
+        This switch is meant to return a list of all computers in the domain
+
+    
+    -ListContacts               [<SwitchParameter>]
+        This switch is meant to return a list of contacts in the domain
+
+    
+    -ListUsers               [<SwitchParameter>]
+        This switch is meant to return a list of all users in the domain
+    
+
+    -ListGroups               [<SwitchParameter>]
+        This switch is meant to return a list of all groups in the domain
+
+
+    -ListContainers      [<SwitchParameter>]
+        This switch is used to return a list of all containers in the domain
+
+
+    -ListDomainObjects     [<SwitchParameter>]
+        This switch is used to return a list of all objects in the domain
+
+
+    -ListBuiltInContainers        [<SwitchParameter>]
+        This switch is used to return a list of built in OU containers in the domain
+
+
+    -ChangePasswordAtNextLogon    [<SwitchParameter>]
+        This switch is used to return a list of users who are set to change their password at next logon
+
+
+    -PasswordNeverExpires       [<SwitchParameter>]
+        This switch is used to obtain a list of users who have passwords that never expire
 
 
     -NoPasswordRequired        [<SwitchParameter>]
@@ -158,6 +229,9 @@ Function Convert-Base64
     -NoKerberosPreAuthRequired [<SwitchParameter>]
         This switch parameter is used to get a list of users who do not require preauthentication when being authenticated with Kerberos
 
+
+    -PasswordsThatHaveNotChangedInYears       [<SwitchParameter>]
+        This switch is used to obtain a list of user passwords that have not changed in years
 
 
 .INPUTS
@@ -259,7 +333,7 @@ Function Convert-Base64
     C:\PS> Get-LdapInfo -ListContacts
 
     This example lists all Active Directory Contacts
-
+    
     -------------------------- EXAMPLE 15 --------------------------
 
     C:\PS> Get-LdapInfo -ListGroups
@@ -268,114 +342,120 @@ Function Convert-Base64
 
     -------------------------- EXAMPLE 16 --------------------------
 
+    C:\PS> Get-LdapInfo -ListGroups
+
+    # This example lists all Active Directory Groups
+
+    -------------------------- EXAMPLE 17 --------------------------
+
     C:\PS> Get-LdapInfo -ListContainers
 
     # This example lists Active Directory Containers
 
-    -------------------------- EXAMPLE 17 --------------------------
+    -------------------------- EXAMPLE 18 --------------------------
 
     C:\PS> Get-LdapInfo -ListDomainObjects
 
     # This example lists Active Directory Domain Objects
 
-    -------------------------- EXAMPLE 18 --------------------------
+    -------------------------- EXAMPLE 19 --------------------------
 
     C:\PS> Get-LdapInfo -ListBuiltInObjects
 
     # This example list Builtin In Active Directory Objects
 
-    -------------------------- EXAMPLE 19 --------------------------
+    -------------------------- EXAMPLE 20 --------------------------
 
     C:\PS> Get-LdapInfo -ListBuiltInContainers
 
     This example lists Built In Active Directory Containers
 
-    -------------------------- EXAMPLE 20 --------------------------
+    -------------------------- EXAMPLE 21 --------------------------
 
     C:\PS> Get-LdapInfo -ChangePasswordAtNextLogon
 
     This example lists users who are set to change their password at next logon.DESCRIPTION
     If a user does not have a "Logon Name" Configured in AD they will be returned with this results as well.
 
-    -------------------------- EXAMPLE 21 --------------------------
+    -------------------------- EXAMPLE 22 --------------------------
 
     C:\PS> Get-LdapInfo -PasswordNeverExpires
 
     This example list users who have passwords that never expire
 
-    -------------------------- EXAMPLE 22 --------------------------
+    -------------------------- EXAMPLE 23 --------------------------
 
     C:\PS> Get-LdapInfo -NoPasswordRequired
 
     # This example lists users who do not require a password for sign in
 
-    -------------------------- EXAMPLE 23 --------------------------
+    -------------------------- EXAMPLE 24 --------------------------
 
     C:\PS> Get-LdapInfo -NoKerberosPreAuthRequired
 
     # This example lists users where Kerberos Pre Authentication is not enabled
 
-    -------------------------- EXAMPLE 24 --------------------------
+    -------------------------- EXAMPLE 25 --------------------------
 
     C:\PS> Get-LdapInfo -PasswordsThatHaveNotChangedInYears | Where-Object -Property Path -notlike "*OU=Disabled*"
 
     # This example lists users who have passwords that have not changed in years who are also not in a Disabled group
 
-    -------------------------- EXAMPLE 25 --------------------------
+    -------------------------- EXAMPLE 26 --------------------------
 
     C:\PS> Get-LdapInfo -DistributionGroups
 
     # This example lists all the Distribution Groups in Active Directory
 
-    -------------------------- EXAMPLE 26 --------------------------
+    -------------------------- EXAMPLE 27 --------------------------
 
     C:\PS> Get-LdapInfo -SecurityGroups
 
     This example lists all the Security Groups in Active Directory
 
-    -------------------------- EXAMPLE 27 --------------------------
+    -------------------------- EXAMPLE 28 --------------------------
 
     C:\PS> Get-LdapInfo -BuiltInGroups
 
     This example lists all Built In Groups in Active Directory
 
-    -------------------------- EXAMPLE 28 --------------------------
+    -------------------------- EXAMPLE 29 --------------------------
 
     C:\PS> Get-LdapInfo -AllGlobalGroups
 
     This example lists all Global Groups in Active Directory
 
-    -------------------------- EXAMPLE 29 --------------------------
+    -------------------------- EXAMPLE 30 --------------------------
 
     C:\PS> Get-LdapInfo -DomainLocalGroups
 
     # This example list Domain Local Groups from Active Directory
 
-    -------------------------- EXAMPLE 30 --------------------------
+    -------------------------- EXAMPLE 31 --------------------------
 
     C:\PS> Get-LdapInfo -UniversalGroups
 
     # This example lists the Universal Groups from Active Directory
 
-    -------------------------- EXAMPLE 31 --------------------------
+    -------------------------- EXAMPLE 32 --------------------------
 
     C:\PS> Get-LdapInfo -GlobalSecurityGroups
 
     # This example list Global Security Groups from Active Directory
 
-    -------------------------- EXAMPLE 32 --------------------------
+    -------------------------- EXAMPLE 33 --------------------------
 
     C:\PS> Get-LdapInfo -UniversalSecurityGroups
 
     # This example lists Universal Security Gruops from Active Directory
 
-    -------------------------- EXAMPLE 32 --------------------------
+    -------------------------- EXAMPLE 34 --------------------------
 
     C:\PS> Get-LdapInfo -DomainLocalSecurityGroups
 
     # This example lists Domain Local Security Groups from Active Directory
 
-    -------------------------- EXAMPLE 33 --------------------------
+    -------------------------- EXAMPLE 35 --------------------------
 
     C:\PS> Get-LdapInfo -GlobalDistributionGroups
 
@@ -385,6 +465,10 @@ Function Convert-Base64
 Function Get-LdapInfo {
     [CmdletBinding()]
         param(
+            [Parameter(
+                Mandatory=$False)]
+            [switch][bool]$Detailed,
+
             [Parameter(
                 Mandatory=$False)]
             [switch][bool]$DomainControllers,
@@ -444,6 +528,10 @@ Function Get-LdapInfo {
             [Parameter(
                 Mandatory=$False)]
             [switch][bool]$ListGroups,
+
+            [Parameter(
+                Mandatory=$False)]
+            [switch][bool]$ListUsers,
 
             [Parameter(
                 Mandatory=$False)]
@@ -540,6 +628,7 @@ Function Get-LdapInfo {
             ElseIf ($ListAllOU.IsPresent) {$LdapFilter = '(objectCategory=organizationalUnit)'}
             ElseIf ($ListComputers.IsPresent) {$LdapFilter = '(objectCategory=computer)'}
             ElseIf ($ListContacts.IsPresent) {$LdapFilter = '(objectClass=contact)'}
+            ElseIf ($ListUsers.IsPresent) {$LdapFilter = 'samAccountType=805306368'}
             ElseIf ($ListGroups.IsPresent) {$LdapFilter = '(objectCategory=group)'}
             ElseIf ($ListContainers.IsPresent) {$LdapFilter = '(objectCategory=container)'}
             ElseIf ($ListDomainObjects.IsPresent) {$LdapFilter = '(objectCategory=domain)'}
@@ -562,42 +651,86 @@ Function Get-LdapInfo {
             ElseIf ($DomainLocalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483644)'}
             ElseIf ($GlobalDistributionGroups.IsPresent) {$LdapFilter = '(groupType=2)'}
 
+            $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+            $Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
+            $Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
+            $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
+
+            $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
+            $SearchString =  "LDAP://" + $PrimaryDC + "/"
+            $DistinguishedName = "DC=$($DomainObj.Name.Replace('.',',DC='))"
+            $SearchString += $DistinguishedName
+
+            $Searcher.SearchRoot = $ObjDomain
+            $Searcher.Filter = $LdapFilter
+            $Searcher.SearchScope = "Subtree"
+
         } # End BEGIN
 
     PROCESS
     {
 
-        $Domain = New-Object System.DirectoryServices.DirectoryEntry
-        $Search = New-Object System.DirectoryServices.DirectorySearcher
+        $Results = $Searcher.FindAll()
 
-        $Search.SearchRoot = $Domain
-        $Search.Filter = $LdapFilter
-        $Search.SearchScope = "Subtree"
+        Write-Verbose "[*] Getting results..."
 
-        $Results = $Search.FindAll()
 
-        Write-Verbose "Getting results..."
-
-        ForEach ($Result in $Results)
+        If ($Detailed.IsPresent)
         {
+            If ($Results.Properties)
+            {
+                ForEach ($Result in $Results)
+                {
 
-            $Object = $Result.GetDirectoryEntry()
-            $Object
+                    ForEach ($Property in $Result.Properties)
+                    {
 
-        } # End ForEach
+                        $Property
+
+                    }  # End ForEach
+
+                    Write-Host "-----------------------------------------------------------------------`n"
+
+                } # End ForEach
+
+            }  # End If
+            Else
+            {
+
+                ForEach ($Result in $Results)
+                {
+
+                    $Object = $Result.GetDirectoryEntry()
+                    $Object
+
+                }  # End ForEach 
+            
+
+            }  # End Else 
+
+        }  # End If
+        Else
+        {
+            ForEach ($Result in $Results)
+            {
+
+                $Object = $Result.GetDirectoryEntry()
+                $Object
+
+            }  # End ForEach
+             
+        }  # End Else
 
     } # End PROCESS
-
     END
     {
 
-        Remove-Variable LdapFilter, Search, Result, Results, Object -ErrorAction 'SilentlyContinue'
-
-        Write-Verbose "LDAP Query complete. "
+        Write-Verbose "[*] LDAP Query complete. "
 
     } # End END
 
 } # End Get-LdapInfo
+
 
 
 <#
