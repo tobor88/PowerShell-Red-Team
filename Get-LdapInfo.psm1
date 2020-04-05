@@ -565,7 +565,7 @@ Function Get-LdapInfo {
 
         If ($Detailed.IsPresent)
         {
-            If ($Result.Properties)
+            If ($Results.Properties)
             {
                 ForEach ($Result in $Results)
                 {
