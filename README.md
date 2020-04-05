@@ -20,10 +20,15 @@ C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
 
 - Get-LdapInfo is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property * or using the -Detailed switch parameter.
 ```powershell
- C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+C:\PS> Get-LdapInfo -Detailed -SPNNamedObjects
+# The above returns all the properties of the returned objects
 #
- C:\PS> Get-LdapInfo -ListUsers | Where-Object -Property SamAccountName -like "user.samname"
-# NOTE: If you include the detailed switch and pipe the output to where-object it has been giving me a hard time and not returning the properties. If you wish to display all the properties of your result it will need to be carried out using the below format
+C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+# If this is run as admin it will return the LAPS password for the local admin account
+#
+C:\PS> Get-LdapInfo -ListUsers | Where-Object -Property SamAccountName -like "user.samname"
+# NOTE: If you include the "-Detailed" switch and pipe the output to where-object it will not return any properties. If you wish to display all the properties of your result it will need to be carried out using the below format
+#
 C:\PS> Get-LdapInfo -AllServers | Where-Object -Property LogonCount -gt 1 | Select-Object -Property * 
  
 ```
