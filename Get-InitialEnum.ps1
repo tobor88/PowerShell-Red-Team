@@ -225,6 +225,12 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     Get-Driver -Unsigned
 
+#===================================================================
+#  FIND SIGNED DRIVERS
+#===================================================================
+
+    Get-Driver -Signed
+
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
@@ -258,6 +264,10 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     Write-Host "=================================`n|  SIGNED IN USERS  |`n=================================" -ForegroundColor "Yellow"
     qwinsta
+
+
+    Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
+    Show-KerberosTokenPermissions
 
 #==========================================================================
 #  NETWORK INFORMATION
@@ -332,10 +342,3 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 }  # End PROCESS
 
 }  # End Function Get-InitialEnum
-
-
-##############################################################################################
-
-Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
-
-Show-KerberosTokenPermissions
