@@ -55,8 +55,37 @@ Function Get-InitialEnum {
     [CmdletBinding()]
         param()  # End param
 
-    BEGIN
+BEGIN
+{
+
+    Function Show-KerberosTokenPermissions {
+    [CmdletBinding()]
+        param()
+
+    $Token = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+ 
+    ForEach ($SID in $GroupSIDs) 
     {
+    
+        Try 
+        {
+    
+            Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
+
+        }  # End Try
+        Catch 
+        {
+    
+            Write-Warning ("Could not translate " + $SID.Value + ". Reason: " + $_.Exception.Message) 
+
+        }  # End Catch
+    }
+
+    $Token
+
+}  # End Function Show-KerberosTokenPermissions
+
+
     Function Get-Driver {
         [CmdletBinding()]
             Param (
@@ -303,3 +332,10 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 }  # End PROCESS
 
 }  # End Function Get-InitialEnum
+
+
+##############################################################################################
+
+Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
+
+Show-KerberosTokenPermissions
