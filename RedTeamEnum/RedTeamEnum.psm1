@@ -165,7 +165,7 @@ Function Convert-Base64
 
     -NotUACTrusted                [<SwitchParameter>]
         This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can NOT be delegated
- 
+
 
     -SPNNamedObjects                [<SwitchParameter>]
         This switch is used to obtain a list of Service Principal Named objects
@@ -181,7 +181,7 @@ Function Convert-Base64
 
     -LogonScript               [<SwitchParameter>]
          This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
-    
+
     -ListAllOu               [<SwitchParameter>]
         This siwtch is meant to return a list of all OUs in the domain
 
@@ -189,14 +189,14 @@ Function Convert-Base64
     -ListComputer               [<SwitchParameter>]
         This switch is meant to return a list of all computers in the domain
 
-    
+
     -ListContacts               [<SwitchParameter>]
         This switch is meant to return a list of contacts in the domain
 
-    
+
     -ListUsers               [<SwitchParameter>]
         This switch is meant to return a list of all users in the domain
-    
+
 
     -ListGroups               [<SwitchParameter>]
         This switch is meant to return a list of all groups in the domain
@@ -333,7 +333,7 @@ Function Convert-Base64
     C:\PS> Get-LdapInfo -ListContacts
 
     This example lists all Active Directory Contacts
-    
+
     -------------------------- EXAMPLE 15 --------------------------
 
     C:\PS> Get-LdapInfo -ListGroups
@@ -677,24 +677,24 @@ Function Get-LdapInfo {
 
         If ($Detailed.IsPresent)
         {
-        
+
             If ($Results.Properties)
             {
-            
+
                 ForEach ($Result in $Results)
                 {
-                
+
                     [array]$ObjProperties = @()
-                    
+
                     ForEach ($Property in $Result.Properties)
                     {
 
                         $ObjProperties += $Property
 
                     }  # End ForEach
-                    
+
                     $ObjProperties
-                    
+
                     Write-Host "-----------------------------------------------------------------------`n"
 
                 } # End ForEach
@@ -709,10 +709,10 @@ Function Get-LdapInfo {
                     $Object = $Result.GetDirectoryEntry()
                     $Object
 
-                }  # End ForEach 
-            
+                }  # End ForEach
 
-            }  # End Else 
+
+            }  # End Else
 
         }  # End If
         Else
@@ -724,7 +724,7 @@ Function Get-LdapInfo {
                 $Object
 
             }  # End ForEach
-             
+
         }  # End Else
 
     } # End PROCESS
@@ -1973,7 +1973,7 @@ Function Invoke-UseCreds {
                 HelpMessage="Define the path to the executable you want run as this user: ")]
             [string]$Path)  # End param
 
-BEGIN 
+BEGIN
 {
 
     Write-Verbose "[*] Building authenticated credential..."
@@ -1983,18 +1983,18 @@ BEGIN
     $Cred = New-Object -TypeName System.Management.Automation.PSCredential($Username, $Passw)
 
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 
     Write-Verbose "Executing $Path"
 
     If (!(Test-Path -Path $Path))
-    { 
-    
-        Try 
+    {
+
+        Try
         {
-        
-            Start-Process $Path -Credential $Cred 
+
+            Start-Process $Path -Credential $Cred
 
         }  # End Try
         Catch [System.Security.Authentication.AuthenticationException]
@@ -2003,23 +2003,23 @@ PROCESS
             Write-Host "The credentials you entered were incorrect"
 
         }  # End Catch
-        Catch 
+        Catch
         {
 
-            $Error[0] 
+            $Error[0]
 
         }  # End Catch
 
-    }  # End If 
-    Else 
+    }  # End If
+    Else
     {
-     
+
         throw "$Path could not be found at that location"
 
     }  # End Else
 
-}  # End PROCESS 
-END 
+}  # End PROCESS
+END
 {
 
     Write-Host "Program has been executed"
