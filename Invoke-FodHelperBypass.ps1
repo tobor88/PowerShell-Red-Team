@@ -1,3 +1,68 @@
+<#
+.NAME
+    Invoke-FodHelperBypass
+    
+
+.SYNOPSIS
+    This function is used to bypass UAC restrictions for the currently logged in user with administrative privileges.
+    When C:\Windows\System32\fodhelper.exe is run, the process first checks the registry value of the current user.
+    If the registry location does not exist it moves on from HKCU to HKCR (HKEY Classes Root). This bypass method exploits
+    this creating the registry value that is searched for first when the process is executed. In the fodhelper.exe
+    application manifest we can see that fodhelper.exe has two flags set that make this possible. This first is the
+    RequestedExecutionLevel which is set to "Require Administrator" and the second is AutoElevate which is set to "True".
+    This means the application can only be run by an administrator and it can elevate privileges without prompting for credentials.
+    To protect your computer from this bypass, don't sign into your computer with an account that has admin privileges. Also
+    set HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System value ConsentPromptBehaviorAdmin to 1 or 2.
+    
+
+.SYNTAX
+    Invoke-FodHelperBypass [-Program <string>] [<CommonParameters>]
+
+
+.PARAMETERS
+    -Program <string>
+        Specify the absolute or relative path for executable or application you wish to run with elevated permissions.
+        Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local 
+        computer or in a directory that the local computer can access.
+        Required?                    True
+        Position?                    0
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
+    
+    
+.DESCRIPTION
+    This cmdlet is used to open an application with full administrative privileges for the currently logged in
+    administrative user. If the registry settings are not configured to prevent this from working it will mention
+    what can be done to prevent this from working.
+
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Invoke-FodHelperBypass -Program 'powershell.exe'
+   This command opens PowerShell in a new window with elevated privileges.    
+
+
+.NOTES
+    Author: Robert H. Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthosborne.com
+    
+.INPUTS
+    [System.IO]
+    
+
+.OUTPUTS
+    None
+    
+#>
 Function Invoke-FodhelperBypass
 { 
     [CmdletBinding()]
