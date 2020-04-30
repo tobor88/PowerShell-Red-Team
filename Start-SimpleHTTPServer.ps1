@@ -1,27 +1,58 @@
 <#
+.NAME
+    Start-SimpleHTTPServer
+    
+    
 .SYNOPSIS
-    Use this cmdlet to host files for download. The idea of this is to have a PowerShell tSimpleHTTPServer
-    that is similar to Python's module SimpleHTTPServer
+    Use this cmdlet to host files for download. The idea of this is to have a PowerShell SimpleHTTPServer
+    that is similar to Python's SimpleHTTPServer module.
+
+
+.SYNTAX
+    Start-SimpleHTTPServer [[-Port] <Int32>] [<CommonParameters>]
+
 
 .DESCRIPTION
-    Running this function will open a PowerShell web server on the device it is run on.DESCRIPTION
-    The server can be accessed at http://localhost:8000 You can download files but directories are
+    Running this function will open a PowerShell web server hosting files in the current directory.
+    The server can be accessed at http://localhost:8000 You can download files. The directories are
     not able to be traversed through the web server.
 
+
 .PARAMETER
-    -Port
+    -Port <Int32>
         The port parameter is for easily defining what port the http server should listen on.
         The default value is 8000.
 
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
+
+
 .EXAMPLE
-    Start-SimpleHTTPServer
-        This example starts an HTTP server on port 8000
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Start-SimpleHTTPServer
+   This example starts an HTTP server on port 8000 in the current directory.
+    
+    -------------------------- EXAMPLE 2 --------------------------
+   C:\PS> Start-SimpleHTTPServer -Port 80
+   This example starts an HTTP server on port 80 in the current directory.   
+
 
 .NOTES
-        Author: Rob Osborne
-        Alias: tobor
-        Contact: rosborne@osbornepro.com
-        https://roberthosborne.com
+    Author: Rob Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthosborne.com
+  
+  
+.INPUTS
+    Int32
+
+
+.OUTPUS
+    None
 #>
 Function Start-SimpleHTTPServer {
     [CmdletBinding()]
@@ -32,22 +63,9 @@ Function Start-SimpleHTTPServer {
                 ValueFromPipeline=$False,
                 HelpMessage='Enter a port for the HTTP Server to listen on. Valid ports are between 1 and 65535. Example: 1234')] # End Parameter
             [ValidateRange(1,65535)]
-            [int32]$Port
-        )  # End param
+            [int32]$Port = 8000)  # End param
 
-    If ($Port -eq $Null)
-    {
-
-        $Port = 8000
-        $Address = "http://localhost:$Port/"
-
-    }  # End If
-    Else
-    {
-
-        $Address = "http://localhost:$Port/"
-
-    }  # End Else
+    $Address = "http://localhost:$Port/"
 
     $WebServer = [System.Reflection.Assembly]::LoadWithPartialName("System.Web")
     $WebServer
@@ -73,6 +91,7 @@ Function Start-SimpleHTTPServer {
         [array]$Content = @()
 
         $LocalPath = $RequestUrl.LocalPath
+        
         Try
         {
 
@@ -82,6 +101,7 @@ Function Start-SimpleHTTPServer {
 
             If($RequestedItem.Attributes -Match "Directory")
             {
+            
                 Function Get-DirectoryContent {
                     [CmdletBinding(SupportsShouldProcess = $True)]
                         param (
@@ -139,14 +159,14 @@ Function Start-SimpleHTTPServer {
                 <td align="left"><a href="$($FileURL)">$($File.Name)</a></td>
                 </tr>
 "@
-                }
+                }. # End ForEach
 @"
                 </table>
                 <hr>
                 </body>
                 </html>
 "@
-                }  # End ForEach
+                }  # End Function Get-DirectoryContent
 
                 $Content = Get-DirectoryContent -Path $FullPath -HeaderName "PowerShell Simple HTTP Server" -RequestURL "$Address" -SubfolderName $LocalPath -Root $Root
 
@@ -159,9 +179,11 @@ Function Start-SimpleHTTPServer {
             {
 
                 $Content = [System.IO.File]::ReadAllBytes($FullPath)
+                
                 $Response.ContentType = [System.Web.MimeMapping]::GetMimeMapping($FullPath)
 
             }  # End Else
+            
         }  # End Try
         Catch [System.UnauthorizedAccessException]
         {
@@ -194,7 +216,6 @@ Function Start-SimpleHTTPServer {
             $Response.StatusCode = 500
 
         }  # End Catch
-
 
         $Response.ContentLength64 = $Content.Length
         $Response.OutputStream.Write($Content, 0, $Content.Length)
