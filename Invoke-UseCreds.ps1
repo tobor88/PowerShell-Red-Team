@@ -6,6 +6,7 @@
 .SYNOPSIS
     This cmdlet is for easily using credentials to execute a program. PowerShell can be a lot of typing.
     Especially when you dont' have a shell that allows autocompletion. This is a huge time saver.
+    This function DOES NOT accept command line arguments. It only executes an application.
     
 
 .SYNTAX
@@ -46,7 +47,8 @@
       
 
 .DESCRIPTION
-    This function is used to execute an application as another user. 
+    This function is used to execute an application as another user. This DOES NOT accept command line arugments.
+    This only executes an application.
     
 
 .EXAMPLE
