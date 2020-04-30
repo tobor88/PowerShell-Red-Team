@@ -1,6 +1,15 @@
 <#
+.NAME 
+    Test-PrivEsc
+    
+    
 .SYNOPSIS
-    This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are enabled on a Windows Machine which opens the door to privesc
+    This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are enabled on a Windows Machine 
+    which opens the door to privesc. It checks common registry locations for clear text credentials. It checks for
+    weak service permissions. This checks for WSUS using HTTP to download updates which can be exploited for privilege
+    escalation. This checks whether the fodhelper bypass method is available for admin users. This checks for unquoted
+    service paths in the reigstry as well.
+
 
 .DESCRIPTION
     AlwaysInstallElevated is functionality that offers all users(especially the low privileged user) on a windows machine to run any MSI file with elevated privileges.
@@ -9,8 +18,10 @@
     When a service is created whose executable path contains spaces and isn’t enclosed within quotes, leads to a vulnerability known as Unquoted Service Path which allows a user
     to gain SYSTEM privileges (only if the vulnerable service is running with SYSTEM privilege level which most of the time it is).
 
+
 .SYNTAX
     Test-PrivEsc [<CommonParameters>]
+
 
 .PARAMETERS
     <CommonParameters>
@@ -19,11 +30,26 @@
         OutBuffer, PipelineVariable, and OutVariable. For more information, see
         about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
 
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Test-PrivEsc -Verbose
+   This example performs a check for common privilege escalation methods. 
+    
+
 .NOTES
     Author: Rob Osborne
     Alias: tobor
     Contact: rosborne@osbornepro.com
     https://roberthosborne.com/ 
+    
+
+.INPUTS
+    None
+    
+    
+.OUTPUTS
+    None
 #>
 Function Test-PrivEsc {
     [CmdletBinding()]
