@@ -69,10 +69,10 @@ Invoke-PingSweep -Subnet 10.0.0.0 -Start 1 -End 20 -Count 2
 Invoke-PingSweep -Subnet 172.16.0.0 -Start 64 -End 128 -Count 3 -Source Multiple
 ```
 
-- Invoke-UseCreds is a function I created to simplify the process of using obtained credentials during a pen test. 
+- Invoke-UseCreds is a function I created to simplify the process of using obtained credentials during a pen test. I use -Passwd instead of -Password because that parameter when defined should be configured as a secure string which is not the case when entering a value into that filed with this function. It gets converted to a secure string after you set that value.
 ```powershell
 # The below command will use the entered credentials to open the msf.exe executable as the user tobor
-Invoke-UseCreds -Username 'OsbornePro\tobor' -Password 'P@ssw0rd1' -Path .\msf.exe -Verbose
+Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1' -Path .\msf.exe -Verbose
 ```
 
 - Invoke-FodHelperBypass is a function that tests whether or not the UAC bypass will work before executing it to elevate priviledges. This of course needs to be run by a member of the local administrators group as this bypass elevates the priviledges of the shell you are in. You can define the program to run which will allow you to execute generaate msfvenom payloads as well as cmd or powershell or just issuing commands.
