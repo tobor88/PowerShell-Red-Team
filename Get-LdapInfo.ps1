@@ -21,7 +21,7 @@
 
 .PARAMETER
     -LDAPS                  [<SwitchParameter>]
-        This switch parameter will display all properties of the rerturned objects
+        This switch parameter will perform searches using LDAP over SSL
 
     -Detailed                  [<SwitchParameter>]
         This switch parameter will display all properties of the rerturned objects
