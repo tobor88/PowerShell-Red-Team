@@ -15,13 +15,13 @@
     https://roberthsoborne.com
 
 
-
 .SYNTAX
-    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ]
-
+    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ] [-LDAPS]
 
 
 .PARAMETER
+    -LDAPS                  [<SwitchParameter>]
+        This switch parameter will display all properties of the rerturned objects
 
     -Detailed                  [<SwitchParameter>]
         This switch parameter will display all properties of the rerturned objects
@@ -53,7 +53,7 @@
 
     -NotUACTrusted                [<SwitchParameter>]
         This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can NOT be delegated
- 
+
 
     -SPNNamedObjects                [<SwitchParameter>]
         This switch is used to obtain a list of Service Principal Named objects
@@ -69,7 +69,7 @@
 
     -LogonScript               [<SwitchParameter>]
          This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
-    
+
     -ListAllOu               [<SwitchParameter>]
         This siwtch is meant to return a list of all OUs in the domain
 
@@ -77,14 +77,14 @@
     -ListComputer               [<SwitchParameter>]
         This switch is meant to return a list of all computers in the domain
 
-    
+
     -ListContacts               [<SwitchParameter>]
         This switch is meant to return a list of contacts in the domain
 
-    
+
     -ListUsers               [<SwitchParameter>]
         This switch is meant to return a list of all users in the domain
-    
+
 
     -ListGroups               [<SwitchParameter>]
         This switch is meant to return a list of all groups in the domain
@@ -126,13 +126,11 @@
     SwitchParameters
 
 
-
 .OUTPUTS
 
     IsPublic IsSerial Name                                     BaseType
     -------- -------- ----                                     --------
     True     True     Object[]                                 System.Array
-
 
 
 .EXAMPLE
@@ -221,7 +219,7 @@
     C:\PS> Get-LdapInfo -ListContacts
 
     This example lists all Active Directory Contacts
-    
+
     -------------------------- EXAMPLE 15 --------------------------
 
     C:\PS> Get-LdapInfo -ListGroups
@@ -356,6 +354,10 @@ Function Get-LdapInfo {
             [Parameter(
                 Mandatory=$False)]
             [switch][bool]$Detailed,
+
+            [Parameter(
+                Mandatory=$False)]
+            [switch][bool]$LDAPS,
 
             [Parameter(
                 Mandatory=$False)]
@@ -544,8 +546,21 @@ Function Get-LdapInfo {
             $Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
             $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
 
+            If ($LDAPS.IsPresent)
+            {
+
+                Write-Verbose "[*] LDAP over SSL was specified. Using port 636"
+                $SearchString =  "LDAPS://" + $PrimaryDC + ":636/"
+
+            }  # End If
+            Else
+            {
+
+                $SearchString =  "LDAP://" + $PrimaryDC + ":389/"
+
+            }  # End Else
             $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
-            $SearchString =  "LDAP://" + $PrimaryDC + "/"
+
             $DistinguishedName = "DC=$($DomainObj.Name.Replace('.',',DC='))"
             $SearchString += $DistinguishedName
 
@@ -565,24 +580,24 @@ Function Get-LdapInfo {
 
         If ($Detailed.IsPresent)
         {
-        
+
             If ($Results.Properties)
             {
-            
+
                 ForEach ($Result in $Results)
                 {
-                
+
                     [array]$ObjProperties = @()
-                    
+
                     ForEach ($Property in $Result.Properties)
                     {
 
                         $ObjProperties += $Property
 
                     }  # End ForEach
-                    
+
                     $ObjProperties
-                    
+
                     Write-Host "-----------------------------------------------------------------------`n"
 
                 } # End ForEach
@@ -597,10 +612,10 @@ Function Get-LdapInfo {
                     $Object = $Result.GetDirectoryEntry()
                     $Object
 
-                }  # End ForEach 
-            
+                }  # End ForEach
 
-            }  # End Else 
+
+            }  # End Else
 
         }  # End If
         Else
@@ -612,7 +627,7 @@ Function Get-LdapInfo {
                 $Object
 
             }  # End ForEach
-             
+
         }  # End Else
 
     } # End PROCESS
