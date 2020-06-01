@@ -1,17 +1,17 @@
 <#
-    .SYNOPSIS
+.SYNOPSIS
     Encode or Decode Base64 strings.
 
-    .NOTES
+.NOTES
     Author: Rob Osborne
     ALias: tobor
     Contact: rosborne@osbornepro.com
     https://roberthsoborne.com
 
-    .SYNTAX
+.SYNTAX
     Convert-Base64 [-Value <string[]>] [{-Decode | -Encode}]
 
-    .PARAMETER
+.PARAMETER
     -Value
         Specifies a string to be encoded or decoded with base64.
 
@@ -29,14 +29,14 @@
     -Decode
     This switch parameter is used to tell the cmdlet to decode the base64 string
 
-    .INPUTS
+.INPUTS
     -Value accepts strings from pipeline.
     System.String
 
-    .OUTPUTS
+.OUTPUTS
     System.String
 
-    .EXAMPLE
+.EXAMPLE
     -------------------------- EXAMPLE 1 --------------------------
     C:\PS> Convert-Base64 -Value 'Hello World!'' -Encode
     # This example encodes "Hello World into Base64 format.
