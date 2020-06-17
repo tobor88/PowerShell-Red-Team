@@ -33,11 +33,11 @@
         about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
 
 
-INPUTS
+.INPUTS
     System.Management.Automation.PSObject
 
 
-OUTPUTS
+.OUTPUTS
     System.Object
 
 
@@ -50,6 +50,7 @@ OUTPUTS
     Alias: tobor
     Contact: rosborne@osbornepro.com
     https://roberthosborne.com/
+    
 #>
 Function Get-InitialEnum {
     [CmdletBinding()]
@@ -63,20 +64,20 @@ BEGIN
         param()
 
     $Token = [System.Security.Principal.WindowsIdentity]::GetCurrent()
- 
-    ForEach ($SID in $GroupSIDs) 
+
+    ForEach ($SID in $GroupSIDs)
     {
-    
-        Try 
+
+        Try
         {
-    
+
             Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
 
         }  # End Try
-        Catch 
+        Catch
         {
-    
-            Write-Warning ("Could not translate " + $SID.Value + ". Reason: " + $_.Exception.Message) 
+
+            Write-Warning ("Could not translate " + $SID.Value + ". Reason: " + $_.Exception.Message)
 
         }  # End Catch
     }
