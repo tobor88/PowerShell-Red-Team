@@ -71,7 +71,7 @@ Function Convert-Base64
     If (!($Encode.IsPresent -or $Decode.IsPresent))
     {
 
-        throw "Switch parameter -Decode or -Encode needs to be defined. "
+        Throw "Switch parameter -Decode or -Encode needs to be defined. "
 
     } # End If
 
@@ -89,7 +89,7 @@ Function Convert-Base64
         Catch
         {
 
-            throw "String could not be converted to Base64. The value entered is below. `n$Value"
+            Throw "String could not be converted to Base64. The value entered is below. `n$Value"
 
         } # End Catch
 
@@ -717,7 +717,7 @@ Function Get-LdapInfo {
 
                     $ObjProperties
 
-                    Write-Host "-----------------------------------------------------------------------`n"
+                    Write-Output "-----------------------------------------------------------------------`n"
 
                 } # End ForEach
 
@@ -916,7 +916,7 @@ Function Invoke-PingSweep
         For ($i = 0; $i -le $End; $i++)
         {
 
-            [string]$IP = "$ClassC.$i"
+            [String]$IP = "$ClassC.$i"
 
             # When Windows PowerShell is executing the command and source value is not defined
             If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -like $Null) -and ($IP -notlike $LocalIPAddress))
@@ -927,7 +927,7 @@ Function Invoke-PingSweep
                 If ((Get-WmiObject "Win32_PingStatus" -Filter $Filter).StatusCode -eq 0)
                 {
 
-                    Write-Host $IP -ForegroundColor "Yellow"
+                    Write-Output $IP
 
                 } # End If
 
@@ -941,8 +941,7 @@ Function Invoke-PingSweep
 
                     $SourceIP = "$ClassC." + ($End - 1)
 
-                    # Uncomment the below line if you wish to see the source address the ping is coming from
-                    # Write-Host "Sending Ping from $SourceIP to $IP"
+                    Write-Verbose "Sending Ping from $SourceIP to $IP"
 
                     Try
                     {
@@ -953,7 +952,7 @@ Function Invoke-PingSweep
                     Catch
                     {
 
-                        Write-Host "Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work." -ForegroundColor 'Red'
+                        Write-Output "[x] Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work."
 
                     }  # End Catch
                 } # End If
@@ -977,7 +976,7 @@ Function Invoke-PingSweep
                         Catch
                         {
 
-                            Write-Host "Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work." -ForegroundColor 'Red'
+                            Write-Output "[x] Source routing may not be allowed on your device. Use ipconfig /all and check that Ip Routing Enabled is set to a value of YES. Otherwise this option will not work."
 
                         }  # End Catch
 
@@ -993,7 +992,7 @@ Function Invoke-PingSweep
                 If (Test-Connection -BufferSize 16 -ComputerName $IP -Count $Count -Quiet)
                 {
 
-                    Write-Host $IP -ForegroundColor 'Yellow'
+                    Write-Output $IP
 
                 }  # End If
 
@@ -1097,7 +1096,7 @@ Function Invoke-PortScan
          Else
          {
 
-            Write-Host "Host is not pingable" -ForegroundColor 'Yellow'
+            Write-Output "[!] Host is not pingable"
 
          }  # End Else
 
@@ -1155,7 +1154,7 @@ Function Start-SimpleHTTPServer {
                 ValueFromPipeline=$False,
                 HelpMessage='Enter a port for the HTTP Server to listen on. Valid ports are between 1 and 65535. Example: 1234')] # End Parameter
             [ValidateRange(1,65535)]
-            [int32]$Port
+            [Int32]$Port
         )  # End param
 
     If ($Port -eq $Null)
@@ -1289,9 +1288,9 @@ Function Start-SimpleHTTPServer {
         Catch [System.UnauthorizedAccessException]
         {
 
-            Write-Host "Access Denied" -ForegroundColor 'Red'
-            Write-Host "Current user:  $env:USERNAME" -ForegroundColor 'Red'
-            Write-Host "Requested File: SimpleHTTPServer:\$LocalPath" -ForegroundColor 'Cyan'
+            Write-Output "[x] Access Denied"
+            Write-Output "[i] Current user:  $env:USERNAME"
+            Write-Output "[i] Requested File: SimpleHTTPServer:\$LocalPath"
             $Response.StatusCode = 404
             $Content = [System.Text.Encoding]::UTF8.GetBytes("<h1>404 - Page Not Found</h1>")
 
@@ -1299,7 +1298,7 @@ Function Start-SimpleHTTPServer {
         Catch [System.Management.Automation.ItemNotFoundException]
         {
 
-            Write-Host "Could not reach. Verify server is accessible over the network:  `n`tSimpleHTTPServer:\$LocalPath" -ForegroundColor 'Red' -BackgroundColor 'Yellow'
+            Write-Output "[x] Could not reach. Verify server is accessible over the network:  `n`tSimpleHTTPServer:\$LocalPath"
             $Response.StatusCode = 404
             $Content = [System.Text.Encoding]::UTF8.GetBytes("<h1>404 - Page Not Found</h1>")
 
@@ -1324,7 +1323,7 @@ Function Start-SimpleHTTPServer {
         $Response.Close()
 
         $ResponseStatus = $Response.StatusCode
-        Write-Host $ResponseStatus -ForegroundColor 'Cyan'
+        Write-Output $ResponseStatus
 
     } While ($Listener.IsListening)
 
@@ -1381,7 +1380,7 @@ Function Test-PrivEsc {
 #==============================================================================================================
 #  CLEAR TEXT CREDENTIALS
 #==============================================================================================================
-        Write-Host "Searching Registry for clear text credentials..." -ForegroundColor "Cyan"
+        Write-Output "Searching Registry for clear text credentials..."
 
         Get-ItemProperty -Path "HKCU:\Software\ORL\WinVNC3\Password" -ErrorAction "SilentlyContinue"
 
@@ -1389,8 +1388,8 @@ Function Test-PrivEsc {
         If (($AutoLoginPassword).DefaultPassword)
         {
 
-            Write-Host "Auto Login Credentials Found: " -ForegroundColor "Red"
-            Write-Host "$AutoLoginPassword" -ForegroundColor "Red"
+            Write-Output "[!] Auto Login Credentials Found: "
+            Write-Output "`t$AutoLoginPassword"
 
         }  # End If
 
@@ -1585,7 +1584,7 @@ BEGIN
         Try
         {
 
-            Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
+            Write-Output (($sid).Translate([System.Security.Principal.NTAccount]))
 
         }  # End Try
         Catch
@@ -1610,7 +1609,7 @@ BEGIN
     BEGIN
     {
 
-        Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
+        Write-Output "[*] Retrieving driver signing information …"
 
     } # End of Begin section
     PROCESS
@@ -2062,25 +2061,13 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
         Catch [Exception]
         {
 
-            $Error[0]
-
-             Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
-
-             Pause
-
-             Exit
+             Throw "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs."
 
         }  # End Catch
         Catch
         {
 
-            Write-Host "I have not caught this error before. Please email me the results at rosborne@osbornepro.com" -ForegrounColor 'Cyan'
-
-            $Error[0]
-
-            Pause
-
-            Exit
+            Throw "I have not caught this error before. Please email me the results at rosborne@osbornepro.com"
 
         }  # End Catch
 
@@ -2203,9 +2190,9 @@ Function Invoke-FodhelperBypass
         Else
         {
 
-            Write-Host "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message" -ForegroundColor "Yellow"
+            Write-Output "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message"
 
-            Write-Host "To defend against the fodhelper UAC bypass there are 2 precautions to take.`n1.) Do not sign in with a user who is a member of the local administraors group. `n2.) Change HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System's values ConsentPromptBehaviorAdmin to a value of 1 or 2."
+            Write-Output "To defend against the fodhelper UAC bypass there are 2 precautions to take.`n1.) Do not sign in with a user who is a member of the local administraors group. `n2.) Change HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System's values ConsentPromptBehaviorAdmin to a value of 1 or 2."
 
         }  # End Else
 
@@ -2363,7 +2350,7 @@ PROCESS
         Catch [System.Security.Authentication.AuthenticationException]
         {
 
-            Write-Host "The credentials you entered were incorrect"
+            Write-Output "[x] The credentials you entered were incorrect"
 
         }  # End Catch
         Catch
@@ -2377,7 +2364,7 @@ PROCESS
     Else
     {
 
-        throw "$Path could not be found at that location"
+        Throw "$Path could not be found at that location"
 
     }  # End Else
 
@@ -2385,7 +2372,7 @@ PROCESS
 END
 {
 
-    Write-Host "Program has been executed"
+    Write-Output "[*] Program has been executed"
 
 }  # End END
 
