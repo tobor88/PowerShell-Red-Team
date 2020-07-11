@@ -550,7 +550,7 @@ Function Get-LdapInfo {
             {
 
                 Write-Verbose "[*] LDAP over SSL was specified. Using port 636"
-                $SearchString =  "LDAPS://" + $PrimaryDC + ":636/"
+                $SearchString =  "LDAP://" + $PrimaryDC + ":636/"
 
             }  # End If
             Else
