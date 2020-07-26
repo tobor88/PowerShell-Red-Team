@@ -20,6 +20,15 @@
     This parameter can be used to define a remote computer(s) name to check for the share names on
 
 
+.EXAMPLE
+    -------------------------- EXAMPLE 1 --------------------------
+    C:\PS> Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL
+    # The above example returns information on the network shares NETLOGON and SYSVOL if they exist on the local machine
+    
+    C:\PS> Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL,C$ -ComputerName DC01.domain.com, DC02.domain.com, 10.10.10.1
+    # The above example returns share info on NETLOGON, SYSVOL, and C$ if they exist on 3 remote devices
+
+
 .NOTES
     Author: Rob Osborne
     Alias: tobor
