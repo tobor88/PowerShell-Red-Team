@@ -27,6 +27,21 @@ C:\PS> Convert-SID -SID S-1-5-21-2860287465-2011404039-792856344-500
 # The above value converts the SID value to its associated username
 ```
 
+- Test-BruteZipPassword is a function that uses a password file to brute force a password protected zip file using 7zip
+```powershell
+C:\PS> Test-BruteForceZipPassword -PassFile 'C:\Users\USER\Downloads\Applications\pass.txt' -Path 'C:\Users\USER\Downloads\Applications\KiTTY.7z' -ZipExe 'C:\Program Files\7-Zip\7z.exe'
+# This example uses the passwords in the pass.txt file to crack the password protected KiTTY.7z file
+```
+
+- Test-BruteForceCredentials is a function that uses WinRM to brute force a users password.
+```powershell
+C:\PS> Test-BruteForceCredentials -ComputerName DC01.domain.com -UseSSL -Username 'admin','administrator' -Passwd 'Password123!' -SleepMinutes 5
+# This example will test the one password defined against both the admin and administrator users on the remote computer DC01.domain.com using WinRM over HTTPS with a time interval of 5 minutes between each attempt
+
+C:\PS> Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt 
+# This example will test every password in rockyou.txt against every username in the users.txt file without any pause between tried attempts
+```
+
 - Get-LdapInfo is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property * or using the -Detailed switch parameter.
 ```powershell
 C:\PS> Get-LdapInfo -Detailed -SPNNamedObjects
