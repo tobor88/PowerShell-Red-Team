@@ -1,58 +1,49 @@
 <#
-.NAME
-    Start-SimpleHTTPServer
-    
-    
 .SYNOPSIS
-    Use this cmdlet to host files for download. The idea of this is to have a PowerShell SimpleHTTPServer
-    that is similar to Python's SimpleHTTPServer module.
-
-
-.SYNTAX
-    Start-SimpleHTTPServer [[-Port] <Int32>] [<CommonParameters>]
+Use this cmdlet to host files for download. The idea of this is to have a PowerShell SimpleHTTPServer that is similar to Python's SimpleHTTPServer module.
 
 
 .DESCRIPTION
-    Running this function will open a PowerShell web server hosting files in the current directory.
-    The server can be accessed at http://localhost:8000 You can download files. The directories are
-    not able to be traversed through the web server.
+Running this function will open a PowerShell web server hosting files in the current directory. The server can be accessed at http://localhost:8000 You can download files. The directories are not able to be traversed through the web server.
 
 
-.PARAMETER
-    -Port <Int32>
-        The port parameter is for easily defining what port the http server should listen on.
-        The default value is 8000.
-
-    <CommonParameters>
-        This cmdlet supports the common parameters: Verbose, Debug,
-        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer, PipelineVariable, and OutVariable. For more information, see
-        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
+.PARAMETER Port
+The port parameter is for easily defining what port the http server should listen on. The default value is 8000.
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
-   C:\PS> Start-SimpleHTTPServer
-   This example starts an HTTP server on port 8000 in the current directory.
+Start-SimpleHTTPServer
+# This example starts an HTTP server on port 8000 in the current directory.
     
-    -------------------------- EXAMPLE 2 --------------------------
-   C:\PS> Start-SimpleHTTPServer -Port 80
-   This example starts an HTTP server on port 80 in the current directory.   
+.EXAMPLE
+Start-SimpleHTTPServer -Port 80
+# This example starts an HTTP server on port 80 in the current directory.   
 
 
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com
-  
-  
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
+
 .INPUTS
-    Int32
+Int32
 
 
-.OUTPUS
-    None
+.OUTPUTS
+None
 #>
 Function Start-SimpleHTTPServer {
     [CmdletBinding()]

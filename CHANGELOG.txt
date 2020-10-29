@@ -1,6 +1,12 @@
 *******************************************************************************************************
 #                                  CHANGE LOG FOR REDTEAMENUM MODULE                                  #
 *******************************************************************************************************
+Module Version 1.2
+  - Updated Help to fit typical PS cmdlet standards
+  - Added initial creation of the Get-ClearTextPassword cmdlet to the module manifest.
+  - Added initial creation of the Test-BruteForceZip cmdlet to the module manifest.
+  - Added initial creation of the Test-BruteForceCredentials to the module manifest.
+  - Added iniital creation of the Get-NetworkShareInfo to the module manifest.
 
 Module Version 1.1
   - Added initial creation of the Invoke-UnquotedServicePathExploit cmdlet to the module manifest.
@@ -12,9 +18,11 @@ Module Version 1.1
   - Added initial creation of the Test-PrivEsc module to the manifest.
   - Added initial creation of the Get-InitialEnum cmdlet to the module manifest.
   - Added initial creation of the Convert-Base64 cmdlet to the module manifest.
+  - Added initial creation of the Convert-SID cmdlet to the module manifest.
   - Added initial creation of the Get-LdapInfo cmdlet to the module manifest.
   - Added initial creation of the Invoke-PortScan cmdlet to the module manifest.
   - Added initial creation of the Invoke-PingSweep cmdlet to the module manifest.
+  - Added initial creation of the Start-HTTPServer cmdlet to the module manifest.
 
 #--------------------------------------------------------------------------------------------------------
 
@@ -22,4 +30,4 @@ Module Version 1.1
 #----------------------------------------------------------------------
 # Command for updating Module Manifest
 #
-# New-ModuleManifest -Path .\RedTeamEnum.psd1 -Author 'Robert H. Osborne' -CompanyName 'OsbornePro' -RootModule .\RedTeamEnum.psm1 -ModuleVersion 1.1 -Description 'Collection of tools Red Teamers may use during a penetration test.' -FunctionsToExport 'Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan','Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-Driver', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit','Convert-SID' -ProjectUri 'https://github.com/tobor88/PowerShell-Red-Team' -ProcessorArchitecture 'None' -Tags 'PowerShell','CyberSecurity','InfoSec','PenetrationTesting','PenTesting','Shells','Security' -AliasesToExport @() -PowerShellHostVersion '5.1.18362.752' -DotNetFrameworkVersion '3.5' -ClrVersion '3.5' -PowerShellHostName 'ConsoleHost' -IconURI 'https://img1.wsimg.com/isteam/ip/8f3c0f3f-85e4-413f-bd91-f19d4f317a5a/logo/967ca34c-6d9b-4d2f-9206-83481c35769d.png/:/rs=h:392/ll' -LicenseUri 'https://raw.githubusercontent.com/tobor88/PowerShell-Red-Team/master/LICENSE' -HelpInfoUri 'https://raw.githubusercontent.com/tobor88/PowerShell-Red-Team/master/README.md' -Copyright '(c) 2020 Robert H. Osborne. All rights reserved.' -PowerShellVersion '5.0'
+# New-ModuleManifest -Path .\RedTeamEnum.psd1 -Author 'Robert H. Osborne' -CompanyName 'OsbornePro' -RootModule .\RedTeamEnum.psm1 -ModuleVersion 1.2 -Description 'Collection of tools Red Teamers may use during a penetration test.' -CmdletsToExport 'Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan','Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-Driver', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit','Convert-SID','Test-BruteForceCredentials','Test-BruteForceZip','Get-NetworkShareInfo','Get-ClearTextPassword' -FunctionsToExport 'Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan','Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-Driver', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit','Convert-SID','Test-BruteForceCredentials','Test-BruteForceZip','Get-NetworkShareInfo','Get-ClearTextPassword' -ProjectUri 'https://github.com/tobor88/PowerShell-Red-Team' -ProcessorArchitecture 'None' -Tags 'PowerShell','CyberSecurity','InfoSec','PenetrationTesting','PenTesting','Shells','Security' -AliasesToExport @() -PowerShellHostVersion '5.1.18362.752' -DotNetFrameworkVersion '3.5' -ClrVersion '3.5' -PowerShellHostName 'ConsoleHost' -IconURI 'https://img1.wsimg.com/isteam/ip/8f3c0f3f-85e4-413f-bd91-f19d4f317a5a/logo/967ca34c-6d9b-4d2f-9206-83481c35769d.png/:/rs=h:392/ll' -LicenseUri 'https://raw.githubusercontent.com/tobor88/PowerShell-Red-Team/master/LICENSE' -HelpInfoUri 'https://raw.githubusercontent.com/tobor88/PowerShell-Red-Team/master/README.md' -Copyright '(c) 2020 Robert H. Osborne. All rights reserved.' -PowerShellVersion '5.0'

@@ -27,7 +27,7 @@
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
     C:\PS> Convert-Base64 -Value 'Hello World!'' -Encode
     # This example encodes "Hello World into Base64 format.
 
@@ -254,213 +254,213 @@ Function Convert-Base64
 
 .EXAMPLE
 
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
 
     C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 
     # This example gets a list of all the Domain Controllers and displays the local admin password. (Requires Administrator Execution to get password attribute )
     If executed as an administrator you will also receive the local admin password under the ms-Mcs-AdmPwd attribute value.
 
-    -------------------------- EXAMPLE 2 --------------------------
+.EXAMPLE 2
 
     C:\PS> Get-LdapInfo -AllServers
 
     # This example lists All Servers in the Domain
 
-    -------------------------- EXAMPLE 3 --------------------------
+.EXAMPLE 3
 
     C:\PS> Get-LdapInfo -AllMemberServers
 
     # This example lists all Member Servers in the domain
 
-    -------------------------- EXAMPLE 4 --------------------------
+.EXAMPLE 4
 
     C:\PS> Get-LdapInfo -DomainTrusts
 
     # This example lists Federated Trust Domains
 
-    -------------------------- EXAMPLE 5 --------------------------
+.EXAMPLE 5
 
     C:\PS> Get-LdapInfo -DomainAdmins
 
     This example lists all Domain Admins in the domain
 
-    -------------------------- EXAMPLE 6 --------------------------
+.EXAMPLE 6
 
     C:\PS> Get-LdapInfo -UACTrusted
 
     This example lists users who are trusted with UAC
 
-    -------------------------- EXAMPLE 7 --------------------------
+.EXAMPLE 7
 
     C:\PS> Get-LdapInfo -NotUACTrusted
 
     This example lists users who are not trusted for UAC
 
-    -------------------------- EXAMPLE 8 --------------------------
+.EXAMPLE 8
 
     C:\PS> Get-LdapInfo -SPNNamedObjects
 
     # This example lists SPN users
 
-    -------------------------- EXAMPLE 9 --------------------------
+.EXAMPLE 9
 
     C:\PS> Get-LdapInfo -EnabledUsers
 
     # This example lists all Enabled Users
 
-    -------------------------- EXAMPLE 10 --------------------------
+.EXAMPLE 10
 
     C:\PS> Get-LdapInfo -PossibleExecutives
 
     # This example finds users with Direct Reports and no manager possibly indicating an executive
 
-    -------------------------- EXAMPLE 11 --------------------------
+.EXAMPLE 11
 
     C:\PS> Get-LdapInfo -LogonScript
 
     # This example lists all users who have logon scripts that execute
 
-    -------------------------- EXAMPLE 12 --------------------------
+.EXAMPLE 12
 
     C:\PS> Get-LdapInfo -ListAllOU
 
     This example lists all of the Domains OUs in Acitve Directory
 
-    -------------------------- EXAMPLE 13 --------------------------
+.EXAMPLE 13
 
     C:\PS> Get-LdapInfo -ListComputers
 
     This example lists all Active Directory Computers
 
-    -------------------------- EXAMPLE 14 --------------------------
+.EXAMPLE 14
 
     C:\PS> Get-LdapInfo -ListContacts
 
     This example lists all Active Directory Contacts
 
-    -------------------------- EXAMPLE 15 --------------------------
+.EXAMPLE 15
 
     C:\PS> Get-LdapInfo -ListGroups
 
     # This example lists all Active Directory Groups
 
-    -------------------------- EXAMPLE 16 --------------------------
+.EXAMPLE 16
 
     C:\PS> Get-LdapInfo -ListGroups
 
     # This example lists all Active Directory Groups
 
-    -------------------------- EXAMPLE 17 --------------------------
+.EXAMPLE 17
 
     C:\PS> Get-LdapInfo -ListContainers
 
     # This example lists Active Directory Containers
 
-    -------------------------- EXAMPLE 18 --------------------------
+.EXAMPLE 18
 
     C:\PS> Get-LdapInfo -ListDomainObjects
 
     # This example lists Active Directory Domain Objects
 
-    -------------------------- EXAMPLE 19 --------------------------
+.EXAMPLE 19
 
     C:\PS> Get-LdapInfo -ListBuiltInObjects
 
     # This example list Builtin In Active Directory Objects
 
-    -------------------------- EXAMPLE 20 --------------------------
+.EXAMPLE 20
 
     C:\PS> Get-LdapInfo -ListBuiltInContainers
 
     This example lists Built In Active Directory Containers
 
-    -------------------------- EXAMPLE 21 --------------------------
+.EXAMPLE 21
 
     C:\PS> Get-LdapInfo -ChangePasswordAtNextLogon
 
     This example lists users who are set to change their password at next logon.DESCRIPTION
     If a user does not have a "Logon Name" Configured in AD they will be returned with this results as well.
 
-    -------------------------- EXAMPLE 22 --------------------------
+.EXAMPLE 22
 
     C:\PS> Get-LdapInfo -PasswordNeverExpires
 
     This example list users who have passwords that never expire
 
-    -------------------------- EXAMPLE 23 --------------------------
+.EXAMPLE 23
 
     C:\PS> Get-LdapInfo -NoPasswordRequired
 
     # This example lists users who do not require a password for sign in
 
-    -------------------------- EXAMPLE 24 --------------------------
+.EXAMPLE 24
 
     C:\PS> Get-LdapInfo -NoKerberosPreAuthRequired
 
     # This example lists users where Kerberos Pre Authentication is not enabled
 
-    -------------------------- EXAMPLE 25 --------------------------
+.EXAMPLE 25
 
     C:\PS> Get-LdapInfo -PasswordsThatHaveNotChangedInYears | Where-Object -Property Path -notlike "*OU=Disabled*"
 
     # This example lists users who have passwords that have not changed in years who are also not in a Disabled group
 
-    -------------------------- EXAMPLE 26 --------------------------
+.EXAMPLE 26
 
     C:\PS> Get-LdapInfo -DistributionGroups
 
     # This example lists all the Distribution Groups in Active Directory
 
-    -------------------------- EXAMPLE 27 --------------------------
+.EXAMPLE 27
 
     C:\PS> Get-LdapInfo -SecurityGroups
 
     This example lists all the Security Groups in Active Directory
 
-    -------------------------- EXAMPLE 28 --------------------------
+.EXAMPLE 28
 
     C:\PS> Get-LdapInfo -BuiltInGroups
 
     This example lists all Built In Groups in Active Directory
 
-    -------------------------- EXAMPLE 29 --------------------------
+.EXAMPLE 29
 
     C:\PS> Get-LdapInfo -AllGlobalGroups
 
     This example lists all Global Groups in Active Directory
 
-    -------------------------- EXAMPLE 30 --------------------------
+.EXAMPLE 30
 
     C:\PS> Get-LdapInfo -DomainLocalGroups
 
     # This example list Domain Local Groups from Active Directory
 
-    -------------------------- EXAMPLE 31 --------------------------
+.EXAMPLE 31
 
     C:\PS> Get-LdapInfo -UniversalGroups
 
     # This example lists the Universal Groups from Active Directory
 
-    -------------------------- EXAMPLE 32 --------------------------
+.EXAMPLE 32
 
     C:\PS> Get-LdapInfo -GlobalSecurityGroups
 
     # This example list Global Security Groups from Active Directory
 
-    -------------------------- EXAMPLE 33 --------------------------
+.EXAMPLE 33
 
     C:\PS> Get-LdapInfo -UniversalSecurityGroups
 
     # This example lists Universal Security Gruops from Active Directory
 
-    -------------------------- EXAMPLE 34 --------------------------
+.EXAMPLE 34
 
     C:\PS> Get-LdapInfo -DomainLocalSecurityGroups
 
     # This example lists Domain Local Security Groups from Active Directory
 
-    -------------------------- EXAMPLE 35 --------------------------
+.EXAMPLE 35
 
     C:\PS> Get-LdapInfo -GlobalDistributionGroups
 
@@ -774,17 +774,17 @@ Function Get-LdapInfo {
 
 
 .EXAMPLES
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
    C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 1 -End 254 -Count 2 -Source Multiple
    This command starts a ping sweep from 192.168.1.1 through 192.168.1.254. It sends two pings to each address. It sends each ping from a random source address.
 
 
-   -------------------------- EXAMPLE 2 --------------------------
+   EXAMPLE 2
   C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 192 -End 224 -Source Singular
   This command starts a ping sweep from 192.168.1.192 through 192.168.1.224. It sends one ping to each address. It sends each ping from one source address that is different from the local IP addresses.
 
 
-  -------------------------- EXAMPLE 3 --------------------------
+  EXAMPLE 3
  C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 64 -End 192
  This command starts a ping sweep from 192.168.1.64 through 192.168.1.192. It sends one ping to each address. It sends each ping from the local computers IPv4 address.
 
@@ -1981,7 +1981,7 @@ Function Get-AntiVirusProduct {
 
 
 .EXAMPLES
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
    C:\PS> Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
    This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
 
@@ -2131,7 +2131,7 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
    C:\PS> Invoke-FodHelperBypass -Program 'powershell.exe'
    This command opens PowerShell in a new window with elevated privileges.
 
@@ -2281,7 +2281,7 @@ Function Invoke-FodhelperBypass
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
    C:\PS> Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
    This command executes a msfvenom payload as the user tobor
 
@@ -2415,7 +2415,7 @@ END
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
     PS C:\> Invoke-UnquotedServicePathExploit -Name wuauserv -Command "net user tobor Passw0rd1! /add", "net localgroup Administrators tobor /add"
     This example exploits 'wuauserv' to add a localuser "tobor" with password Passw0rd1! to the local administrator group
 
@@ -2570,15 +2570,15 @@ PROCESS
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE 1
     C:\PS> $Pipe = New-Object PSObject -Property @{SID='S-1-5-21-2860287465-2011404039-792856344-500'}
     C:\PS> $Pipe | Convert-SID
 
-    -------------------------- EXAMPLE 2 --------------------------
+.EXAMPLE 2
     C:\PS> Convert-SID -Username 'j.smith'
     C:\PS> Convert-SID -Username j.smith@domain.com
 
-    -------------------------- EXAMPLE 3 --------------------------
+.EXAMPLE 3
     C:\PS> Convert-SID -SID S-1-5-21-2860287465-2011404039-792856344-500
     C:\PS> Convert-SID -SID 'S-1-5-21-2860287465-2011404039-792856344-500'
 

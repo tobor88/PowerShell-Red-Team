@@ -1,114 +1,69 @@
 <#
 .SYNOPSIS
-    Perform a pingsweep of a defiend subnet.
-
-
-.SYNTAX
-    Invoke-PingSweep -Subnet <string IP Address> -Start <Int> -End <Int> [-Count] <Int> [-Source { Singular | Multiple }]
+This cmdlet is used to perform a pingsweep of a defiend subnet.
 
 
 .DESCRIPTION
-    This cmdlet is used to perform a ping sweep of a defined subnet. Executioner is able to define the start and end IP range to use.DESCRIPTION
-    Executioner is also able to define a source to mask where the ping sweep is coming from.
+This cmdlet is used to perform a ping sweep of a defined subnet. Executioner is able to define the start and end IP range to use.DESCRIPTION Executioner is also able to define a source to mask where the ping sweep is coming from.
 
 
 .EXAMPLES
-    -------------------------- EXAMPLE 1 --------------------------
-   C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 1 -End 254 -Count 2 -Source Multiple
-   This command starts a ping sweep from 192.168.1.1 through 192.168.1.254. It sends two pings to each address. It sends each ping from a random source address.
+Invoke-PingSweep -Subnet 192.168.1.0 -Start 1 -End 254 -Count 2 -Source Multiple
+# This command starts a ping sweep from 192.168.1.1 through 192.168.1.254. It sends two pings to each address. It sends each ping from a random source address.
+
+.EXAMPLE
+Invoke-PingSweep -Subnet 192.168.1.0 -Start 192 -End 224 -Source Singular
+# This command starts a ping sweep from 192.168.1.192 through 192.168.1.224. It sends one ping to each address. It sends each ping from one source address that is different from the local IP addresses.
+
+.EXAMPLE
+ Invoke-PingSweep -Subnet 192.168.1.0 -Start 64 -End 192
+ # This command starts a ping sweep from 192.168.1.64 through 192.168.1.192. It sends one ping to each address. It sends each ping from the local computers IPv4 address.
 
 
-   -------------------------- EXAMPLE 2 --------------------------
-  C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 192 -End 224 -Source Singular
-  This command starts a ping sweep from 192.168.1.192 through 192.168.1.224. It sends one ping to each address. It sends each ping from one source address that is different from the local IP addresses.
+.PARAMETER Subnet
+Defines the Class C subnet range to perform the ping sweep. Enter a string consisting of 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by a zero
 
+.PARAMETER Start
+Defines the start IPv4 address the ping sweep should begin the sweep from.
 
-  -------------------------- EXAMPLE 3 --------------------------
- C:\PS> Invoke-PingSweep -Subnet 192.168.1.0 -Start 64 -End 192
- This command starts a ping sweep from 192.168.1.64 through 192.168.1.192. It sends one ping to each address. It sends each ping from the local computers IPv4 address.
+.PARAMETER End 
+Defines the end IPv4 address the ping sweep should end at.
 
+.PARAMETER Count
+Defines how many ICMP ping requests should be sent to each host's IPv4 address
 
-.PARAMTERS
-    -Subnet <string>
-        Defines the Class C subnet range to perform the ping sweep
-
-        Enter a string consisting of 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by a zero
-
-        Required?                    True
-        Position?                    0
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-
-    -Start <Int>
-        Defines the start IPv4 address the ping sweep should begin the sweep from.
-
-        Accepts a number between 1 and 254
-
-        Required?                    True
-        Position?                    1
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-
-    -End <Int>
-        Defines the end IPv4 address the ping sweep should end at.
-
-        Accepts a number between 1 and 254
-
-        Required?                    True
-        Position?                    2
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-
-    -Count <Int>
-        Defines how many ICMP ping requests should be sent to each host's IPv4 address
-
-        Accepts a number between 1 and 10
-
-        Required?                    false
-        Position?                    none
-        Default value                1
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-
-
-    -Source <bool>
-        Defines whether you want to mask the IP address you are pinging from.
-
-        Accepts a value of Singular or Multiple
-
-        Required?                    false
-        Position?                    none
-        Default value                none
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
+.PARAMETER Source 
+Defines whether you want to mask the IP address you are pinging from.
 
 
 .INPUTS
-    None. This command does not accept value from pipeline
+None. This command does not accept value from pipeline
 
 
 .OUTPUTS
-    System.Array
-
-    The results of this command is an array of active IP Addresses.
-    NOTE: Technically this does not output an object yet. This is something I will do in the future
+System.Array The results of this command is an array of active IP Addresses.
+NOTE: Technically this does not output an object yet. This is something I will do in the future
 
 
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
 
 #>
-Function Invoke-PingSweep
-{
+Function Invoke-PingSweep {
     [CmdletBinding()]
         param(
             [Parameter(

@@ -1,54 +1,40 @@
 <#
 .SYNOPSIS
-    Encode or Decode Base64 strings.
+Encode or Decode Base64 strings.
 
 
-.SYNTAX
-    Convert-Base64 [-Value] <string[]> {-Decode | -Encode}
+.PARAMETER Value
+Specifies a string to be encoded or decoded with base64. Enter a string consisting of spaces and special charcters if desired.DESCRIPTION
 
 
-.PARAMETERS
-    -Value <String[]>
-        Specifies a string to be encoded or decoded with base64.
+.PARAMETER Encode
+This switch is used to tell the cmdlet to encode the base64 string
 
-        Enter a string consisting of spaces and special charcters if desired.DESCRIPTION
-
-        Required?                    True
-        Position?                    0
-        Default value                None
-        Accept pipeline input?       True
-        Accept wildcard characters?  false
-
-    -Encode <Switch>
-     This switch is used to tell the cmdlet to encode the base64 string
-
-    -Decode <Switch>
-    This switch parameter is used to tell the cmdlet to decode the base64 string
+.PARAMETER Decode
+This switch parameter is used to tell the cmdlet to decode the base64 string
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
-    C:\PS> Convert-Base64 -Value 'Hello World!'' -Encode
-    # This example encodes "Hello World into Base64 format.
+Convert-Base64 -Value 'Hello World!'' -Encode
+# This example encodes "Hello World into Base64 format.
 
-    C:\PS> Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode
-    # This example decodes Base64 to a string.
+.EXAMPLE
+Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode
+# This example decodes Base64 to a string.
     
     
 .NOTES
-    Author: Rob Osborne
-    ALias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthsoborne.com
-    
-    
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
 .INPUTS
-    -Value accepts strings from pipeline.
-    System.String
+System.String -Value accepts strings from pipeline.
 
 
 .OUTPUTS
-    System.String
+System.String
 
 #>
 Function Convert-Base64

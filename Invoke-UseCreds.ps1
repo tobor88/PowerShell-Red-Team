@@ -1,75 +1,52 @@
 <#
-.NAME
-    Invoke-UseCreds
-    
-    
 .SYNOPSIS
-    This cmdlet is for easily using credentials to execute a program. PowerShell can be a lot of typing.
-    Especially when you dont' have a shell that allows autocompletion. This is a huge time saver.
-    This function DOES NOT accept command line arguments. It only executes an application.
-    
+This cmdlet is for easily using credentials to execute a program. PowerShell can be a lot of typing. Especially when you dont' have a shell that allows autocompletion. This is a huge time saver. This function DOES NOT accept command line arguments. It only executes an application.
 
-.SYNTAX
-    Invoke-UseCreds [-Username] <string> [-Passwd] <string> [-Path] <string> [<CommonParameters>]
-    
 
-.PARAMETERS
-    -Username
-        Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.    
-        Required?                    True
-        Position?                    0
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
+.PARAMETER Username
+Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.    
+
                
-    -Passwd
-        Enter the string value of the users password    
-        Required?                    True
-        Position?                    1
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
+.PARAMETER Passwd
+Enter the string value of the users password    
                
-    -Path
-        Defines the location of the application that should execute as the user.
-        Enter a string consisting of the absolute or relative path to the executable
-        Required?                    True
-        Position?                    2
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
-             
-    <CommonParameters>
-        This cmdlet supports the common parameters: Verbose, Debug,
-        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer, PipelineVariable, and OutVariable. For more information, see
-        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
-      
+.PARAMETER Path
+Defines the location of the application that should execute as the user. Enter a string consisting of the absolute or relative path to the executable
+   
 
 .DESCRIPTION
-    This function is used to execute an application as another user. This DOES NOT accept command line arugments.
-    This only executes an application.
+This function is used to execute an application as another user. This DOES NOT accept command line arugments. This only executes an application.
     
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
-   C:\PS> Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
-   This command executes a msfvenom payload as the user tobor
+Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
+# This command executes a msfvenom payload as the user tobor
 
 
 .NOTES
-    Author: Robert H. Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
     
     
 .INPUTS
-    [System.String]
+[System.String]
     
     
 .OUTPUTS
-    None
+None
 
 #>
 Function Invoke-UseCreds {

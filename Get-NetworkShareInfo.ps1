@@ -1,53 +1,52 @@
 <#
-.NAME
-    Get-NetworkShareInfo
-
-
 .SYNOPSIS
-    This cmdlet is used to discover information associated with a network share such as the physical
-    location of the network share, its creation date, and name.
+This cmdlet is used to discover information associated with a network share such as the physical location of the network share, its creation date, and name.
 
 
 .DESCRIPTION
-    This function returns information associated with the defined network share or shares based on
-    the shares name. It can also be used to search multiple remote Windows machines for network shares
+This function returns information associated with the defined network share or shares based on the shares name. It can also be used to search multiple remote Windows machines for network shares
 
 
 .PARAMETER ShareName
-    This parmater is used to define the name of the share or shares the executer wishes to obtain info on
+This parmater is used to define the name of the share or shares the executer wishes to obtain info on
 
 .PARAMETER ComputerName
-    This parameter can be used to define a remote computer(s) name to check for the share names on
+This parameter can be used to define a remote computer(s) name to check for the share names on
 
 
 .EXAMPLE
-    -------------------------- EXAMPLE 1 --------------------------
-    C:\PS> Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL
-    # The above example returns information on the network shares NETLOGON and SYSVOL if they exist on the local machine
+Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL
+# The above example returns information on the network shares NETLOGON and SYSVOL if they exist on the local machine
     
-    C:\PS> Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL,C$ -ComputerName DC01.domain.com, DC02.domain.com, 10.10.10.1
-    # The above example returns share info on NETLOGON, SYSVOL, and C$ if they exist on 3 remote devices
+.EXAMPLE
+Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL,C$ -ComputerName DC01.domain.com, DC02.domain.com, 10.10.10.1
+# The above example returns share info on NETLOGON, SYSVOL, and C$ if they exist on 3 remote devices
 
 
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
 
 
 .LINK
-    https://roberthosborne.com
-    https://github.com/tobor88
-    https://gitlab.com/tobor88
-    https://www.powershellgallery.com/profiles/tobor
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
 
 
 .INPUTS
-    System.String[]
+System.String[]
 
 
 .OUTPUTS
-    Microsoft.Management.Infrastructure.CimInstance
+Microsoft.Management.Infrastructure.CimInstance
 
 #>
 Function Get-NetworkShareInfo {

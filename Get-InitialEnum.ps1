@@ -1,60 +1,59 @@
 <#
-.NAME
-    Get-InitialEnum
-
-
 .SYNOPSIS
-    This cmdlet was created to perform enumeration of a Windows system using PowerShell.
+This cmdlet was created to perform enumeration of a Windows system using PowerShell.
 
 
 .DESCRIPTION
-    This cmdlet enumerates a system that has been compromised to better understand what is running on the target.
-    This does not test for any PrivEsc methods it only enumerates machine info. Use Test-PrivEsc to search for possible exploits.
+This cmdlet enumerates a system that has been compromised to better understand what is running on the target. This does not test for any PrivEsc methods it only enumerates machine info. Use Test-PrivEsc to search for possible exploits.
 
 
-.SYNTAX
-    Get-InitialEnum [[-FilePath] <string>] [<CommonParameters>]
+.PARAMETER FilePath
+This parameter defines the location to save a file containing the results of this cmdlets execution
 
 
-.PARAMETERS
-    -FilePath <string>
+.EXAMPLE
+Get-InitialEnum
+# This example returns information on the local device
 
-        Required?                    false
-        Position?                    0
-        Accept pipeline input?       false
-        Parameter set name           ByPath
-        Aliases                      None
-        Dynamic?                     false
-
-    <CommonParameters>
-        This cmdlet supports the common parameters: Verbose, Debug,
-        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer, PipelineVariable, and OutVariable. For more information, see
-        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216).
-
-
-.INPUTS
-    System.Management.Automation.PSObject
-
-
-.OUTPUTS
-    System.Object
-
-
-.ALIASES
-    None
+.EXAMPLE
+Get-InitialEnum -FilePath C:\Temp\enum.txt
+# This example saves the results of this command to the file C:\Temp\enum.txt
 
 
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com/
-    
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
+
+.INPUTS
+System.Management.Automation.PSObject
+
+
+.OUTPUTS
+System.Object
+
 #>
 Function Get-InitialEnum {
     [CmdletBinding()]
-        param()  # End param
+        param(
+            [Parameter(
+                Mandatory=$False,
+                ValueFromPipeline=$False)]  # End Parameter
+            [String]$FilePath
+        )  # End param
 
 BEGIN
 {

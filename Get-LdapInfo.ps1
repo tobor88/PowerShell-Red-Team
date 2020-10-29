@@ -1,351 +1,251 @@
 <#
-.NAME
-    Get-LdapInfo
-
-
 .SYNOPSIS
-    Perform LDAP Queries of the current domain. This requires a user account in order to execute the cmdlet.
-    Due to the amount of switches I have not provieded examples for each one. The names are pretty self explanatory.
+Perform LDAP Queries of the current domain. This requires a user account in order to execute the cmdlet. Due to the amount of switches I have not provieded examples for each one. The names are pretty self explanatory.
 
 
-.NOTES
-    Author: Rob Osborne
-    ALias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthsoborne.com
+.PARAMETER LDAPS
+This switch parameter will perform searches using LDAP over SSL
 
+.PARAMETER Detailed
+This switch parameter will display all properties of the rerturned objects
 
-.SYNTAX
-    Get-LdapInfo [-Detailed] [ -DomainAdmins | -DomainControllers | -UAC ] [-LDAPS]
+.PARAMETER DomainControllers
+This switch is used to tell the cmdlet to get a list of the Domain's Controllers
 
+.PARAMETER AllServers
+This switch is used to obtain a list of all servers in the domain environment
 
-.PARAMETER
-    -LDAPS                  [<SwitchParameter>]
-        This switch parameter will perform searches using LDAP over SSL
+.PARAMETER AllMemberServers
+This switch is used to obtain a list of all member servers in the environment
 
-    -Detailed                  [<SwitchParameter>]
-        This switch parameter will display all properties of the rerturned objects
+.PARAMETER DomainTrusts
+This switch is used to obtain a list of all trusted and federated domains for the domain
 
+.PARAMETER DomainAdmins
+The switch parameter is used to tell the cmdlet to obtain a list of members of the Domain Admins Group
 
-    -DomainControllers         [<SwitchParameter>]
-         This switch is used to tell the cmdlet to get a list of the Domain's Controllers
+.PARAMETER UACTrusted
+This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can be delegated
 
+.PARAMETER NotUACTrusted
+This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can NOT be delegated
 
-    -AllServers                [<SwitchParameter>]
-        This switch is used to obtain a list of all servers in the domain environment
+.PARAMETER SPNNamedObjects
+This switch is used to obtain a list of Service Principal Named objects
 
+.PARAMETER EnabledUsers
+This switch parameter is used to tell the cmdlet to get a list of enabled user accounts in the domain
 
-    -AllMemberServers                [<SwitchParameter>]
-        This switch is used to obtain a list of all member servers in the environment
+.PARAMETER PossibleExecutives
+This switch is used to obtain a list of possible executives for the company
 
+.PARAMETER LogonScript
+This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
 
-    -DomainTrusts                [<SwitchParameter>]
-        This switch is used to obtain a list of all trusted and federated domains for the domain
+.PARAMETER ListAllOu
+This siwtch is meant to return a list of all OUs in the domain
 
+.PARAMETER ListComputer
+This switch is meant to return a list of all computers in the domain
 
-    -DomainAdmins              [<SwitchParameter>]
-        The switch parameter is used to tell the cmdlet to obtain a list of members of the Domain Admins Group
+.PARAMETER ListContacts
+This switch is meant to return a list of contacts in the domain
 
+.PARAMETER ListUsers
+This switch is meant to return a list of all users in the domain
 
-    -UACTrusted                [<SwitchParameter>]
-        This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can be delegated
+.PARAMETER ListGroups
+This switch is meant to return a list of all groups in the domain
 
+.PARAMETER -ListContainers
+This switch is used to return a list of all containers in the domain
 
-    -NotUACTrusted                [<SwitchParameter>]
-        This switch parameter is used to tell the cmdlet to get a list of UAC Permissions that can NOT be delegated
+.PARAMETER ListDomainObjects
+This switch is used to return a list of all objects in the domain
 
+.PARAMETER ListBuiltInContainers
+This switch is used to return a list of built in OU containers in the domain
 
-    -SPNNamedObjects                [<SwitchParameter>]
-        This switch is used to obtain a list of Service Principal Named objects
+.PARAMETER ChangePasswordAtNextLogon
+This switch is used to return a list of users who are set to change their password at next logon
 
+.PARAMETER PasswordNeverExpires
+This switch is used to obtain a list of users who have passwords that never expire
 
-    -EnabledUsers              [<SwitchParameter>]
-        This switch parameter is used to tell the cmdlet to get a list of enabled user accounts in the domain
+.PARAMETER NoPasswordRequired
+This switch parameter is used to get a list of users who do not require a password to sign in
 
+.PARAMETER NoKerberosPreAuthRequired
+This switch parameter is used to get a list of users who do not require preauthentication when being authenticated with Kerberos
 
-    -PossibleExecutives                [<SwitchParameter>]
-        This switch is used to obtain a list of possible executives for the company
-
-
-    -LogonScript               [<SwitchParameter>]
-         This switch is used to tell the cmdlet to get a list of users who have logon scriprts assigned
-
-    -ListAllOu               [<SwitchParameter>]
-        This siwtch is meant to return a list of all OUs in the domain
-
-
-    -ListComputer               [<SwitchParameter>]
-        This switch is meant to return a list of all computers in the domain
-
-
-    -ListContacts               [<SwitchParameter>]
-        This switch is meant to return a list of contacts in the domain
-
-
-    -ListUsers               [<SwitchParameter>]
-        This switch is meant to return a list of all users in the domain
-
-
-    -ListGroups               [<SwitchParameter>]
-        This switch is meant to return a list of all groups in the domain
-
-
-    -ListContainers      [<SwitchParameter>]
-        This switch is used to return a list of all containers in the domain
-
-
-    -ListDomainObjects     [<SwitchParameter>]
-        This switch is used to return a list of all objects in the domain
-
-
-    -ListBuiltInContainers        [<SwitchParameter>]
-        This switch is used to return a list of built in OU containers in the domain
-
-
-    -ChangePasswordAtNextLogon    [<SwitchParameter>]
-        This switch is used to return a list of users who are set to change their password at next logon
-
-
-    -PasswordNeverExpires       [<SwitchParameter>]
-        This switch is used to obtain a list of users who have passwords that never expire
-
-
-    -NoPasswordRequired        [<SwitchParameter>]
-        This switch parameter is used to get a list of users who do not require a password to sign in
-
-
-    -NoKerberosPreAuthRequired [<SwitchParameter>]
-        This switch parameter is used to get a list of users who do not require preauthentication when being authenticated with Kerberos
-
-
-    -PasswordsThatHaveNotChangedInYears       [<SwitchParameter>]
-        This switch is used to obtain a list of user passwords that have not changed in years
-
-
-.INPUTS
-    SwitchParameters
-
-
-.OUTPUTS
-
-    IsPublic IsSerial Name                                     BaseType
-    -------- -------- ----                                     --------
-    True     True     Object[]                                 System.Array
+.PARAMETER PasswordsThatHaveNotChangedInYears
+This switch is used to obtain a list of user passwords that have not changed in years
 
 
 .EXAMPLE
+Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+# This example gets a list of all the Domain Controllers and displays the local admin password. (Requires Administrator Execution to get password attribute ) If executed as an administrator you will also receive the local admin password under the ms-Mcs-AdmPwd attribute value.
+
+.EXAMPLE
+Get-LdapInfo -AllServers
+# This example lists All Servers in the Domain
+
+.EXAMPLE
+Get-LdapInfo -AllMemberServers
+# This example lists all Member Servers in the domain
+
+.EXAMPLE
+Get-LdapInfo -DomainTrusts
+# This example lists Federated Trust Domains
+
+.EXAMPLE
+Get-LdapInfo -DomainAdmins
+# This example lists all Domain Admins in the domain
+
+.EXAMPLE
+Get-LdapInfo -UACTrusted
+# This example lists users who are trusted with UAC
+
+.EXAMPLE
+Get-LdapInfo -NotUACTrusted
+# This example lists users who are not trusted for UAC
+
+.EXAMPLE
+Get-LdapInfo -SPNNamedObjects
+# This example lists SPN users
+
+.EXAMPLE
+Get-LdapInfo -EnabledUsers
+# This example lists all Enabled Users
+
+.EXAMPLE
+Get-LdapInfo -PossibleExecutives
+# This example finds users with Direct Reports and no manager possibly indicating an executive
+
+.EXAMPLE
+Get-LdapInfo -LogonScript
+# This example lists all users who have logon scripts that execute
+
+.EXAMPLE
+Get-LdapInfo -ListAllOU
+# This example lists all of the Domains OUs in Acitve Directory
 
-    -------------------------- EXAMPLE 1 --------------------------
+.EXAMPLE
+Get-LdapInfo -ListComputers
+# This example lists all Active Directory Computers
+
+.EXAMPLE
+Get-LdapInfo -ListContacts
+# This example lists all Active Directory Contacts
+
+.EXAMPLE
+Get-LdapInfo -ListGroups
+# This example lists all Active Directory Groups
+
+.EXAMPLE
+Get-LdapInfo -ListGroups
+# This example lists all Active Directory Groups
 
-    C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
+.EXAMPLE
+Get-LdapInfo -ListContainers
+# This example lists Active Directory Containers
 
-    # This example gets a list of all the Domain Controllers and displays the local admin password. (Requires Administrator Execution to get password attribute )
-    If executed as an administrator you will also receive the local admin password under the ms-Mcs-AdmPwd attribute value.
+.EXAMPLE
+Get-LdapInfo -ListDomainObjects
+# This example lists Active Directory Domain Objects
 
-    -------------------------- EXAMPLE 2 --------------------------
+.EXAMPLE
+Get-LdapInfo -ListBuiltInObjects
+# This example list Builtin In Active Directory Objects
 
-    C:\PS> Get-LdapInfo -AllServers
+.EXAMPLE
+Get-LdapInfo -ListBuiltInContainers
+# This example lists Built In Active Directory Containers
 
-    # This example lists All Servers in the Domain
+.EXAMPLE
+Get-LdapInfo -ChangePasswordAtNextLogon
+# This example lists users who are set to change their password at next logon.DESCRIPTION If a user does not have a "Logon Name" Configured in AD they will be returned with this results as well.
 
-    -------------------------- EXAMPLE 3 --------------------------
+.EXAMPLE
+Get-LdapInfo -PasswordNeverExpires
+# This example list users who have passwords that never expire
 
-    C:\PS> Get-LdapInfo -AllMemberServers
+.EXAMPLE
+Get-LdapInfo -NoPasswordRequired
+# This example lists users who do not require a password for sign in
 
-    # This example lists all Member Servers in the domain
+.EXAMPLE
+Get-LdapInfo -NoKerberosPreAuthRequired
+# This example lists users where Kerberos Pre Authentication is not enabled
 
-    -------------------------- EXAMPLE 4 --------------------------
+.EXAMPLE
+Get-LdapInfo -PasswordsThatHaveNotChangedInYears | Where-Object -Property Path -notlike "*OU=Disabled*"
+# This example lists users who have passwords that have not changed in years who are also not in a Disabled group
 
-    C:\PS> Get-LdapInfo -DomainTrusts
+.EXAMPLE
+Get-LdapInfo -DistributionGroups
+# This example lists all the Distribution Groups in Active Directory
 
-    # This example lists Federated Trust Domains
+.EXAMPLE
+Get-LdapInfo -SecurityGroups
+# This example lists all the Security Groups in Active Directory
 
-    -------------------------- EXAMPLE 5 --------------------------
+.EXAMPLE
+Get-LdapInfo -BuiltInGroups
+# This example lists all Built In Groups in Active Directory
 
-    C:\PS> Get-LdapInfo -DomainAdmins
+.EXAMPLE
+Get-LdapInfo -AllGlobalGroups
+# This example lists all Global Groups in Active Directory
 
-    This example lists all Domain Admins in the domain
+.EXAMPLE
+Get-LdapInfo -DomainLocalGroups
+# This example list Domain Local Groups from Active Directory
 
-    -------------------------- EXAMPLE 6 --------------------------
+.EXAMPLE
+Get-LdapInfo -UniversalGroups
+# This example lists the Universal Groups from Active Directory
 
-    C:\PS> Get-LdapInfo -UACTrusted
+.EXAMPLE
+Get-LdapInfo -GlobalSecurityGroups
+# This example list Global Security Groups from Active Directory
 
-    This example lists users who are trusted with UAC
+.EXAMPLE
+Get-LdapInfo -UniversalSecurityGroups
+# This example lists Universal Security Gruops from Active Directory
 
-    -------------------------- EXAMPLE 7 --------------------------
+.EXAMPLE
+Get-LdapInfo -DomainLocalSecurityGroups
+# This example lists Domain Local Security Groups from Active Directory
 
-    C:\PS> Get-LdapInfo -NotUACTrusted
+.EXAMPLE
+Get-LdapInfo -GlobalDistributionGroups
+# This example lists Global Distribution Groups from Acitve Directory
 
-    This example lists users who are not trusted for UAC
+.NOTES
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
 
-    -------------------------- EXAMPLE 8 --------------------------
 
-    C:\PS> Get-LdapInfo -SPNNamedObjects
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
 
-    # This example lists SPN users
 
-    -------------------------- EXAMPLE 9 --------------------------
+.INPUTS
+None
 
-    C:\PS> Get-LdapInfo -EnabledUsers
 
-    # This example lists all Enabled Users
-
-    -------------------------- EXAMPLE 10 --------------------------
-
-    C:\PS> Get-LdapInfo -PossibleExecutives
-
-    # This example finds users with Direct Reports and no manager possibly indicating an executive
-
-    -------------------------- EXAMPLE 11 --------------------------
-
-    C:\PS> Get-LdapInfo -LogonScript
-
-    # This example lists all users who have logon scripts that execute
-
-    -------------------------- EXAMPLE 12 --------------------------
-
-    C:\PS> Get-LdapInfo -ListAllOU
-
-    This example lists all of the Domains OUs in Acitve Directory
-
-    -------------------------- EXAMPLE 13 --------------------------
-
-    C:\PS> Get-LdapInfo -ListComputers
-
-    This example lists all Active Directory Computers
-
-    -------------------------- EXAMPLE 14 --------------------------
-
-    C:\PS> Get-LdapInfo -ListContacts
-
-    This example lists all Active Directory Contacts
-
-    -------------------------- EXAMPLE 15 --------------------------
-
-    C:\PS> Get-LdapInfo -ListGroups
-
-    # This example lists all Active Directory Groups
-
-    -------------------------- EXAMPLE 16 --------------------------
-
-    C:\PS> Get-LdapInfo -ListGroups
-
-    # This example lists all Active Directory Groups
-
-    -------------------------- EXAMPLE 17 --------------------------
-
-    C:\PS> Get-LdapInfo -ListContainers
-
-    # This example lists Active Directory Containers
-
-    -------------------------- EXAMPLE 18 --------------------------
-
-    C:\PS> Get-LdapInfo -ListDomainObjects
-
-    # This example lists Active Directory Domain Objects
-
-    -------------------------- EXAMPLE 19 --------------------------
-
-    C:\PS> Get-LdapInfo -ListBuiltInObjects
-
-    # This example list Builtin In Active Directory Objects
-
-    -------------------------- EXAMPLE 20 --------------------------
-
-    C:\PS> Get-LdapInfo -ListBuiltInContainers
-
-    This example lists Built In Active Directory Containers
-
-    -------------------------- EXAMPLE 21 --------------------------
-
-    C:\PS> Get-LdapInfo -ChangePasswordAtNextLogon
-
-    This example lists users who are set to change their password at next logon.DESCRIPTION
-    If a user does not have a "Logon Name" Configured in AD they will be returned with this results as well.
-
-    -------------------------- EXAMPLE 22 --------------------------
-
-    C:\PS> Get-LdapInfo -PasswordNeverExpires
-
-    This example list users who have passwords that never expire
-
-    -------------------------- EXAMPLE 23 --------------------------
-
-    C:\PS> Get-LdapInfo -NoPasswordRequired
-
-    # This example lists users who do not require a password for sign in
-
-    -------------------------- EXAMPLE 24 --------------------------
-
-    C:\PS> Get-LdapInfo -NoKerberosPreAuthRequired
-
-    # This example lists users where Kerberos Pre Authentication is not enabled
-
-    -------------------------- EXAMPLE 25 --------------------------
-
-    C:\PS> Get-LdapInfo -PasswordsThatHaveNotChangedInYears | Where-Object -Property Path -notlike "*OU=Disabled*"
-
-    # This example lists users who have passwords that have not changed in years who are also not in a Disabled group
-
-    -------------------------- EXAMPLE 26 --------------------------
-
-    C:\PS> Get-LdapInfo -DistributionGroups
-
-    # This example lists all the Distribution Groups in Active Directory
-
-    -------------------------- EXAMPLE 27 --------------------------
-
-    C:\PS> Get-LdapInfo -SecurityGroups
-
-    This example lists all the Security Groups in Active Directory
-
-    -------------------------- EXAMPLE 28 --------------------------
-
-    C:\PS> Get-LdapInfo -BuiltInGroups
-
-    This example lists all Built In Groups in Active Directory
-
-    -------------------------- EXAMPLE 29 --------------------------
-
-    C:\PS> Get-LdapInfo -AllGlobalGroups
-
-    This example lists all Global Groups in Active Directory
-
-    -------------------------- EXAMPLE 30 --------------------------
-
-    C:\PS> Get-LdapInfo -DomainLocalGroups
-
-    # This example list Domain Local Groups from Active Directory
-
-    -------------------------- EXAMPLE 31 --------------------------
-
-    C:\PS> Get-LdapInfo -UniversalGroups
-
-    # This example lists the Universal Groups from Active Directory
-
-    -------------------------- EXAMPLE 32 --------------------------
-
-    C:\PS> Get-LdapInfo -GlobalSecurityGroups
-
-    # This example list Global Security Groups from Active Directory
-
-    -------------------------- EXAMPLE 33 --------------------------
-
-    C:\PS> Get-LdapInfo -UniversalSecurityGroups
-
-    # This example lists Universal Security Gruops from Active Directory
-
-    -------------------------- EXAMPLE 34 --------------------------
-
-    C:\PS> Get-LdapInfo -DomainLocalSecurityGroups
-
-    # This example lists Domain Local Security Groups from Active Directory
-
-    -------------------------- EXAMPLE 35 --------------------------
-
-    C:\PS> Get-LdapInfo -GlobalDistributionGroups
-
-    This example lists Global Distribution Groups from Acitve Directory
+.OUTPUTS
+System.Array
 
 #>
 Function Get-LdapInfo {
