@@ -105,7 +105,7 @@ Function Convert-Base64
 
 <#
 .SYNOPSIS
-    This cmdlet is for translating an SID to a username or a username to an SID.
+This cmdlet is for translating an SID to a username or a username to an SID.
 
 
 .PARAMETER Username
@@ -1574,56 +1574,50 @@ Function Invoke-FodhelperBypass {
 
 
 <#
-.NAME
-    Invoke-InMemoryPayload
-    
-    
 .SYNOPSIS
-    Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections.
-    This function was built off of a template from the Offensive Security PWK course.
+Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections. This was built thanks to information from the Offensive Security PWK Course
 
-.SYNTAX
-    Invoke-InMemoryPayload [-ShellCode] <bytes[] shellcode>
-    
 
 .DESCRIPTION
-    This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory.
-    It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
-    
+This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory. It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
 
-.EXAMPLES
-.EXAMPLE 1
-   C:\PS> Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
-   This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
- 
- 
- .PARAMTERS
-    -ShellCode <byte[]>
-        Defines the Class C subnet range to perform the ping sweep
-        Enter a string consisting of 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by a zero
-        Required?                    True
-        Position?                    0
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
+
+.EXAMPLE 
+Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
+# This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
+
+
+.PARAMETER ShellCode
+This parameter accepts byte input only. Qutations should not be used around your defined bytes as this will convert your bytes to strings
     
     
 .INPUTS
-    [System.Byte[]]
-    
-    
+[System.Byte[]]
+
+
 .OUTPUTS
-    None
-    
-    
+None
+
+
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com
+Author: Rob Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
 #>
-Function Invoke-InMemoryPayload
-{
+Function Invoke-InMemoryPayload {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -1706,6 +1700,7 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     }  # End For
 
 }  # End Invoke-InMemoryPayload
+
 
 
 <#
@@ -2075,16 +2070,18 @@ Enter a string containing the domain or workgroup of the user and the username o
 .PARAMETER Passwd
 Enter the string value of the users password    
                
-.PARAMETER Path
+.PARAMETER FilePath
 Defines the location of the application that should execute as the user. Enter a string consisting of the absolute or relative path to the executable
-   
+
+.PARAMETER ComputerName
+Define a single or multiple FQDN's or hostnames. The local file you specify will be executed on the remote devices you specify
 
 .DESCRIPTION
 This function is used to execute an application as another user. This DOES NOT accept command line arugments. This only executes an application.
     
 
 .EXAMPLE
-Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
+Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -FilePath 'C:\Windows\System32\spool\drivers\color\msf.exe'
 # This command executes a msfvenom payload as the user tobor
 
 
@@ -2115,77 +2112,116 @@ None
 
 #>
 Function Invoke-UseCreds {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='Local')]
         param(
             [Parameter(
                 Mandatory=$True,
                 Position=0,
                 ValueFromPipeline=$False,
                 HelpMessage="Enter the username: ")]
-            [string]$Username,
+            [String]$Username,
+
             [Parameter(
                 Mandatory=$True,
                 Position=1,
                 ValueFromPipeline=$False,
                 HelpMessage="Enter the password: ")]
-            [string]$Passwd,
+            [String]$Passwd,
+
             [Parameter(
                 Mandatory=$True,
                 Position=2,
                 ValueFromPipeline=$False,
                 HelpMessage="Define the path to the executable you want run as this user: ")]
-            [string]$Path)  # End param
+            [String]$FilePath,
+            
+            [Parameter(
+              ParameterSetName='Remote',
+              Mandatory=$False,
+              ValueFromPipeline=$False)]  # End Parameter
+            [String[]]$ComputerName,
+            
+            [Parameter(
+              ParameterSetName='Remote',
+              Mandatory=$False)]  # End Parameter
+            [Switch][Bool]$UseSSL)  # End param
 
 BEGIN 
 {
 
     Write-Verbose "[*] Building authenticated credential..."
 
-    $Passw = ConvertTo-SecureString $Passwd -AsPlainText -Force
-
+    $Passw = ConvertTo-SecureString -String $Passwd -AsPlainText -Force
     $Cred = New-Object -TypeName System.Management.Automation.PSCredential($Username, $Passw)
 
 }  # End BEGIN
 PROCESS 
 {
 
-    Write-Verbose "Executing $Path"
-
-    If (!(Test-Path -Path $Path))
-    { 
-    
-        Try 
-        {
-        
-            Start-Process $Path -Credential $Cred 
-
-        }  # End Try
-        Catch [System.Security.Authentication.AuthenticationException]
-        {
-
-            Write-Host "The credentials you entered were incorrect"
-
-        }  # End Catch
-        Catch 
-        {
-
-            $Error[0] 
-
-        }  # End Catch
-
-    }  # End If 
-    Else 
+    Switch ($PSCmdlet.ParameterSetName)
     {
-     
-        throw "$Path could not be found at that location"
+    
+      'Local' {
+    
+                Write-Verbose "Executing $FilePath"
+                If (Test-Path -Path $FilePath)
+                { 
 
-    }  # End Else
+                    Try 
+                    {
+
+                        Start-Process -FilePath $FilePath -Credential $Cred 
+
+                    }  # End Try
+                    Catch [System.Security.Authentication.AuthenticationException]
+                    {
+
+                        Throw "The credentials you entered were incorrect"
+
+                    }  # End Catch
+                    Catch 
+                    {
+
+                        $Error[0] 
+
+                    }  # End Catch
+
+                }  # End If 
+                Else 
+                {
+
+                    Throw "$FilePath could not be found at that location"
+
+                }  # End Else
+                
+      }  # End Local Switch
+     
+      'Remote' {
+     
+                $Bool = $False
+                If ($UseSSL.IsPresent)
+                {
+                
+                    $Bool = $True
+                    
+                }  # End If
+                
+                ForEach ($C in $ComputerName)
+                {
+
+                    Invoke-Command -HideComputerName $C -UseSSL:$Bool -FilePath $FilePath
+
+                }  # End ForEach
+     
+      }  # End Remote Switch
+     
+    }  # End Switch
 
 }  # End PROCESS 
 END 
 {
 
-    Write-Host "Program has been executed"
+    Write-Output "[*] Program has been executed: $FilePath"
 
 }  # End END
 
