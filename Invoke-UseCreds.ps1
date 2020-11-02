@@ -10,16 +10,18 @@ Enter a string containing the domain or workgroup of the user and the username o
 .PARAMETER Passwd
 Enter the string value of the users password    
                
-.PARAMETER Path
+.PARAMETER FilePath
 Defines the location of the application that should execute as the user. Enter a string consisting of the absolute or relative path to the executable
-   
+
+.PARAMETER ComputerName
+Define a single or multiple FQDN's or hostnames. The local file you specify will be executed on the remote devices you specify
 
 .DESCRIPTION
 This function is used to execute an application as another user. This DOES NOT accept command line arugments. This only executes an application.
     
 
 .EXAMPLE
-Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -Path 'C:\Windows\System32\spool\drivers\color\msf.exe'
+Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -FilePath 'C:\Windows\System32\spool\drivers\color\msf.exe'
 # This command executes a msfvenom payload as the user tobor
 
 
@@ -50,77 +52,116 @@ None
 
 #>
 Function Invoke-UseCreds {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='Local')]
         param(
             [Parameter(
                 Mandatory=$True,
                 Position=0,
                 ValueFromPipeline=$False,
                 HelpMessage="Enter the username: ")]
-            [string]$Username,
+            [String]$Username,
+
             [Parameter(
                 Mandatory=$True,
                 Position=1,
                 ValueFromPipeline=$False,
                 HelpMessage="Enter the password: ")]
-            [string]$Passwd,
+            [String]$Passwd,
+
             [Parameter(
                 Mandatory=$True,
                 Position=2,
                 ValueFromPipeline=$False,
                 HelpMessage="Define the path to the executable you want run as this user: ")]
-            [string]$Path)  # End param
+            [String]$FilePath,
+            
+            [Parameter(
+              ParameterSetName='Remote',
+              Mandatory=$False,
+              ValueFromPipeline=$False)]  # End Parameter
+            [String[]]$ComputerName,
+            
+            [Parameter(
+              ParameterSetName='Remote',
+              Mandatory=$False)]  # End Parameter
+            [Switch][Bool]$UseSSL)  # End param
 
 BEGIN 
 {
 
     Write-Verbose "[*] Building authenticated credential..."
 
-    $Passw = ConvertTo-SecureString $Passwd -AsPlainText -Force
-
+    $Passw = ConvertTo-SecureString -String $Passwd -AsPlainText -Force
     $Cred = New-Object -TypeName System.Management.Automation.PSCredential($Username, $Passw)
 
 }  # End BEGIN
 PROCESS 
 {
 
-    Write-Verbose "Executing $Path"
-
-    If (!(Test-Path -Path $Path))
-    { 
-    
-        Try 
-        {
-        
-            Start-Process $Path -Credential $Cred 
-
-        }  # End Try
-        Catch [System.Security.Authentication.AuthenticationException]
-        {
-
-            Write-Host "The credentials you entered were incorrect"
-
-        }  # End Catch
-        Catch 
-        {
-
-            $Error[0] 
-
-        }  # End Catch
-
-    }  # End If 
-    Else 
+    Switch ($PSCmdlet.ParameterSetName)
     {
-     
-        throw "$Path could not be found at that location"
+    
+      'Local' {
+    
+                Write-Verbose "Executing $FilePath"
+                If (Test-Path -Path $FilePath)
+                { 
 
-    }  # End Else
+                    Try 
+                    {
+
+                        Start-Process -FilePath $FilePath -Credential $Cred 
+
+                    }  # End Try
+                    Catch [System.Security.Authentication.AuthenticationException]
+                    {
+
+                        Throw "The credentials you entered were incorrect"
+
+                    }  # End Catch
+                    Catch 
+                    {
+
+                        $Error[0] 
+
+                    }  # End Catch
+
+                }  # End If 
+                Else 
+                {
+
+                    Throw "$FilePath could not be found at that location"
+
+                }  # End Else
+                
+      }  # End Local Switch
+     
+      'Remote' {
+     
+                $Bool = $False
+                If ($UseSSL.IsPresent)
+                {
+                
+                    $Bool = $True
+                    
+                }  # End If
+                
+                ForEach ($C in $ComputerName)
+                {
+
+                    Invoke-Command -HideComputerName $C -UseSSL:$Bool -FilePath $FilePath
+
+                }  # End ForEach
+     
+      }  # End Remote Switch
+     
+    }  # End Switch
 
 }  # End PROCESS 
 END 
 {
 
-    Write-Host "Program has been executed"
+    Write-Output "[*] Program has been executed: $FilePath"
 
 }  # End END
 
