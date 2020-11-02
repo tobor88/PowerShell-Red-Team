@@ -12,7 +12,7 @@ Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0
 # This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
 
 
-.PARAMTER ShellCode
+.PARAMETER ShellCode
 This parameter accepts byte input only. Qutations should not be used around your defined bytes as this will convert your bytes to strings
     
     
