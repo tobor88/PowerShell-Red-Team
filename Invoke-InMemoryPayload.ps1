@@ -1,54 +1,48 @@
 <#
-.NAME
-    Invoke-InMemoryPayload
-    
-    
 .SYNOPSIS
-    Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections.
-    This function was built off of a template from the Offensive Security PWK course.
+Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections. This was built thanks to information from the Offensive Security PWK Course
 
-.SYNTAX
-    Invoke-InMemoryPayload [-ShellCode] <bytes[] shellcode>
-    
 
 .DESCRIPTION
-    This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory.
-    It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
-    
+This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory. It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
 
-.EXAMPLES
-.EXAMPLE 1
-   C:\PS> Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
-   This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
- 
- 
- .PARAMTERS
-    -ShellCode <byte[]>
-        Defines the Class C subnet range to perform the ping sweep
-        Enter a string consisting of 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by 1-3 digits followed by a . followed by a zero
-        Required?                    True
-        Position?                    0
-        Default value                None
-        Accept pipeline input?       false
-        Accept wildcard characters?  false
+
+.EXAMPLE 
+Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
+# This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
+
+
+.PARAMTER ShellCode
+This parameter accepts byte input only. Qutations should not be used around your defined bytes as this will convert your bytes to strings
     
     
 .INPUTS
-    [System.Byte[]]
-    
-    
+[System.Byte[]]
+
+
 .OUTPUTS
-    None
-    
-    
+None
+
+
 .NOTES
-    Author: Rob Osborne
-    Alias: tobor
-    Contact: rosborne@osbornepro.com
-    https://roberthosborne.com
+Author: Rob Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
 #>
-Function Invoke-InMemoryPayload
-{
+Function Invoke-InMemoryPayload {
     [CmdletBinding()]
         param(
             [Parameter(
