@@ -1,17 +1,23 @@
 <#
 .SYNOPSIS
-Encode or Decode Base64 strings.
+This cmdlet is used to Encode or Decode Base64 strings.
+
+
+.DESCRIPTION
+Convert a string of text to or from Base64 format. Pipeline input is accepted in string format. Use the switch parameters Encode or Decode to define which action you wish to perform on your string
 
 
 .PARAMETER Value
-Specifies a string to be encoded or decoded with base64. Enter a string consisting of spaces and special charcters if desired.DESCRIPTION
-
+Defines the string to be encoded or decoded with base64.
 
 .PARAMETER Encode
-This switch is used to tell the cmdlet to encode the base64 string
+This switch parameter is used to tell the cmdlet to encode the base64 string
 
 .PARAMETER Decode
 This switch parameter is used to tell the cmdlet to decode the base64 string
+
+.PARAMETER TextEncoding
+This parameter is used to define the type of Unicode Character encoding to convert with Base64. This value you can be ASCII, BigEndianUnicode, Default, Unicode, UTF32, UTF7, or UTF8. The default value is UTF8
 
 
 .EXAMPLE
@@ -19,8 +25,8 @@ Convert-Base64 -Value 'Hello World!'' -Encode
 # This example encodes "Hello World into Base64 format.
 
 .EXAMPLE
-Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode
-# This example decodes Base64 to a string.
+Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode -Encoding ASCII
+# This example decodes Base64 to a string in ASCII format
     
     
 .NOTES
@@ -29,75 +35,228 @@ Alias: tobor
 Contact: rosborne@osbornepro.com
 
 
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
+
 .INPUTS
-System.String -Value accepts strings from pipeline.
+System.String, -Value accepts strings from pipeline.
 
 
 .OUTPUTS
 System.String
 
 #>
-Function Convert-Base64
-{
-    [CmdletBinding()]
+Function Convert-Base64 {
+    [CmdletBinding(DefaultParameterSetName='Encode')]
         param(
             [Parameter(
                 Mandatory=$True,
                 Position=0,
                 ValueFromPipeline=$True,
                 HelpMessage="Enter a string you wish to encode or decode using Base64. Example: Hello World!")] # End Parameter
-            [string]$Value,
+            [String]$Value,
 
-            [Parameter(Mandatory=$False)]
-            [switch][bool]$Encode,
+            [Parameter(
+                ParameterSetName='Encode',
+                Mandatory=$True)]
+            [Switch][Bool]$Encode,
 
-            [Parameter(Mandatory=$False)]
-            [switch][bool]$Decode) # End param
+            [Parameter(
+                ParameterSetName='Decode',
+                Mandatory=$True)]
+            [Switch][Bool]$Decode,
 
-    If (!($Encode.IsPresent -or $Decode.IsPresent))
+            [Parameter(
+                Mandatory=$False,
+                ValueFromPipeline=$False)]  # End Parameter
+            [ValidateSet('ASCII', 'BigEndianUnicode', 'Default', 'Unicode', 'UTF32', 'UTF7', 'UTF8')]
+            [String]$TextEncoding = 'UTF8'
+        ) # End param
+
+PROCESS 
+{
+
+    Switch ($PSCmdlet.ParameterSetName)
     {
 
-        throw "Switch parameter -Decode or -Encode needs to be defined. "
+        'Encode' {
 
-    } # End If
+            Switch ($TextEncoding)
+            {
 
-    ElseIf ($Encode.IsPresent)
-    {
+                'ASCII' {$StringValue  = [System.Text.Encoding]::ASCII.GetBytes("$Value")}
 
-        $StringValue  = [System.Text.Encoding]::UTF8.GetBytes("$Value")
+                'BigEndianUnicode' {$StringValue  = [System.Text.Encoding]::BigEndianUnicode.GetBytes("$Value")}
 
-        Try
-        {
+                'Default' {$StringValue  = [System.Text.Encoding]::Default.GetBytes("$Value")}
 
-            [System.Convert]::ToBase64String($StringValue)
+                'Unicode' {$StringValue  = [System.Text.Encoding]::Unicode.GetBytes("$Value")}
 
-        } # End Try
-        Catch
-        {
+                'UTF32'  {$StringValue  = [System.Text.Encoding]::UTF32.GetBytes("$Value")}
 
-            throw "String could not be converted to Base64. The value entered is below. `n$Value"
+                'UTF7' {$StringValue  = [System.Text.Encoding]::UTF7.GetBytes("$Value")}
 
-        } # End Catch
+                'UTF8' {$StringValue  = [System.Text.Encoding]::UTF8.GetBytes("$Value")}
 
-    } # End If
-    If ($Decode.IsPresent)
-    {
+            }  # End Switch
 
-        $EncodedValue = [System.Convert]::FromBase64String("$Value")
+            Try
+            {
 
-        Try
-        {
+                [System.Convert]::ToBase64String($StringValue)
 
-            [System.Text.Encoding]::UTF8.GetString($EncodedValue)
+            } # End Try
+            Catch
+            {
 
-        } # End Try
-        Catch
-        {
+                Throw "String could not be converted to Base64. The value entered is below. `n$Value"
+                $Error[0]
 
-            throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+            } # End Catch
+            
+        }  # End Switch Encode
 
-        } # End Catch
+        'Decode' {
+            
+            $EncodedValue = [System.Convert]::FromBase64String("$Value")
 
-    } # End ElseIf
+            Switch ($TextEncoding)
+            {
+
+                'ASCII' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::ASCII.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Switch ASCII
+
+                'BigEndianUnicode' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::BigEndianUnicode.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Switch BigEndianUnicode
+
+                'Default' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::Default.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Switch Default
+
+                'Unicode' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::Unicode.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Switch Unicode
+
+                'UTF32'  {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::UTF32.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Switch UTF32
+
+                'UTF7' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::UTF7.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+                
+                }  # End Swithc UTF7
+
+                'UTF8' {
+                    
+                    Try
+                    {
+
+                        [System.Text.Encoding]::UTF8.GetString($EncodedValue)
+
+                    } # End Try
+                    Catch
+                    {
+
+                        Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
+
+                    } # End Catch
+    
+                }  # End Switch UTF8
+
+            }  # End Switch
+
+        }  # End Switch Decode
+
+    }  # End Switch
+
+}  # End PROCESS
 
 } # End Function Convert-Base64
