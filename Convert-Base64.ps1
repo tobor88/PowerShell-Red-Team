@@ -25,7 +25,7 @@ Convert-Base64 -Value 'Hello World!'' -Encode
 # This example encodes "Hello World into Base64 format.
 
 .EXAMPLE
-Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode -Encoding ASCII
+Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode -TextEncoding ASCII
 # This example decodes Base64 to a string in ASCII format
     
     
