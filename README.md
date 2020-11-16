@@ -175,4 +175,19 @@ $UserNames | Invoke-AzurePasswordSpray -Passwd "Password123!" -RoundRobin
 # This Example tests the passwords defined against the list of usernames defined in a Round Robin fashion
 ```
 
+- Test-KerberosDoubleHop is used to discover Computers, Users, and/or Administrator accounts who are vulberable to a Kerberos Double Hop
+```powershell
+Test-KerberosDoubleHop -All
+# This example checks for and displays Computers, Users, and Admin AD Objects vulnerable to a Kerberos Double Hop on the domain controller you are logged into
+
+Test-KerberosDoubleHop -Server DC01.domain.com -UserResults
+# This example uses WinRM to display User AD Objects vulnerable to a Kerberos Double Hop on the remote domain controller DC01.domain.com
+
+Test-KerberosDoubleHop -Server DC01.domain.com -UseSSL -AdminResults
+# This example uses WinRM over HTTPS to display Admin AD Objects vulnerable to a Kerberos Double Hop on the remote domain controller DC01.domain.com
+
+Test-KerberosDoubleHop -ComputerResults -AdminResults
+# This example checks for and displays Computer and Admin AD Objects vulnerable to a Kerberos Double Hop on the domain controller you are logged into
+```
+
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
