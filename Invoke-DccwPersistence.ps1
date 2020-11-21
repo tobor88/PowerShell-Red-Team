@@ -12,11 +12,11 @@ Specify the absolute or relative path for executable or application you wish to 
 
 
 .EXAMPLE
-Invoke-DccwPersistence -Program "cmd /c start powershell"
+Invoke-DccwPersistence -Program "cmd /c powershell"
 # This example exploits the DCCW UAC bypass method to open PowerShell with administrative privileges
 
 .EXAMPLE
-Invoke-DccwPersistence "cmd /c start mfs.exe" 
+Invoke-DccwPersistence "cmd /c mfs.exe" 
 # This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges
 
 
@@ -55,7 +55,7 @@ Function Invoke-DccwPersistence {
             Mandatory=$False,
             ValueFromPipeLine=$False,
             HelpMessage='Enter an executable you wish to execute to gain privesc. Default value is cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile')]  # End Parameter
-        [String]$Program = "cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile"
+        [String]$Program = "cmd /c powershell -ExecutionPolicy Bypass -NoLogo -NoExit -NoProfile"
     )  # End param
 
 BEGIN 
