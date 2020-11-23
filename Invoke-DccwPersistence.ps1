@@ -55,7 +55,12 @@ Function Invoke-DccwPersistence {
             Mandatory=$False,
             ValueFromPipeLine=$False,
             HelpMessage='Enter an executable you wish to execute to gain privesc. Default value is cmd /c start powershell -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoExit -NoProfile')]  # End Parameter
-        [String]$Program = "cmd /c powershell -ExecutionPolicy Bypass -NoLogo -NoExit -NoProfile"
+        [String]$Program = "cmd",
+
+        [Parameter(
+            Mandatory=$False,
+            ValueFromPipeline=$False)] #  End Parameter
+        [Switch][Bool]$RemoveRegistryValue
     )  # End param
 
 BEGIN 
@@ -143,11 +148,16 @@ PROCESS
 END
 {
 
-    Write-Verbose "Removing Registry Key"
-    If (Test-Path -Path $RegValue)
+    If ($RemoveRegistryValue.IsPresent)
     {
 
-        Remove-Item -Path $RegValue -Recurse -Force
+        Write-Verbose "Removing Registry Key"
+        If (Test-Path -Path $RegValue)
+        {
+
+            Remove-Item -Path $RegValue -Recurse -Force
+
+        }  # End If
 
     }  # End If
     
