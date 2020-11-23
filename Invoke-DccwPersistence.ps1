@@ -12,15 +12,15 @@ Specify the absolute or relative path for executable or application you wish to 
 
 
 .EXAMPLE
-Invoke-DccwPersistence -Program "cmd /c powershell"
-# This example exploits the DCCW UAC bypass method to open PowerShell with administrative privileges
+Invoke-DccwPersistence -Program "cmd"
+# This example exploits the DCCW UAC bypass method to open Commnad Prompt with administrative privileges
 
 .EXAMPLE
-Invoke-DccwPersistence "cmd /c mfs.exe" 
+Invoke-DccwPersistence "cmd /c powershell -noexit -nop -exec bypass -c C:\Temp\msf.exe" 
 # This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges
 
 
- .NOTES
+.NOTES
 Author: Robert H. Osborne
 Alias: tobor
 Contact: rosborne@osbornepro.com
