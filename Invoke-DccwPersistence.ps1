@@ -10,6 +10,9 @@ A new registry key will be created at "HKLM\SOFTWARE\Microsoft\Windows NT\Curren
 .PARAMETER Program
 Specify the absolute or relative path for executable or application you wish to run with elevated permissions. Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local  computer or in a directory that the local computer can access.
 
+.PARAMETER RemoveRegistryValue
+This parameter is used to delete the registry value created after the cmdlet finishes its execution.
+
 
 .EXAMPLE
 Invoke-DccwPersistence -Program "cmd"
