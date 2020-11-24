@@ -2521,7 +2521,7 @@ Function Start-SimpleHTTPServer {
                 <td align="left"><a href="$($FileURL)">$($File.Name)</a></td>
                 </tr>
 "@
-                }. # End ForEach
+                } # End ForEach
 @"
                 </table>
                 <hr>

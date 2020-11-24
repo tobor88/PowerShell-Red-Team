@@ -150,7 +150,7 @@ Function Start-SimpleHTTPServer {
                 <td align="left"><a href="$($FileURL)">$($File.Name)</a></td>
                 </tr>
 "@
-                }. # End ForEach
+                } # End ForEach
 @"
                 </table>
                 <hr>
@@ -175,7 +175,7 @@ Function Start-SimpleHTTPServer {
 
             }  # End Else
             
-        }  # End Try
+        } # End Try
         Catch [System.UnauthorizedAccessException]
         {
 
