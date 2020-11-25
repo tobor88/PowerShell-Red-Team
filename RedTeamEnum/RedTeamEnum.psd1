@@ -18,7 +18,7 @@ ModuleVersion = '1.2'
 # CompatiblePSEditions = @()
 
 # ID used to uniquely identify this module
-GUID = 'cf97d5b5-0c63-4675-aae0-692001046cb1'
+GUID = '5c62d5b4-9cb5-478e-88bf-a57e8000b04c'
 
 # Author of this module
 Author = 'Robert H. Osborne'
@@ -69,10 +69,10 @@ ProcessorArchitecture = 'None'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan', 'Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit', 'Convert-SID', 'Test-BruteForceCredentials', 'Test-BruteForceZip', 'Get-NetworkShareInfo', 'Get-ClearTextPassword', 'Start-Listener', 'Start-Bind', 'Invoke-ReversePowerShell', 'Invoke-AzurePasswordSpray', 'Test-KerberosDoubleHop', 'Invoke-DccwPersistence', 'Enable-RDP','Test-BruteLocalUserCredential')
+FunctionsToExport = @('Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan', 'Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit', 'Convert-SID', 'Test-BruteForceCredentials', 'Test-BruteForceZip', 'Get-NetworkShareInfo', 'Get-ClearTextPassword', 'Start-Listener', 'Start-Bind', 'Invoke-ReversePowerShell', 'Invoke-AzurePasswordSpray', 'Test-KerberosDoubleHop', 'Invoke-DccwPersistence', 'Enable-RDP')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan', 'Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit', 'Convert-SID', 'Test-BruteForceCredentials', 'Test-BruteForceZip', 'Get-NetworkShareInfo', 'Get-ClearTextPassword', 'Start-Listener', 'Start-Bind', 'Invoke-ReversePowerShell', 'Invoke-AzurePasswordSpray', 'Test-KerberosDoubleHop', 'Invoke-DccwPersistence', 'Enable-RDP','Test-BruteLocalUserCredential')
+CmdletsToExport = @('Convert-Base64', 'Get-LdapInfo', 'Invoke-PingSweep', 'Invoke-PortScan', 'Start-SimpleHTTPServer', 'Test-PrivEsc', 'Get-InitialEnum', 'Get-AntiVirusProduct', 'Invoke-FodHelperBypass', 'Invoke-InMemoryPayload', 'Invoke-UseCreds', 'Invoke-UnquotedServicePathExploit', 'Convert-SID', 'Test-BruteForceCredentials', 'Test-BruteForceZip', 'Get-NetworkShareInfo', 'Get-ClearTextPassword', 'Start-Listener', 'Start-Bind', 'Invoke-ReversePowerShell', 'Invoke-AzurePasswordSpray', 'Test-KerberosDoubleHop', 'Invoke-DccwPersistence', 'Enable-RDP')
 
 # Variables to export from this module
 VariablesToExport = '*'
