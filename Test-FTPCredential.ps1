@@ -86,7 +86,7 @@ Function Test-FTPCredential {
                 Position=2,
                 Mandatory=$True,
                 ValueFromPipeline=$False,
-                HelpMessage="`n[H] Define the passwords you wish to attempt authentication with. `n[E] ftp.domain.com")]  # End Parameter
+                HelpMessage="`n[H] Define the passwords you wish to attempt authentication with. `n[E] 'Passw0rd1!','Password123!'")]  # End Parameter
             [String[]]$Passwd,
 
             [Parameter(

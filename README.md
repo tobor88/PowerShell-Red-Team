@@ -218,14 +218,25 @@ ForEach $U in $Users) {Test-BruteLocalUserCredential -Username $U -Passwd (Get-C
 ```
 - Test-FTPCredential is used to brute force passwords against an FTP or FTP over SSL server
 ```powershell
-Test-FTPCredential -Server FTP.domian.com -Username ftpuser -Passwd 'Password123','Passw0rd1!','password123!' -Port 21
+Test-FTPCredential -Server FTP.domian.com -Username ftpuser -Passwd 'Password123','Passw0rd1!','password123!' -Port 21 -Protocol FTP
 # This example tests the 3 defined passwords against the ftpuser account on the FTP server located on FTP.domain.com over port 21
 
-Test-FTPCredential -Server FTP.domian.com -Username ftpuser,admin -Passwd 'Password123','Passw0rd1!','password123!' -Seconds 60
+Test-FTPCredential -Server FTP.domian.com -Username ftpuser,admin -Passwd 'Password123','Passw0rd1!','password123!' -Protocol FTPS -Seconds 60
 # This example tests the 3 defined passwords against the admin and ftpuser account on the FTP server located on FTP.domain.com over port 21, waiting 60 seconds in between failed attempts
 
 Test-FTPCredential -Server FTP.domian.com -Username (Get-Content -Path C:\Temp\userlist.txt) -Passwd (Get-Content -Path C:\Temp\passlist.txt)
 # This example tests the passwords in C:\Temp\passlist.txt against all users defined in C:\Temp\userlist.txt file against the FTP server located at FTP.domain.com over port 21, waiting 1 seconds in between failed attempts
 ```
 
+- Test-SQLCredential is used to brute force passwords against a local or remote SQL Server
+```powershell
+Test-SQLCredential -Server sql.domian.com -Username sa -Passwd 'Password123','Passw0rd1!','password123!' -Port 1433
+# This example tests the 3 defined passwords against the sa account on the SQL server located on sql.domain.com over port 1433
+
+Test-SQLCredential -Server sql.domian.com -Username sa,admin -Passwd 'Password123','Passw0rd1!','password123!' -Seconds 60
+# This example tests the 3 defined passwords against the admin and sa account on the SQL server located on sql.domain.com over port 1433, waiting 60 seconds in between failed attempts
+
+Test-SQLCredential -Server sql.domian.com -Username (Get-Content -Path C:\Temp\userlist.txt) -Passwd (Get-Content -Path C:\Temp\passlist.txt)
+# This example tests the passwords in C:\Temp\passlist.txt against all users defined in C:\Temp\userlist.txt file against the SQL server located at sql.domain.com over port 1433, waiting 1 seconds in between failed attempts
+```
 For more information on Start-Listener, Start-Bind, and Invoke-ReversePowerShell see [https://github.com/tobor88/ReversePowerShell](https://github.com/tobor88/ReversePowerShell)
