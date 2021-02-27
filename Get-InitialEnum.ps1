@@ -298,13 +298,14 @@ Get-CimInstance -ClassName Win32_Share
     Get-CimInstance -Class Win32_SerialPort | Select-Object -Property Name, Description, DeviceID
     $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
     $Connections = $TCPProperties.GetActiveTcpListeners()
+    $OutputObj = @()
     ForEach ($Connection in $Connections)
     {
         If ($Connection.address.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }
-        $OutputObj = New-Object -TypeName PSobject -Property @{LocalAddress=$Connection.Address; ListeningPort=$Connection.Port; AddressType=$IPType}
-        $OutputObj
+        $OutputObj += New-Object -TypeName PSobject -Property @{LocalAddress=$Connection.Address; ListeningPort=$Connection.Port; AddressType=$IPType}
 
     }  # End ForEach
+    $OutputObj | Format-Table -AutoSize
 
     Write-Output "=================================`n|  ESTABLISHED CONNECTIONS      |`n================================="
     $OutputObj = @()
