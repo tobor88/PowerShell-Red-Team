@@ -142,28 +142,28 @@ Function Invoke-AzureEnum {
             Write-Output "--------------------------------------------------" | Add-Content -Path $Path -PassThru
 
         }  # End ForEach
-
-        $AzureVMs = Get-AzVM
-        If ($AzureVMs)
-        {
-
-            Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-            Write-Output "|                     AZURE VMs                      |" | Add-Content -Path $Path -PassThru
-            Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-
-            $AzureVMs | ForEach-Object { Get-AzVM -Name $_.Name } | Out-String | Add-Content -Path $Path -PassThru
-
-        }  # End If
+        
+    }  # End If
+    
+    $AzureVMs = Get-AzVM
+    If ($AzureVMs)
+    {
 
         Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|             AZURE Virtual Network Info             |" | Add-Content -Path $Path -PassThru
+        Write-Output "|                     AZURE VMs                      |" | Add-Content -Path $Path -PassThru
         Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Get-AzVirtualNetwork | Out-String | Add-Content -Path $Path -PassThru
-        Get-AzPublicIpAddress | Out-String | Add-Content -Path $Path -PassThru
-        Get-AzExpressRouteCircuit | Out-String | Add-Content -Path $Path -PassThru
-        Get-AzVpnConnection | Out-String | Add-Content -Path $Path -PassThru
 
-    }  # End Else
+        $AzureVMs | ForEach-Object { Get-AzVM -Name $_.Name } | Out-String | Add-Content -Path $Path -PassThru
+
+    }  # End If
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|             AZURE Virtual Network Info             |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Get-AzVirtualNetwork | Out-String | Add-Content -Path $Path -PassThru
+    Get-AzPublicIpAddress | Out-String | Add-Content -Path $Path -PassThru
+    Get-AzExpressRouteCircuit | Out-String | Add-Content -Path $Path -PassThru
+    Get-AzVpnConnection | Out-String | Add-Content -Path $Path -PassThru
 
     $AzAdApplication = Get-AzAdApplication
     If ($AzAdApplication)
