@@ -89,62 +89,59 @@ Function Invoke-AzureEnum {
         Write-Output "[*] This Azure Tenant does not have any Azure subscriptions to enumerate" | Add-Content -Path $Path -PassThru
 
     }  # End If
-    Else
+
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|               AZURE SUBSCRIPTIONS                  |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    $AzSubscription = Get-AzSubscription
+    $AzSubscription | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|                 AZURE RESOURCE                     |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    $AzureResources = Get-AzResource
+    $AzureResources | Sort-Object -Property Location,ResourceGroupName | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|                 AZURE GROUPS                       |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    $AzureResourceGroups = Get-AzResourceGroup | Sort-Object -Property Location,ResourceGroupName | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|                 AZURE STORAGE ACCOUNTS             |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    $AzureResourceGroups | ForEach-Object { Get-AzStorageAccount -ResourceGroupName $_.ResourceGroupName } | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    Write-Output "|                   AZURE WEB APPS                   |" | Add-Content -Path $Path -PassThru
+    Write-Output "======================================================" | Add-Content -Path $Path -PassThru
+    $AzureResourceGroups | ForEach-Object { Get-AzWebApp -ResourceGroupName $_.ResourceGroupName } | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+
+    $AzureSQL = Get-AzSQLServer
+    If ($AzureSQL)
     {
 
         Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|               AZURE SUBSCRIPTIONS                  |" | Add-Content -Path $Path -PassThru
+        Write-Output "|                 AZURE SQL SERVERS                  |" | Add-Content -Path $Path -PassThru
         Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        $AzSubscription = Get-AzSubscription -SubscriptionName $AzureContexts.SubscriptionName
-        $AzSubscription | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
+        $AzureSQL | Out-String | Add-Content -Path $Path -PassThru
 
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|                 AZURE RESOURCE                     |" | Add-Content -Path $Path -PassThru
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        $AzureResources = Get-AzResource
-        $AzureResources | Sort-Object -Property Location,ResourceGroupName | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
-
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|                 AZURE GROUPS                       |" | Add-Content -Path $Path -PassThru
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        $AzureResourceGroups = Get-AzResourceGroup | Sort-Object -Property Location,ResourceGroupName | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
-
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|                 AZURE STORAGE ACCOUNTS             |" | Add-Content -Path $Path -PassThru
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        $AzureResourceGroups | ForEach-Object { Get-AzStorageAccount -ResourceGroupName $_.ResourceGroupName } | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
-
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        Write-Output "|                   AZURE WEB APPS                   |" | Add-Content -Path $Path -PassThru
-        Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-        $AzureResourceGroups | ForEach-Object { Get-AzWebApp -ResourceGroupName $_.ResourceGroupName } | Format-Table -AutoSize | Out-String | Add-Content -Path $Path -PassThru
-
-        $AzureSQL = Get-AzSQLServer
-        If ($AzureSQL)
+        ForEach ($Asql in $AzureSQL)
         {
 
-            Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-            Write-Output "|                 AZURE SQL SERVERS                  |" | Add-Content -Path $Path -PassThru
-            Write-Output "======================================================" | Add-Content -Path $Path -PassThru
-            $AzureSQL | Out-String | Add-Content -Path $Path -PassThru
+            Write-Output "--------------- Azure SQL Database ---------------" | Add-Content -Path $Path -PassThru
+            Get-AzSqlDatabase -ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
 
-            ForEach ($Asql in $AzureSQL)
-            {
+            Write-Output "------------ Azure SQL Firewall Rules ------------" | Add-Content -Path $Path -PassThru
+            Get-AzSqlServerFirewallRule –ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
 
-                Write-Output "--------------- Azure SQL Database ---------------" | Add-Content -Path $Path -PassThru
-                Get-AzSqlDatabase -ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
+            Write-Output "---------------- Azure SQL Admins ----------------" | Add-Content -Path $Path -PassThru
+            Get-AzSqlServerActiveDirectoryAdminstrator -ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
 
-                Write-Output "------------ Azure SQL Firewall Rules ------------" | Add-Content -Path $Path -PassThru
-                Get-AzSqlServerFirewallRule –ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
+            Write-Output "--------------------------------------------------" | Add-Content -Path $Path -PassThru
 
-                Write-Output "---------------- Azure SQL Admins ----------------" | Add-Content -Path $Path -PassThru
-                Get-AzSqlServerActiveDirectoryAdminstrator -ServerName $Asql.ServerName -ResourceGroupName $Asql.ResourceGroupName | Out-String | Add-Content -Path $Path -PassThru
-
-                Write-Output "--------------------------------------------------" | Add-Content -Path $Path -PassThru
-
-            }  # End ForEach
-
-        }  # End If
+        }  # End ForEach
 
         $AzureVMs = Get-AzVM
         If ($AzureVMs)
