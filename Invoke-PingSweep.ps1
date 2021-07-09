@@ -53,7 +53,7 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
@@ -110,7 +110,7 @@ Function Invoke-PingSweep {
         For ($i = 0; $i -le $End; $i++)
         {
 
-            [string]$IP = "$ClassC.$i"
+            [String]$IP = "$ClassC.$i"
 
             # When Windows PowerShell is executing the command and source value is not defined
             If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -like $Null) -and ($IP -notlike $LocalIPAddress))
