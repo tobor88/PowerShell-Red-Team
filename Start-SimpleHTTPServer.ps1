@@ -14,10 +14,10 @@ The port parameter is for easily defining what port the http server should liste
 .EXAMPLE
 Start-SimpleHTTPServer
 # This example starts an HTTP server on port 8000 in the current directory.
-    
+
 .EXAMPLE
 Start-SimpleHTTPServer -Port 80
-# This example starts an HTTP server on port 80 in the current directory.   
+# This example starts an HTTP server on port 80 in the current directory.
 
 
 .NOTES
@@ -28,13 +28,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -82,7 +82,7 @@ Function Start-SimpleHTTPServer {
         [array]$Content = @()
 
         $LocalPath = $RequestUrl.LocalPath
-        
+
         Try
         {
 
@@ -92,7 +92,7 @@ Function Start-SimpleHTTPServer {
 
             If($RequestedItem.Attributes -Match "Directory")
             {
-            
+
                 Function Get-DirectoryContent {
                     [CmdletBinding(SupportsShouldProcess = $True)]
                         param (
@@ -170,11 +170,11 @@ Function Start-SimpleHTTPServer {
             {
 
                 $Content = [System.IO.File]::ReadAllBytes($FullPath)
-                
+
                 $Response.ContentType = [System.Web.MimeMapping]::GetMimeMapping($FullPath)
 
             }  # End Else
-            
+
         } # End Try
         Catch [System.UnauthorizedAccessException]
         {

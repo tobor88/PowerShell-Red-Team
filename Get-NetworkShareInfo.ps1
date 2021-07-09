@@ -17,7 +17,7 @@ This parameter can be used to define a remote computer(s) name to check for the 
 .EXAMPLE
 Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL
 # The above example returns information on the network shares NETLOGON and SYSVOL if they exist on the local machine
-    
+
 .EXAMPLE
 Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL,C$ -ComputerName DC01.domain.com, DC02.domain.com, 10.10.10.1
 # The above example returns share info on NETLOGON, SYSVOL, and C$ if they exist on 3 remote devices
@@ -31,13 +31,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -82,7 +82,7 @@ BEGIN
     {
 
         $ComputerName = $env:COMPUTERNAME
-        
+
     }   # End If
 
 }  # End BEGIN

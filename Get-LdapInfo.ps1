@@ -230,13 +230,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 

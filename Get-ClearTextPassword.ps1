@@ -8,7 +8,7 @@ Return cached passwords for the current user, WiFi passwords, SNMP passwords, an
 
 
 .PARAMETER All
-This switch parameter indicates you want to return all stored and saved credentials. 
+This switch parameter indicates you want to return all stored and saved credentials.
 
 .PARAMETER AutoLogon
 This switch parameter indicates you want to retrieve the autologon credentials
@@ -40,13 +40,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -153,9 +153,9 @@ Function Get-ClearTextPassword {
 
                 Get-Content -Path $PassFile | Select-String -Pattern "Password"
 
-            }  # End If 
+            }  # End If
 
-        }  # End ForEach 
+        }  # End ForEach
 
     }  # End If
 

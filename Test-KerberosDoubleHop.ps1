@@ -1,4 +1,3 @@
-@@ -1,307 +0,0 @@
 <#
 .SYNOPSIS
 This cmdlet is for finding AD Objects that are vulnerable to Kerberos Double Hop Vulnerability
@@ -60,14 +59,14 @@ None
 
 .LINK
 https://roberthosborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.hackthebox.eu/profile/52286
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 #>
 Function Test-KerberosDoubleHop {
     [CmdletBinding(DefaultParameterSetName='Local')]

@@ -25,13 +25,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -71,7 +71,7 @@ Function Test-BruteForceZipPassword {
 
     ForEach ($P in $Passwords)
     {
-        
+
         Write-Verbose "Attempting password $P"
 
         $Attempt = & "$ZipExe" e "$Path" -p"$P" -y
@@ -79,25 +79,25 @@ Function Test-BruteForceZipPassword {
         If ($Attempt -Contains "Everything is Ok")
         {
 
-            Try 
+            Try
             {
 
                 Write-Host "SUCCESS: $P" -ForegroundColor Green
 
             }  # End Try
-            Catch 
+            Catch
             {
 
                 Write-Output "SUCCESS: $P"
 
             }  # End Catch
-            
+
             $Result = 'False'
 
         } # Brute If
-        Else 
+        Else
         {
-            
+
             $Failed = 'True'
 
         }  # End Else

@@ -7,7 +7,7 @@ This cmdlet is used to perform a pingsweep of a defiend subnet.
 This cmdlet is used to perform a ping sweep of a defined subnet. Executioner is able to define the start and end IP range to use.DESCRIPTION Executioner is also able to define a source to mask where the ping sweep is coming from.
 
 
-.EXAMPLES
+.EXAMPLE
 Invoke-PingSweep -Subnet 192.168.1.0 -Start 1 -End 254 -Count 2 -Source Multiple
 # This command starts a ping sweep from 192.168.1.1 through 192.168.1.254. It sends two pings to each address. It sends each ping from a random source address.
 
@@ -26,13 +26,13 @@ Defines the Class C subnet range to perform the ping sweep. Enter a string consi
 .PARAMETER Start
 Defines the start IPv4 address the ping sweep should begin the sweep from.
 
-.PARAMETER End 
+.PARAMETER End
 Defines the end IPv4 address the ping sweep should end at.
 
 .PARAMETER Count
 Defines how many ICMP ping requests should be sent to each host's IPv4 address
 
-.PARAMETER Source 
+.PARAMETER Source
 Defines whether you want to mask the IP address you are pinging from.
 
 
@@ -59,7 +59,7 @@ https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 #>
@@ -159,7 +159,7 @@ Function Invoke-PingSweep {
 
                         $SourceIP = "$ClassC.$x"
 
-                        # Uncomment the below line if you wish to see the source ip the ping is being sent from 
+                        # Uncomment the below line if you wish to see the source ip the ping is being sent from
                         # Write-Host "Sending ping from $SourceIP to $IP"
 
                         Try

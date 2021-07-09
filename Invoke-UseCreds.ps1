@@ -4,12 +4,12 @@ This cmdlet is for easily using credentials to execute a program. PowerShell can
 
 
 .PARAMETER Username
-Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.    
+Enter a string containing the domain or workgroup of the user and the username or in some cases just the username.
 
-               
+
 .PARAMETER Passwd
-Enter the string value of the users password    
-               
+Enter the string value of the users password
+
 .PARAMETER FilePath
 Defines the location of the application that should execute as the user. Enter a string consisting of the absolute or relative path to the executable
 
@@ -18,7 +18,7 @@ Define a single or multiple FQDN's or hostnames. The local file you specify will
 
 .DESCRIPTION
 This function is used to execute an application as another user. This DOES NOT accept command line arugments. This only executes an application.
-    
+
 
 .EXAMPLE
 Invoke-UseCreds -Username 'OsbornePro\tobor' -Passwd 'P@ssw0rd1!' -FilePath 'C:\Windows\System32\spool\drivers\color\msf.exe'
@@ -33,20 +33,20 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
-    
-    
+
+
 .INPUTS
 [System.String]
-    
-    
+
+
 .OUTPUTS
 None
 
@@ -74,19 +74,19 @@ Function Invoke-UseCreds {
                 ValueFromPipeline=$False,
                 HelpMessage="Define the path to the executable you want run as this user: ")]
             [String]$FilePath,
-            
+
             [Parameter(
               ParameterSetName='Remote',
               Mandatory=$False,
               ValueFromPipeline=$False)]  # End Parameter
             [String[]]$ComputerName,
-            
+
             [Parameter(
               ParameterSetName='Remote',
               Mandatory=$False)]  # End Parameter
             [Switch][Bool]$UseSSL)  # End param
 
-BEGIN 
+BEGIN
 {
 
     Write-Verbose "[*] Building authenticated credential..."
@@ -95,22 +95,22 @@ BEGIN
     $Cred = New-Object -TypeName System.Management.Automation.PSCredential($Username, $Passw)
 
 }  # End BEGIN
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
     {
-    
+
       'Local' {
-    
+
                 Write-Verbose "Executing $FilePath"
                 If (Test-Path -Path $FilePath)
-                { 
+                {
 
-                    Try 
+                    Try
                     {
 
-                        Start-Process -FilePath $FilePath -Credential $Cred 
+                        Start-Process -FilePath $FilePath -Credential $Cred
 
                     }  # End Try
                     Catch [System.Security.Authentication.AuthenticationException]
@@ -119,46 +119,46 @@ PROCESS
                         Throw "The credentials you entered were incorrect"
 
                     }  # End Catch
-                    Catch 
+                    Catch
                     {
 
-                        $Error[0] 
+                        $Error[0]
 
                     }  # End Catch
 
-                }  # End If 
-                Else 
+                }  # End If
+                Else
                 {
 
                     Throw "$FilePath could not be found at that location"
 
                 }  # End Else
-                
+
       }  # End Local Switch
-     
+
       'Remote' {
-     
+
                 $Bool = $False
                 If ($UseSSL.IsPresent)
                 {
-                
+
                     $Bool = $True
-                    
+
                 }  # End If
-                
+
                 ForEach ($C in $ComputerName)
                 {
 
                     Invoke-Command -HideComputerName $C -UseSSL:$Bool -FilePath $FilePath
 
                 }  # End ForEach
-     
+
       }  # End Remote Switch
-     
+
     }  # End Switch
 
-}  # End PROCESS 
-END 
+}  # End PROCESS
+END
 {
 
     Write-Output "[*] Program has been executed: $FilePath"

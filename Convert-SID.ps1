@@ -14,7 +14,7 @@ If the SID parameter value is specified this cmdlet will result in the username 
 $Pipe = New-Object PSObject -Property @{SID='S-1-5-21-2860287465-2011404039-792856344-500'} ; $Pipe | Convert-SID
 # This example uses the pipeline to convert an SID to a username
 
-.EXAMPLE 
+.EXAMPLE
 Convert-SID -Username 'j.smith'
 # This example gets the SID for j.smith
 
@@ -39,13 +39,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 

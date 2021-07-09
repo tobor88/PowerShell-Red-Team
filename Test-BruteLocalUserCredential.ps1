@@ -36,13 +36,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -78,16 +78,16 @@ Function Test-BruteLocalUserCredential {
 
     Write-Verbose "Adding required .NET method for Account Management"
 
-    Add-Type -AssemblyName System.DirectoryServices.AccountManagement 
+    Add-Type -AssemblyName System.DirectoryServices.AccountManagement
     $Type = [DirectoryServices.AccountManagement.ContextType]::Machine
     $Attempt = [DirectoryServices.AccountManagement.PrincipalContext]::New($Type)
 
     ForEach ($P in $Passwd)
     {
 
-        Try 
-        { 
-            
+        Try
+        {
+
             If (!($Attempt.ValidateCredentials($Username,$P)))
             {
 
@@ -97,33 +97,33 @@ Function Test-BruteLocalUserCredential {
             Else
             {
 
-                Write-Output "[*] SUCCESS: However this user does not have Sign In permissions" 
+                Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
                 $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
             }  # End Else
 
             If ($P -eq $Final)
             {
-                
+
                 Write-Output "[*] None of the specified credentials were successful"
 
             }  # End If
-        
+
         }  # End Try
         Catch [UnauthorizedAccessException]
-        { 
-             
+        {
+
             Write-Verbose "FAILURE: $Username : $P"
-        
+
         }  # End Catch Exception
-        Catch 
-        { 
-            
-            Write-Output "[*] SUCCESS: However this user does not have Sign In permissions" 
+        Catch
+        {
+
+            Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
             $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
         }  # End Catch
-        Finally 
+        Finally
         {
 
             If ($Result)

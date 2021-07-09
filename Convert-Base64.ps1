@@ -27,8 +27,8 @@ Convert-Base64 -Value 'Hello World!'' -Encode
 .EXAMPLE
 Convert-Base64 -Value 'SGVsbG8gV29ybGQh' -Decode -TextEncoding ASCII
 # This example decodes Base64 to a string in ASCII format
-    
-    
+
+
 .NOTES
 Author: Robert H. Osborne
 Alias: tobor
@@ -38,13 +38,13 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://powershell.org/2020/11/writing-your-own-powershell-functions-cmdlets/
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -83,7 +83,7 @@ Function Convert-Base64 {
             [String]$TextEncoding = 'UTF8'
         ) # End param
 
-PROCESS 
+PROCESS
 {
 
     Switch ($PSCmdlet.ParameterSetName)
@@ -123,18 +123,18 @@ PROCESS
                 $Error[0]
 
             } # End Catch
-            
+
         }  # End Switch Encode
 
         'Decode' {
-            
+
             $EncodedValue = [System.Convert]::FromBase64String("$Value")
 
             Switch ($TextEncoding)
             {
 
                 'ASCII' {
-                    
+
                     Try
                     {
 
@@ -147,11 +147,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch ASCII
 
                 'BigEndianUnicode' {
-                    
+
                     Try
                     {
 
@@ -164,11 +164,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch BigEndianUnicode
 
                 'Default' {
-                    
+
                     Try
                     {
 
@@ -181,11 +181,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch Default
 
                 'Unicode' {
-                    
+
                     Try
                     {
 
@@ -198,11 +198,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch Unicode
 
                 'UTF32'  {
-                    
+
                     Try
                     {
 
@@ -215,11 +215,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Switch UTF32
 
                 'UTF7' {
-                    
+
                     Try
                     {
 
@@ -232,11 +232,11 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-                
+
                 }  # End Swithc UTF7
 
                 'UTF8' {
-                    
+
                     Try
                     {
 
@@ -249,7 +249,7 @@ PROCESS
                         Throw "Base64 entered was not in a correct format. The value received is below. `n$Value"
 
                     } # End Catch
-    
+
                 }  # End Switch UTF8
 
             }  # End Switch

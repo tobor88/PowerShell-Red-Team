@@ -37,7 +37,7 @@ Test-BruteForceCredentials -ComputerName DC01.domain.com -UseSSL -Username 'admi
 # This example will test the one password defined against both the admin and administrator users on the remote computer DC01.domain.com using WinRM over HTTPS with a time interval of 5 minutes between each attempt
 
 .EXAMPLE
-Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt 
+Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Temp\users.txt -PassFile C:\Temp\rockyou.txt
 # This example will test every password in rockyou.txt against every username in the users.txt file without any pause between tried attempts
 
 
@@ -49,13 +49,13 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://roberthsoborne.com
-https://osbornepro.com
+https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
-https://www.youracclaim.com/users/roberthosborne/badges
+https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 
@@ -65,7 +65,7 @@ System.String, System,Array
 
 .OUTPUTS
 PSCustomObject
-		
+
 #>
 Function Test-BruteForceCredentials {
     [CmdletBinding()]
@@ -114,7 +114,7 @@ Function Test-BruteForceCredentials {
             )]  # End Parameter
             [String]$PassFile)  # End param
 
-    
+
     If ($PSBoundParameters.Keys -eq 'Username')
     {
 
@@ -125,17 +125,17 @@ Function Test-BruteForceCredentials {
     }  # End If
     ElseIf ($PSBoundParameters.Keys -eq 'UserFile')
     {
-        
+
         Write-Verbose "UserFile ParameterSet being used"
 
         $UserList = Get-Content -Path $UserFile
-        ForEach ($User in $UserList) 
+        ForEach ($User in $UserList)
         {
-            
+
             $UserList += $User
-        
+
         }  # End ForEach
-            
+
 
     }  # End ElseIf
 
@@ -154,43 +154,43 @@ Function Test-BruteForceCredentials {
         Write-Verbose "PassFile ParameterSet being used"
 
         $PassList = Get-Content -Path $PassFile
-        ForEach ($P in $PassList) 
+        ForEach ($P in $PassList)
         {
-            
+
             $Passwd += $P
-            
+
         }  # End ForEach
 
 
     }  # End ElseIf
 
-    ForEach ($U in $UserList) 
+    ForEach ($U in $UserList)
     {
 
         Write-Verbose "Testing passwords for $U"
 
-        ForEach ($P in $PassList) 
+        ForEach ($P in $PassList)
         {
-              
+
             $Error.Clear()
-        
+
             $Credentials = @()
-          
+
             $SecurePassword = ConvertTo-SecureString -String $P -AsPlainText -Force
             $AttemptCredentials = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecurePassword)
-                
+
             If ($UseSSL.IsPresent)
             {
-                
+
                 If ($PSBoundParameters.Keys -eq "SleepSeconds")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepSeconds
 
                 }  # End If
                 ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepMinutes
 
                 }  # End ElseIf
@@ -198,18 +198,18 @@ Function Test-BruteForceCredentials {
                 $Result = Test-WSMan -UseSSL -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
 
             }  # End If
-            Else 
+            Else
             {
-        
+
                 If ($PSBoundParameters.Keys -eq "SleepSeconds")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepSeconds
 
                 }  # End If
                 ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
                 {
-                    
+
                     Start-Sleep -Seconds $SleepMinutes
 
                 }  # End ElseIf
@@ -218,27 +218,27 @@ Function Test-BruteForceCredentials {
 
             }  # End Else
 
-           If ($Null -eq $Result) 
+           If ($Null -eq $Result)
            {
-        
+
                 Write-Verbose "[*] Testing Password: $P = Failed"
-        
-            }  # End If 
-            Else 
+
+            }  # End If
+            Else
             {
-        
+
 
                 $Credentials += "USER: $U`nPASS: $P`n"
 
                 Write-Output "SUCCESS: `n$Credentials`n"
-                
-            }  # End Else       
-        
+
+            }  # End Else
+
         } # ForEach
 
     }  # End ForEach
 
-    If ($Null -eq $Credentials) 
+    If ($Null -eq $Credentials)
     {
 
         Write-Output "FAILED: None of the defined passwords were found to be correct"
