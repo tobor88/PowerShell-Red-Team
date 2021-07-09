@@ -7,7 +7,7 @@ This cmdlet is used to perform a pingsweep of a defiend subnet.
 This cmdlet is used to perform a ping sweep of a defined subnet. Executioner is able to define the start and end IP range to use.DESCRIPTION Executioner is also able to define a source to mask where the ping sweep is coming from.
 
 
-.EXAMPLES
+.EXAMPLE
 Invoke-PingSweep -Subnet 192.168.1.0 -Start 1 -End 254 -Count 2 -Source Multiple
 # This command starts a ping sweep from 192.168.1.1 through 192.168.1.254. It sends two pings to each address. It sends each ping from a random source address.
 
@@ -110,7 +110,7 @@ Function Invoke-PingSweep {
         For ($i = 0; $i -le $End; $i++)
         {
 
-            [string]$IP = "$ClassC.$i"
+            [String]$IP = "$ClassC.$i"
 
             # When Windows PowerShell is executing the command and source value is not defined
             If (($PsVersionTable.PSEdition -ne 'Core') -and ($Source -like $Null) -and ($IP -notlike $LocalIPAddress))
