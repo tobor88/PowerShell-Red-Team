@@ -37,7 +37,7 @@ Contact: rosborne@osbornepro.com
 
 .LINK
 https://powershell.org/2020/11/writing-your-own-powershell-functions-cmdlets/
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -303,7 +303,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -431,7 +431,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -609,7 +609,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -1138,7 +1138,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -1482,7 +1482,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -1619,7 +1619,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -1747,7 +1747,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -1898,7 +1898,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2072,7 +2072,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2233,7 +2233,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2398,7 +2398,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2641,7 +2641,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2867,7 +2867,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -2978,7 +2978,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -3214,7 +3214,7 @@ None
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -3397,7 +3397,7 @@ None
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -3586,7 +3586,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -3876,7 +3876,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -4547,7 +4547,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -4618,7 +4618,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
@@ -4771,7 +4771,7 @@ Contact: rosborne@osbornepro.com
 
 
 .LINK
-https://roberthsoborne.com
+https://osbornepro.com
 https://writeups.osbornepro.com
 https://btps-secpack.com
 https://github.com/tobor88
