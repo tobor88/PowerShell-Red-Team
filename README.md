@@ -11,11 +11,18 @@ C:\PS> Get-Command -Module RedTeamEnum
 # This will list all the commands in the module.
 ```
 
-- Convert-Base64.psm1 is a function as the name states for encoding and/or decoding text into Base64 format.
+- Convert-Base64.ps1 is a function as the name states for encoding and/or decoding text into Base64 format.
 ```powershell
 C:\PS> Convert-Base64 -Value "Convert me to base64!" -Encode
 
 C:\PS> Convert-Base64 -Value "Q29udmVydCBtZSB0byBiYXNlNjQh" -Decode
+```
+
+- Convert-StringToHash.ps1 is a function for converting a string value to a hash value
+```powershell
+C:\PS> Convert-StringToHash -String "Convert me to base64!"
+C:\PS> Convert-StringToHash -String "Password123" -Encoding UTF8 -Algorithm MD5
+# Both of the above examples convert the string Password123 to an MD5 Hash value
 ```
 
 - Convert-SID.ps1 is a function that converts SID values to usernames and usernames to SID values

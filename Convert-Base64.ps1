@@ -39,7 +39,7 @@ Contact: rosborne@osbornepro.com
 https://powershell.org/2020/11/writing-your-own-powershell-functions-cmdlets/
 https://osbornepro.com
 https://writeups.osbornepro.com
-https://btps-secpack.com
+https://btpssecpack.osbornepro.com
 https://github.com/tobor88
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
