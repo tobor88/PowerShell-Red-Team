@@ -99,15 +99,15 @@ Function Invoke-PingSweep {
 
             [Parameter(
                 ParameterSetName="Dynamic",
-                Mandatory=$True,
-                Position=1,
+                Mandatory=$False,
+                Position=2,
                 HelpMessage="Enter the last IP of the range you want to scan : ")]  # End Parameter
             [ValidateScript({$_ | ForEach-Object { $_ -Match "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" }})]
             [String[]]$ExcludeAddresses,
 
             [Parameter(
                 Mandatory=$False,
-                Position=4,
+                Position=3,
                 HelpMessage="Enter the number of milliseconds to wait between timeouts : ")]  # End Parameter
             [Int]$TimeoutMilliSec = 4000,
 
