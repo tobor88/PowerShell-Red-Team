@@ -1,7 +1,14 @@
+Function Get-LdapInfo {
 <#
 .SYNOPSIS
 Perform LDAP Queries of the current domain. This requires a user account in order to execute the cmdlet. Due to the amount of switches I have not provieded examples for each one. The names are pretty self explanatory.
 
+
+.PARAMETER Domain
+Define the domain that you want to connect to using your credentials
+
+.PARAMETER Credential
+Enter your credentials for the domain you are connecting too.
 
 .PARAMETER LDAPS
 This switch parameter will perform searches using LDAP over SSL
@@ -222,6 +229,11 @@ Get-LdapInfo -DomainLocalSecurityGroups
 Get-LdapInfo -GlobalDistributionGroups
 # This example lists Global Distribution Groups from Acitve Directory
 
+.EXAMPLE
+Get-LdapInfo -GlobalDistributionGroups -Domain domain.com -Credential (Get-Credential)
+# This example gets GlobalDistributionGroups for domain.com
+
+
 .NOTES
 Author: Robert H. Osborne
 Alias: tobor
@@ -248,9 +260,24 @@ None
 System.Array
 
 #>
-Function Get-LdapInfo {
     [CmdletBinding()]
         param(
+            [Parameter(
+                ParameterSetName="Domain"
+                Position=0,
+                Mandatory=$False,
+                ValueFromPipeline=$False
+            )]  # End Parameter
+            [String]$Domain,
+            
+            [Parameter(
+                ParameterSetName="Domain"
+            )]  # End Parameter
+            [ValidateNotNull()]
+            [System.Management.Automation.PSCredential]
+            [System.Management.Automation.Credential()]
+            $Credential = [System.Management.Automation.PSCredential]::Empty
+            
             [Parameter(
                 Mandatory=$False)]
             [switch][bool]$Detailed,
@@ -397,145 +424,127 @@ Function Get-LdapInfo {
 
         ) # End param
 
-    BEGIN
-    {
+BEGIN {
 
-        Write-Verbose "Creating LDAP query..."
+    $Output = @()
+    Write-Verbose -Message "Creating LDAP query..."
 
-            If ($DomainControllers.IsPresent) {$LdapFilter = "(primaryGroupID=516)"}
-            ElseIf ($AllServers.IsPresent) {$LdapFilter = '(&(objectCategory=computer)(operatingSystem=*server*))'}
-            ElseIf ($AllMemberServers.IsPresent) {$LdapFilter = '(&(objectCategory=computer)(operatingSystem=*server*)(!(userAccountControl:1.2.840.113556.1.4.803:=8192)))'}
-            ElseIf ($DomainTrusts.IsPresent) {$LdapFilter = '(objectClass=trustedDomain)'}
+    If ($DomainControllers.IsPresent) {$LdapFilter = "(primaryGroupID=516)"}
+    ElseIf ($AllServers.IsPresent) {$LdapFilter = '(&(objectCategory=computer)(operatingSystem=*server*))'}
+    ElseIf ($AllMemberServers.IsPresent) {$LdapFilter = '(&(objectCategory=computer)(operatingSystem=*server*)(!(userAccountControl:1.2.840.113556.1.4.803:=8192)))'}
+    ElseIf ($DomainTrusts.IsPresent) {$LdapFilter = '(objectClass=trustedDomain)'}
 
-            ElseIf ($DomainAdmins.IsPresent) {$LdapFilter =  "(&(objectCategory=person)(objectClass=user)((memberOf=CN=Domain Admins,OU=Admin Accounts,DC=usav,DC=org)))"}
-            ElseIf ($UACTrusted.IsPresent) {$LdapFilter =  "(userAccountControl:1.2.840.113556.1.4.803:=524288)"}
-            ElseIf ($NotUACTrusted.IsPresent) {$LdapFilter = '(userAccountControl:1.2.840.113556.1.4.803:=1048576)'}
-            ElseIf ($SPNNamedObjects.IsPresent) {$LdapFilter = '(servicePrincipalName=*)'}
-            ElseIf ($EnabledUsers.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))'}
-            ElseIf ($PossibleExecutives.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(directReports=*)(!(manager=*)))'}
-            ElseIf ($LogonScript.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(scriptPath=*))'}
+    ElseIf ($DomainAdmins.IsPresent) {$LdapFilter =  "(&(objectCategory=person)(objectClass=user)((memberOf=CN=Domain Admins,OU=Admin Accounts,DC=usav,DC=org)))"}
+    ElseIf ($UACTrusted.IsPresent) {$LdapFilter =  "(userAccountControl:1.2.840.113556.1.4.803:=524288)"}
+    ElseIf ($NotUACTrusted.IsPresent) {$LdapFilter = '(userAccountControl:1.2.840.113556.1.4.803:=1048576)'}
+    ElseIf ($SPNNamedObjects.IsPresent) {$LdapFilter = '(servicePrincipalName=*)'}
+    ElseIf ($EnabledUsers.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))'}
+    ElseIf ($PossibleExecutives.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(directReports=*)(!(manager=*)))'}
+    ElseIf ($LogonScript.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(scriptPath=*))'}
 
-            ElseIf ($ListAllOU.IsPresent) {$LdapFilter = '(objectCategory=organizationalUnit)'}
-            ElseIf ($ListComputers.IsPresent) {$LdapFilter = '(objectCategory=computer)'}
-            ElseIf ($ListContacts.IsPresent) {$LdapFilter = '(objectClass=contact)'}
-            ElseIf ($ListUsers.IsPresent) {$LdapFilter = 'samAccountType=805306368'}
-            ElseIf ($ListGroups.IsPresent) {$LdapFilter = '(objectCategory=group)'}
-            ElseIf ($ListContainers.IsPresent) {$LdapFilter = '(objectCategory=container)'}
-            ElseIf ($ListDomainObjects.IsPresent) {$LdapFilter = '(objectCategory=domain)'}
-            ElseIf ($ListBuiltInContainers.IsPresent) {$LdapFilter = '(objectCategory=builtinDomain)'}
+    ElseIf ($ListAllOU.IsPresent) {$LdapFilter = '(objectCategory=organizationalUnit)'}
+    ElseIf ($ListComputers.IsPresent) {$LdapFilter = '(objectCategory=computer)'}
+    ElseIf ($ListContacts.IsPresent) {$LdapFilter = '(objectClass=contact)'}
+    ElseIf ($ListUsers.IsPresent) {$LdapFilter = 'samAccountType=805306368'}
+    ElseIf ($ListGroups.IsPresent) {$LdapFilter = '(objectCategory=group)'}
+    ElseIf ($ListContainers.IsPresent) {$LdapFilter = '(objectCategory=container)'}
+    ElseIf ($ListDomainObjects.IsPresent) {$LdapFilter = '(objectCategory=domain)'}
+    ElseIf ($ListBuiltInContainers.IsPresent) {$LdapFilter = '(objectCategory=builtinDomain)'}
 
-            ElseIf ($ChangePasswordAtNextLogon.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(pwdLastSet=0))'}
-            ElseIf ($PasswordNeverExpires.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (userAccountControl:1.2.840.113556.1.4.803:=65536))'}
-            ElseIf ($NoPasswordRequired.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (userAccountControl:1.2.840.113556.1.4.803:=32))'}
-            ElseIf ($NoKerberosPreAuthRequired.IsPresent) {'(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))'}
-            ElseIf ($PasswordsThatHaveNotChangedInYears.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (pwdLastSet>=129473172000000000))'}
+    ElseIf ($ChangePasswordAtNextLogon.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user)(pwdLastSet=0))'}
+    ElseIf ($PasswordNeverExpires.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (userAccountControl:1.2.840.113556.1.4.803:=65536))'}
+    ElseIf ($NoPasswordRequired.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (userAccountControl:1.2.840.113556.1.4.803:=32))'}
+    ElseIf ($NoKerberosPreAuthRequired.IsPresent) {'(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))'}
+    ElseIf ($PasswordsThatHaveNotChangedInYears.IsPresent) {$LdapFilter = '(&(objectCategory=person)(objectClass=user) (pwdLastSet>=129473172000000000))'}
 
-            ElseIf ($DistributionGroups.IsPresent) {$LdapFilter = '(&(objectCategory=group)(!(groupType:1.2.840.113556.1.4.803:=2147483648)))'}
-            ElseIf ($SecurityGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=2147483648)'}
-            ElseIf ($BuiltInGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=1)'}
-            ElseIf ($AllGlobalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=2)'}
-            ElseIf ($DomainLocalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=4)'}
-            ElseIf ($UniversalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=8)'}
-            ElseIf ($GlobalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483646)'}
-            ElseIf ($UniversalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483640)'}
-            ElseIf ($DomainLocalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483644)'}
-            ElseIf ($GlobalDistributionGroups.IsPresent) {$LdapFilter = '(groupType=2)'}
+    ElseIf ($DistributionGroups.IsPresent) {$LdapFilter = '(&(objectCategory=group)(!(groupType:1.2.840.113556.1.4.803:=2147483648)))'}
+    ElseIf ($SecurityGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=2147483648)'}
+    ElseIf ($BuiltInGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=1)'}
+    ElseIf ($AllGlobalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=2)'}
+    ElseIf ($DomainLocalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=4)'}
+    ElseIf ($UniversalGroups.IsPresent) {$LdapFilter = '(groupType:1.2.840.113556.1.4.803:=8)'}
+    ElseIf ($GlobalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483646)'}
+    ElseIf ($UniversalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483640)'}
+    ElseIf ($DomainLocalSecurityGroups.IsPresent) {$LdapFilter = '(groupType=-2147483644)'}
+    ElseIf ($GlobalDistributionGroups.IsPresent) {$LdapFilter = '(groupType=2)'}
 
-            $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
-            $Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
-            $Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
-            $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
+    $Port = "389"
+    If ($LDAPS.IsPresent) {
 
-            If ($LDAPS.IsPresent)
-            {
+        $Port = "636"
+        Write-Verbose -Message "[*] LDAP over SSL was specified. Using port $Port"
+        
+    }  # End If
+    
+    If ($Domain) {
 
-                Write-Verbose "[*] LDAP over SSL was specified. Using port 636"
-                $SearchString =  "LDAP://" + $PrimaryDC + ":636/"
+        $DirectoryContext = [System.DirectoryServices.ActiveDirectory.DirectoryContext]::new("Domain", $Domain)
+        $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DirectoryContext)
+        $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
+        $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry "LDAP://$($PrimaryDC)" ,$Credential.UserName,$($Credential.GetNetworkCredential().Password)
 
-            }  # End If
-            Else
-            {
+    } Else {
 
-                $SearchString =  "LDAP://" + $PrimaryDC + ":389/"
+        $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+        $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
+        $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry
 
-            }  # End Else
-            $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
+    }  # End If Else
+    
+    $DistinguishedName = "DC=$($DomainObj.Name.Replace('.',',DC='))"
+    $SearchString = "LDAP://$PrimaryDC`:$Port/$DistinguishedName"
+    $Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher([ADSI]$SearchString)
+    $Searcher.SearchRoot = $ObjDomain
+    $Searcher.Filter = $LdapFilter
+    $Searcher.SearchScope = "Subtree"
 
-            $DistinguishedName = "DC=$($DomainObj.Name.Replace('.',',DC='))"
-            $SearchString += $DistinguishedName
+} PROCESS {
 
-            $Searcher.SearchRoot = $ObjDomain
-            $Searcher.Filter = $LdapFilter
-            $Searcher.SearchScope = "Subtree"
+    $Results = $Searcher.FindAll()
+    Write-Verbose -Message "[*] Getting results"
 
-        } # End BEGIN
+    If ($Detailed.IsPresent) {
 
-    PROCESS
-    {
+        If ($Results.Properties) {
 
-        $Results = $Searcher.FindAll()
+            ForEach ($Result in $Results) {
 
-        Write-Verbose "[*] Getting results..."
+                $ObjProperties = @()
+                ForEach ($Property in $Result.Properties) {
 
-
-        If ($Detailed.IsPresent)
-        {
-
-            If ($Results.Properties)
-            {
-
-                ForEach ($Result in $Results)
-                {
-
-                    [array]$ObjProperties = @()
-
-                    ForEach ($Property in $Result.Properties)
-                    {
-
-                        $ObjProperties += $Property
-
-                    }  # End ForEach
-
-                    $ObjProperties
-
-                    Write-Host "-----------------------------------------------------------------------`n"
-
-                } # End ForEach
-
-            }  # End If
-            Else
-            {
-
-                ForEach ($Result in $Results)
-                {
-
-                    $Object = $Result.GetDirectoryEntry()
-                    $Object
+                    $ObjProperties += $Property
 
                 }  # End ForEach
 
+                $Output += $ObjProperties
 
-            }  # End Else
+            } # End ForEach
 
-        }  # End If
-        Else
-        {
-            ForEach ($Result in $Results)
-            {
+        } Else {
 
-                $Object = $Result.GetDirectoryEntry()
-                $Object
+            ForEach ($Result in $Results) {
+
+                $Output += $Result.GetDirectoryEntry()
 
             }  # End ForEach
 
-        }  # End Else
+        }  # End If Else
 
-    } # End PROCESS
-    END
-    {
+    } Else {
 
-        Write-Verbose "[*] LDAP Query complete. "
+        ForEach ($Result in $Results) {
 
-    } # End END
+            $Output += $Result.GetDirectoryEntry()
+
+        }  # End ForEach
+
+    }  # End If Else
+
+} END {
+
+    Write-Verbose -Message "[*] LDAP Query complete. "
+    Return $Output
+
+} # End END
 
 } # End Get-LdapInfo
