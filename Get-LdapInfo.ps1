@@ -263,7 +263,7 @@ System.Array
     [CmdletBinding()]
         param(
             [Parameter(
-                ParameterSetName="Domain"
+                ParameterSetName="Domain",
                 Position=0,
                 Mandatory=$False,
                 ValueFromPipeline=$False
