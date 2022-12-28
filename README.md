@@ -51,8 +51,8 @@ C:\PS> Test-BruteForceCredentials -ComputerName File.domain.com -UserFile C:\Tem
 
 - Get-LdapInfo is a function I am very proud of for performing general LDAP queries. Although only two properties will show in the output, all of the properties associated with object can be seen by piping to Select-Object -Property * or using the -Detailed switch parameter.
 ```powershell
-C:\PS> Get-LdapInfo -Detailed -SPNNamedObjects
-# The above returns all the properties of the returned objects
+C:\PS> Get-LdapInfo -Detailed -SPNNamedObjects -Domain domain.com -Credential (Get-Credential)
+# The above returns all the properties of the returned objects in domain.com
 #
 C:\PS> Get-LdapInfo -DomainControllers | Select-Object -Property 'Name','ms-Mcs-AdmPwd'
 # If this is run as admin it will return the LAPS password for the local admin account
