@@ -1,3 +1,4 @@
+Function Get-NetworkShareInfo {
 <#
 .SYNOPSIS
 This cmdlet is used to discover information associated with a network share such as the physical location of the network share, its creation date, and name.
@@ -49,7 +50,6 @@ System.String[]
 Microsoft.Management.Infrastructure.CimInstance
 
 #>
-Function Get-NetworkShareInfo {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -68,67 +68,98 @@ Function Get-NetworkShareInfo {
                 ValueFromPipeline=$True,
                 ValueFromPipelineByPropertyName=$True,
                 HelpMessage="Define the FQDN, hostname, or IP address of the device you wish to check for network share names on"
-                )]
+                )]  # End Parameter
             [Alias("Computer","cn")]
-            [String[]]$ComputerName
+            [String[]]$ComputerName = $env:COMPUTERNAME
         )
 
-BEGIN
-{
+BEGIN {
 
     $Obj = @()
+    
+    Function Test-SMBPort {
+        [CmdletBinding()]
+            param(
+                [Parameter(
+                    Mandatory=$True,
+                    Position=0,
+                    ValueFromPipeline=$False,
+                    ValueFromPipelineByPropertyName=$False)]  # End Parameter
+                [String[]]$ComputerName
+            )  # End param
 
-    If ($Null -eq $ComputerName)
-    {
+        $Output = @()
+        ForEach ($C in $ComputerName) {
 
-        $ComputerName = $env:COMPUTERNAME
+            $TcpClient = New-Object -TypeName System.Net.Sockets.TcpClient
+            $Connect = $TcpClient.BeginConnect($ComputerName, 445, $Null, $Null)
+            Start-Sleep -Milliseconds 100
 
-    }   # End If
+            If ($TcpClient.Connected) { 
 
-}  # End BEGIN
-PROCESS
-{
+                $Open = $True 
 
-    ForEach ($C in $ComputerName)
-    {
+            } Else { 
 
-        ForEach ($S in $ShareName)
-        {
+                $Open = $False 
 
+            }  # End If Else
 
-            $Result = Get-WmiObject -Class Win32_Share -Filter "Name LIKE '$S'" -ComputerName $C -ErrorAction SilentlyContinue -ErrorVariable Clear
-
-            If ($Result)
-            {
-                Write-Verbose "Getting property values for $S"
-                $Name = $Result.Name
-                $Description = $Result.Description
-                $InstallDate = ((Get-CimInstance -ClassName Win32_Share -Filter "Name LIKE '$S'" -ComputerName $C -ErrorAction SilentlyContinue -ErrorVariable Clear).CimInstanceProperties | Where-Object -Property Name -like InstallDate).Value
-                $Path = $Result.Path
-                $Status =  $Result.Status
-
-                $Obj += New-Object -TypeName PSObject -Property @{ComputerName=$C; Name=$Name; Description=$Description; InstallDate=$InstallDate; Path=$Path; Status=$Status}
-
-                Clear-Variable -Name Name,Description,InstallDate,Path,Status,Result
-
-            }  # End If
-            Else
-            {
-
-                Write-Output "[!] $C does not host a share called $S"
-
-            }  # End Else
+            $TcpClient.Close()
+            $Output += New-Object -TypeName PSCustomObject -Property @{ComputerName=$ComputerName;SMBOpen=$Open}
 
         }  # End ForEach
 
+    }  # End Function Test-SMBPort
+
+} PROCESS {
+
+    ForEach ($C in $ComputerName) {
+
+        If ((Test-SMBPort -ComputerName $C).SMBOpen -eq $True) {
+        
+            Write-Verbose -Message "SMB is open on $C"
+            ForEach ($S in $ShareName) {
+
+                $Result = Get-CimInstance -Class Win32_Share -Filter "Name LIKE '$S'" -ComputerName $C -ErrorAction SilentlyContinue -ErrorVariable Clear
+                If ($Result) {
+
+                    Write-Verbose -Message "Getting property values for $S"
+                    $Name = $Result.Name
+                    $Description = $Result.Description
+                    $InstallDate = ((Get-CimInstance -ClassName Win32_Share -Filter "Name LIKE '$S'" -ComputerName $C -ErrorAction SilentlyContinue -ErrorVariable Clear).CimInstanceProperties | Where-Object -Property Name -like InstallDate).Value
+                    $Path = $Result.Path
+                    $Status =  $Result.Status
+
+                    $Obj += New-Object -TypeName PSObject -Property @{ComputerName=$C; Name=$Name; Description=$Description; InstallDate=$InstallDate; Path=$Path; Status=$Status}
+
+                    Clear-Variable -Name Name,Description,InstallDate,Path,Status,Result
+
+                } ElseIf ($Clear) {
+                
+                    $Obj += New-Object -TypeName PSObject -Property @{ComputerName=$C; Name="Failed to connect"; Description="Verify service at destination is running and accepting requests"; InstallDate="NA"; Path="NA"; Status="NA"}
+
+                } Else {
+
+                    $Obj += New-Object -TypeName PSObject -Property @{ComputerName=$C; Name="Does not exist"; Description="Share with that name does not exist"; InstallDate="NA"; Path="NA"; Status="NA"}
+
+                }  # End If Else
+
+            }  # End ForEach
+            
+        } Else {
+        
+            Write-Verbose -Message "SMB is closed on $C"
+            $Obj += New-Object -TypeName PSObject -Property @{ComputerName=$C; Name="SMB not open"; Description="SMB not reachable"; InstallDate="NA"; Path="NA"; Status="NA"}
+        
+        }  # End If Else
+
     }  # End ForEach
 
-}  # End PROCESS
-END
-{
+} END {
 
-        Write-Output $Obj
+    Return $Obj
 
-}  # End END
+}  # End BPE
 
 }  # End Function Get-NetworkShareInfo
