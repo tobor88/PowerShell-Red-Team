@@ -1,6 +1,7 @@
+Function Convert-SID {
 <#
 .SYNOPSIS
-    This cmdlet is for translating an SID to a username or a username to an SID.
+This cmdlet is for translating an SID to a username or a username to an SID.
 
 
 .PARAMETER Username
@@ -55,9 +56,7 @@ System.Array of Usernames or SIDs can be piped to this cmdlet based on property 
 
 .OUTPUTS
 System.Management.Automation.PSCustomObject
-
 #>
-Function Convert-SID {
     [CmdletBinding(DefaultParameterSetName = 'Username')]
         param(
             [Parameter(
@@ -81,28 +80,35 @@ Function Convert-SID {
             [String[]]$SID)  # End param
 
 
-BEGIN
-{
+BEGIN {
 
     [array]$Obj = @()
 
     Write-Verbose "[*] Obtaining username and SID information for defined value"
 
-}  # End BEGIN
-PROCESS
-{
+} PROCESS {
 
-    For ($i = 0; $i -lt (Get-Variable -Name ($PSCmdlet.ParameterSetName) -ValueOnly).Count; $i++)
-    {
+    For ($i = 0; $i -lt (Get-Variable -Name ($PSCmdlet.ParameterSetName) -ValueOnly).Count; $i++) {
 
         $Values = Get-Variable -Name ($PSCmdlet.ParameterSetName) -ValueOnly
-
         New-Variable -Name ArrayItem -Value ($Values[$i])
 
-        Switch ($PSCmdlet.ParameterSetName)
-        {
-            SID {$ObjSID = New-Object -TypeName System.Security.Principal.SecurityIdentifier($ArrayItem); $ObjUser = $ObjSID.Translate([System.Security.Principal.NTAccount])}
-            Username {$ObjUser = New-Object -TypeName System.Security.Principal.NTAccount($ArrayItem); $ObjSID = $ObjUser.Translate([System.Security.Principal.SecurityIdentifier])}
+        Switch ($PSCmdlet.ParameterSetName) {
+        
+            SID {
+            
+                $ObjSID = New-Object -TypeName System.Security.Principal.SecurityIdentifier($ArrayItem)
+                $ObjUser = $ObjSID.Translate([System.Security.Principal.NTAccount])
+                
+            }  # End Switch SID
+            
+            Username {
+            
+                $ObjUser = New-Object -TypeName System.Security.Principal.NTAccount($ArrayItem)
+                $ObjSID = $ObjUser.Translate([System.Security.Principal.SecurityIdentifier])
+                
+            }  # End Switch Username
+        
         }  # End Switch
 
         $Obj += New-Object -TypeName "PSObject" -Property @{
@@ -114,12 +120,10 @@ PROCESS
 
     }  # End For
 
-}  # End PROCESS
-END
-{
+} END {
 
-    Write-Output $Obj
+    Return $Obj
 
-}  # End END
+}  # End BPE
 
 }  # End Function Convert-SID
