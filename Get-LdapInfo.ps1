@@ -478,7 +478,7 @@ BEGIN {
     
     If ($Domain) {
 
-        $DirectoryContext = [System.DirectoryServices.ActiveDirectory.DirectoryContext]::new("Domain", $Domain)
+        $DirectoryContext = [System.DirectoryServices.ActiveDirectory.DirectoryContext]::new("Domain", $Domain, $Credential.UserName, $Credential.GetNetworkCredential().Password)
         $DomainObj = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DirectoryContext)
         $PrimaryDC = ($DomainObj.PdcRoleOwner).Name
         $ObjDomain = New-Object -TypeName System.DirectoryServices.DirectoryEntry "LDAP://$($PrimaryDC)" ,$Credential.UserName,$($Credential.GetNetworkCredential().Password)
