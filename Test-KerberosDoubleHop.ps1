@@ -1,3 +1,4 @@
+Function Test-KerberosDoubleHop {
 <#
 .SYNOPSIS
 This cmdlet is for finding AD Objects that are vulnerable to Kerberos Double Hop Vulnerability
@@ -60,15 +61,16 @@ None
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.hackthebox.eu/profile/52286
 https://www.linkedin.com/in/roberthosborne/
 https://www.credly.com/users/roberthosborne/badges
 #>
-Function Test-KerberosDoubleHop {
     [CmdletBinding(DefaultParameterSetName='Local')]
         param(
             [Parameter(
@@ -110,43 +112,36 @@ Function Test-KerberosDoubleHop {
     $Domain = $DomainObj.Name
     $DCs = $DomainObj.DomainControllers.Name
 
-    Switch ($PSCmdlet.ParameterSetName)
-    {
+    Switch ($PSCmdlet.ParameterSetName) {
 
         'Remote' {
 
             $Regex = ‘(?<Address>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))’
-            If ($Server -match $Regex)
-            {
+            If ($Server -match $Regex) {
 
                 Throw "[x] Please use the hostname or FQDN of the domain controller"
 
             }  # End If
 
 
-            If ($Server -notlike "*.$Domain")
-            {
+            If ($Server -notlike "*.$Domain") {
 
                 $ComputerName = "$Server.$Domain"
 
-            }  # End If
-            Else
-            {
+            } Else {
 
                 $ComputerName = $Server
 
-            }  # End Else
+            }  # End If Else
 
-            If ($ComputerName -notin $DCs)
-            {
+            If ($ComputerName -notin $DCs) {
 
                 Throw "[x] $ComputerName is not a known domain controller for $Domain"
 
             }  # End If
 
             $Bool = $False
-            If ($UseSSL.IsPresent)
-            {
+            If ($UseSSL.IsPresent) {
 
                 $Bool = $True
 
@@ -159,65 +154,58 @@ Function Test-KerberosDoubleHop {
                 $AdminResults = $Args[2]
                 $ComputerResults = $Args[3]
 
-                If ($ComputerResults.IsPresent -or $All.IsPresent)
-                {
+                If ($ComputerResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Verbose "Getting information on computers in the domain that are vulnerable to a Kerberos Double Hop attack"
+                    Write-Verbose -Message "Getting information on computers in the domain that are vulnerable to a Kerberos Double Hop attack"
                     $ComputerResult = Get-ADComputer -Filter {(TrustedForDelegation -eq $True) -and (PrimaryGroupId -eq 515)} -Properties TrustedforDelegation,TrustedtoAuthForDelegation,servicePrincipalName,Description | Select-Object -Property DistinguishedName,TrustedForDelegation,TrustedtoAuthForDelegation
-                    Write-Output "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than
-                    be forwarded to a server for authentication."
+                    Write-Output -InputObject "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than be forwarded to a server for authentication."
 
                 }  # End If
 
-                If ($UserResults.IsPresent -or $All.IsPresent)
-                {
+                If ($UserResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Verbose "Discovering accounts with the AD property 'Account is sensitive and cannot be delegated' selected. These accounts are protected against the Kerberos Double Hop vulnerability."
+                    Write-Verbose -Message "Discovering accounts with the AD property 'Account is sensitive and cannot be delegated' selected. These accounts are protected against the Kerberos Double Hop vulnerability."
                     $UserResult = Get-ADGroupMember -Identity "Domain Users" | ForEach-Object {
 
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
 
-                    Write-Output "[*] The above accounts are vulnerable to a Kerberos Double Hop"
+                    Write-Output -InputObject "[*] The above accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
 
-                If ($AdminResults.IsPresent -or $All.IsPresent)
-                {
+                If ($AdminResults.IsPresent -or $All.IsPresent) {
 
                     $AdminResult = @()
-                    Write-Verbose "Discovering any Admin Accounts vulnerable to Kerberos Hop Vulnerability"
+                    Write-Verbose -Message "Discovering any Admin Accounts vulnerable to Kerberos Hop Vulnerability"
                     $AdminResult += Get-ADGroupMember -Identity "Domain Admins" | ForEach-Object {
 
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
 
-                    Write-Output "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
+                    Write-Output -InputObject "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
 
-                If ($ComputerResults.IsPresent -or $All.IsPresent)
-                {
+                If ($ComputerResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "COMPUTER RESULTS"
+                    Write-Output -InputObjet "COMPUTER RESULTS"
                     $ComputerResult
 
                 }  # End If
 
-                If ($UserResults.IsPresent -or $All.IsPresent)
-                {
+                If ($UserResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "`nUSER RESULTS"
+                    Write-Output -InputObject "`nUSER RESULTS"
                     $UserResult
 
                 }  # End If
 
-                If ($AdminResults.IsPresent -or $All.IsPresent)
-                {
+                If ($AdminResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "`nADMIN RESULTS"
+                    Write-Output -InputObject "`nADMIN RESULTS"
                     $AdminResult
 
                 }  # End If
@@ -229,73 +217,65 @@ Function Test-KerberosDoubleHop {
         'Local' {
 
             $ComputerName = "$env:COMPUTERNAME.$Domain"
-
-            If ($ComputerName -notin $DCs)
-            {
+            If ($ComputerName -notin $DCs) {
 
                 Throw "[x] $ComputerName is not a known domain controller for $Domain"
 
             }  # End If
 
 
-            If ($ComputerResults.IsPresent -or $All.IsPresent)
-                {
+            If ($ComputerResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Verbose "Getting information on computers in the domain that are vulnerable to a Kerberos Double Hop attack"
+                    Write-Verbose -Message "Getting information on computers in the domain that are vulnerable to a Kerberos Double Hop attack"
                     $ComputerResult = Get-ADComputer -Filter {(TrustedForDelegation -eq $True) -and (PrimaryGroupId -eq 515)} -Properties TrustedforDelegation,TrustedtoAuthForDelegation,servicePrincipalName,Description | Select-Object -Property DistinguishedName,TrustedForDelegation,TrustedtoAuthForDelegation
-                    Write-Output "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than be forwarded to a server for authentication."
+                    Write-Output -InputObject "[*] The above computers are vulnerable to Kerberos Hop Attack. This vulnerability allows an attacker to pivot to other machines using TGT stored on a trusted device. This can than be forwarded to a server for authentication."
 
                 }  # End If
 
-                If ($UserResults.IsPresent -or $All.IsPresent)
-                {
+                If ($UserResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Verbose "Discovering accounts with the AD property 'Account is sensitive and cannot be delegated' selected. These accounts are protected against the Kerberos Double Hop vulnerability."
+                    Write-Verbose -Message "Discovering accounts with the AD property 'Account is sensitive and cannot be delegated' selected. These accounts are protected against the Kerberos Double Hop vulnerability."
                     $UserResult = Get-ADGroupMember -Identity "Domain Users" | ForEach-Object {
 
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
 
-                    Write-Output "[*] The above accounts are vulnerable to a Kerberos Double Hop"
+                    Write-Output -InputObject "[*] The above accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
 
-                If ($AdminResults.IsPresent -or $All.IsPresent)
-                {
+                If ($AdminResults.IsPresent -or $All.IsPresent) {
 
                     $AdminResult = @()
-                    Write-Verbose "Discovering any Admin Accounts vulnerable to Kerberos Hop Vulnerability"
+                    Write-Verbose -Message "Discovering any Admin Accounts vulnerable to Kerberos Hop Vulnerability"
                     $AdminResult += Get-ADGroupMember -Identity "Domain Admins" | ForEach-Object {
 
                         Get-ADUser -Identity $_ -Properties AccountNotDelegated | Where-Object {$_.AccountNotDelegated -eq $False} | Select-Object -Property DistinguishedName,AccountNotDelegated
 
                     }  # End ForEach-Object
 
-                    Write-Output "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
+                    Write-Output -InputObjet "[*] The above admin accounts are vulnerable to a Kerberos Double Hop"
 
                 }  # End If
 
-                If ($ComputerResults.IsPresent -or $All.IsPresent)
-                {
+                If ($ComputerResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "COMPUTER RESULTS"
+                    Write-Output -InputObject "COMPUTER RESULTS"
                     $ComputerResult
 
                 }  # End If
 
-                If ($UserResults.IsPresent -or $All.IsPresent)
-                {
+                If ($UserResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "`nUSER RESULTS"
+                    Write-Output -InputObject "`nUSER RESULTS"
                     $UserResult
 
                 }  # End If
 
-                If ($AdminResults.IsPresent -or $All.IsPresent)
-                {
+                If ($AdminResults.IsPresent -or $All.IsPresent) {
 
-                    Write-Output "`nADMIN RESULTS"
+                    Write-Output -InputObject "`nADMIN RESULTS"
                     $AdminResult
 
                 }  # End If
