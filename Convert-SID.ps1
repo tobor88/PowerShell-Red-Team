@@ -82,9 +82,8 @@ System.Management.Automation.PSCustomObject
 
 BEGIN {
 
-    [array]$Obj = @()
-
-    Write-Verbose "[*] Obtaining username and SID information for defined value"
+    $Obj = @()
+    Write-Verbose -Message "[*] Obtaining username and SID information for defined value"
 
 } PROCESS {
 
