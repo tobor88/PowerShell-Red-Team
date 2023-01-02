@@ -1,3 +1,4 @@
+Function Test-BruteForceZipPassword {
 <#
 .SYNOPSIS
 This cmdlet is used to brute force the password of a password protected zip file
@@ -26,8 +27,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -41,9 +44,7 @@ None
 
 .OUTPUTS
 None
-
 #>
-Function Test-BruteForceZipPassword {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -67,48 +68,39 @@ Function Test-BruteForceZipPassword {
             [String]$ZipExe
         )  # End param
 
+    $Output = @()
     $Passwords = Get-Content -Path $PassFile
+    ForEach ($P in $Passwords) {
 
-    ForEach ($P in $Passwords)
-    {
-
-        Write-Verbose "Attempting password $P"
-
+        Write-Verbose -Message "Attempting password $P"
         $Attempt = & "$ZipExe" e "$Path" -p"$P" -y
 
-        If ($Attempt -Contains "Everything is Ok")
-        {
+        If ($Attempt -Contains "Everything is Ok") {
 
-            Try
-            {
+            $Output = New-Object -TypeName PSCustomObject -Property @{
+                Password=$P;
+                File=$Path;
+            }  # End New-Object -Property
+            
+            Continue
 
-                Write-Host "SUCCESS: $P" -ForegroundColor Green
-
-            }  # End Try
-            Catch
-            {
-
-                Write-Output "SUCCESS: $P"
-
-            }  # End Catch
-
-            $Result = 'False'
-
-        } # Brute If
-        Else
-        {
+        } Else {
 
             $Failed = 'True'
 
-        }  # End Else
+        }  # End If Else
 
-    } # Foreach Rule
+    }  # End ForEach
 
-    If (($Failed -eq 'True') -and ($Result -ne 'False'))
-    {
+    If (!($Output)) {
 
-        Write-Output "Password Not Found"
+        $Output = New-Object -TypeName PSCustomObject -Property @{
+            Password="Not found";
+            File=$Path;
+        }  # End New-Object -Property
 
     }  # End If
+    
+    Return $Output
 
 }  # End Function Test-BruteForceZipPassword
