@@ -1,3 +1,4 @@
+Function Invoke-PingSweep {
 <#
 .SYNOPSIS
 This cmdlet is used to perform a pingsweep for a range of IP addresses
@@ -60,16 +61,17 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://encrypit.osbornepro.com
 https://github.com/tobor88
+https://gitlab.com/tobor88
 https://github.com/OsbornePro
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
 https://www.credly.com/users/roberthosborne/badges
 https://www.hackthebox.eu/profile/52286
 #>
-Function Invoke-PingSweep {
     [CmdletBinding(DefaultParameterSetName="Dynamic")]
         param(
             [Parameter(
@@ -159,11 +161,11 @@ BEGIN {
             
         } Else {
 
-            Write-Verbose "Starting and Ending Subnets are within the required parameters"
+            Write-Verbose -Message "Starting and Ending Subnets are within the required parameters"
 
         } # End If
 
-        Write-Verbose "Building range of IP addresses to perform ICMP checks against"
+        Write-Verbose -Message "Building range of IP addresses to perform ICMP checks against"
         $IpOd = $Start -Split "\."
         $IpDo = $End -Split "\."
     
@@ -271,7 +273,7 @@ BEGIN {
 
     } Else {
 
-        Write-Error "I have not created enough statements yet to handle more than 1278 IP Addresses"
+        Write-Error -Message "I have not created enough statements yet to handle more than 1278 IP Addresses"
 
     }  # End If ElseIf ElseIf ElseIf Else
 
