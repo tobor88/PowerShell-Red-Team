@@ -16,6 +16,21 @@ Define the IP address, FQDN, or resolvable hostname of the server to retrieve th
 Define the TCP port you wish to grab the certificate information from
 
 
+.EXAMPLE
+Get-HttpCertificate -ComputerName osbornepro.com -Port 443
+# This example attempts to retrieve the certificate information from osbornepro.com on port 443
+
+.EXAMPLE
+Get-HttpCertificate -ComputerName 10.0.0.1 -Port 8080
+Get-HttpCertificate -IPAddress 10.0.0.1 -Port 8080
+Get-HttpCertificate -IP 10.0.0.1 -Port 8080
+# These examples attempt to retrieve the certificate information from 10.0.0.1 on port 8080
+
+.EXAMPLE
+Get-HttpCertificate
+# This example attempts to retrieve the certificate information from the localhost on port 443
+
+
 .LINK
 https://osbornepro.com
 https://writeups.osbornepro.com
