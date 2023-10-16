@@ -11,7 +11,7 @@ Test to see if a TCP or UDP port is open. This may need some extra work performe
 .PARAMETER ComputerName
 Define the remote device(s) by IP address, hostname, or FQDN you want to test the port on
 
-.PARAMEER Port
+.PARAMETER Port
 Define the port to check connectivity on
 
 .PARAMETER Protocol
